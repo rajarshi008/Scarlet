@@ -1,0 +1,387 @@
+from formulaTree import Formula
+import random
+import sys
+	
+
+
+def lineToTrace(line):
+	lasso_start = None
+	try:
+		traceData, lasso_start = line.split('::')
+	except:
+		traceData = line
+	trace_vector = [tuple([int(varValue) for varValue in varsInTimestep.split(',')]) for varsInTimestep in
+				   traceData.split(';')]
+
+	return (trace_vector, lasso_start)
+
+
+def lineToWord(line):
+	lasso_start = None
+	try:
+		wordData, lasso_start = line.split('::')
+	except:
+		wordData = line
+	wordVector = list(line.split()[0])
+	return (wordVector, lasso_start)  
+
+
+def convertFileType(wordfile, tracefile=None, operators=['F', '&']):
+	'''
+	converts words file type to trace file type
+	'''
+	sample = Sample(positive=[], negative=[])
+	sample.readFromFile(wordfile)
+	one_hot_alphabet = {}
+	sample.alphabet.sort()
+	for i in range(len(sample.alphabet)):
+		one_hot_letter = [str(0)]*len(sample.alphabet)
+		letter = sample.alphabet[i]
+		one_hot_letter[i] = str(1)
+		one_hot_alphabet[letter] = one_hot_letter
+
+	if tracefile==None:
+		tracefile = wordfile.rstrip('.words')+'.trace'
+	with open(tracefile, 'w') as file:
+		for word in sample.positive:
+			prop_word = ';'.join([','.join(one_hot_alphabet[letter]) for letter in word.vector])
+			file.write(prop_word+'\n')
+
+		file.write('---\n')
+		for word in sample.negative:
+			prop_word = prop_word = ';'.join([','.join(one_hot_alphabet[letter]) for letter in word.vector])
+			file.write(prop_word+'\n')
+		file.write('---\n')
+		file.write(','.join(operators))
+
+
+# Use smaller case letters for words
+class Trace:
+	'''
+	defines a sequences of letters, which could be a subset of propositions or symbol from an alphabet
+	'''
+	def __init__(self, vector, lasso_start=None, is_word=False):
+			
+		self.vector = vector
+		self.length = len(vector)
+		self.lasso_start = lasso_start
+		self.is_word = is_word
+		if self.lasso_start == None:
+			self.is_finite = True
+		
+		self.vector_str = str(self)
+		if lasso_start != None:
+			self.is_finite = False
+			self.lasso_start = int(lasso_start)
+			if self.lasso_start >= self.length:
+				raise Exception(
+					"lasso start = %s is greater than any value in trace (trace length = %s) -- must be smaller" % (
+					self.lasso_start, self.length))
+
+			self.lasso_length = self.length - self.lasso_start
+			self.prefix_length = self.length - self.lasso_length
+
+			self.lasso = self.vector[self.lasso_start:self.length]
+			self.prefix = self.vector[:self.lasso_start] 
+
+
+	
+	def nextPos(self, currentPos):
+		'''
+		returns the next position in the trace
+		'''
+		if self.is_finite:
+			if currentPos < self.length:
+				return currentPos+1
+			else:
+				return None
+		else:
+			if currentPos == self.length - 1:
+				return self.lasso_start
+			else:
+				return currentPos + 1
+
+
+	
+	def futurePos(self, currentPos):
+		'''
+		returns all the relevant future positions	
+		'''
+		futurePositions = []
+		if self.is_finite:
+			futurePositions = list(range(currentPos, self.length))
+		else:
+			alreadyGathered = set()
+			while currentPos not in alreadyGathered:
+				futurePositions.append(currentPos)
+				alreadyGathered.add(currentPos)
+				currentPos = self.nextPos(currentPos)
+			futurePositions.append(currentPos)
+		return futurePositions
+
+	'''
+	def inTracePosition(self, currentpos):
+		if currentpos<self.length:
+			return currentpos
+		else:
+			modpos=self.uLength + ((currentpos-self.uLength)%self.vLength)
+			return modpos
+	'''
+
+	def evaluateFormula(self, formula):
+		'''
+		evalutates formula on trace
+		'''
+		#print(self.vector)
+		nodes = list(set(formula.getAllNodes()))
+		self.truthAssignmentTable = {node: [None for _ in range(self.length)] for node in nodes}
+
+
+		return self.truthValue(formula, 0)
+
+	def truthValue(self, formula, timestep):
+		'''
+		evaluates formula on trace starting from timestep
+		'''
+
+		futureTracePositions = self.futurePos(timestep)
+
+		tableValue = self.truthAssignmentTable[formula][timestep]
+		if tableValue != None:
+			return tableValue
+		else:
+			label = formula.label
+			if label == 'true':
+				val = True
+
+			elif label == 'false':
+				val = False
+
+			elif label.islower():
+				if self.is_word:
+					val = self.vector[timestep] == label
+				else:
+					val = self.vector[timestep][ord(label)-ord('p')] # assumes  propositions to be p,q,...
+
+			elif label == '&':
+				val = self.truthValue(formula.left, timestep) and self.truthValue(formula.right, timestep)
+			
+			elif label == '|':
+				val = self.truthValue(formula.left, timestep) or self.truthValue(formula.right, timestep)
+			
+			elif label == '!':
+				val = not self.truthValue(formula.left, timestep)
+			
+			elif label == '->':
+				val = not self.truthValue(formula.left, timestep) or self.truthValue(formula.right, timestep)
+			
+			elif label == 'F':
+				val = max([self.truthValue(formula.left, futureTimestep) for futureTimestep in futureTracePositions])
+			
+			elif label == 'G':
+				val = min([self.truthValue(formula.left, futureTimestep) for futureTimestep in futureTracePositions])
+			
+			elif label == 'U':
+				val = max(
+					[self.truthValue(formula.right, futureTimestep) for futureTimestep in futureTracePositions]) == True \
+					   and ( \
+								   self.truthValue(formula.right, timestep) \
+								   or \
+								   (self.truthValue(formula.left, timestep) and self.truthValue(formula,
+																								self.nextPos(timestep))) \
+						   )
+
+			elif label == 'X':
+				try:
+					val = self.truthValue(formula.left, self.nextPos(timestep))
+				except:
+					val = False
+				
+			
+			self.truthAssignmentTable[formula][timestep] = val
+			return val
+
+
+
+	def __str__(self):
+
+		if self.is_finite:
+			if self.is_word:
+				return str(''.join(self.vector))
+			else:
+				vector_str = [list(map(lambda x: str(int(x)), letter)) for letter in self.vector]
+				return str(';'.join([','.join(letter) for letter in vector_str]))
+		else:
+			if self.is_word:	
+				return str(''.join(self.prefix)+' '+''.join(str(self.lasso)))
+			else:
+				
+				prefix_str = [list(map(lambda x: str(int(x)), letter)) for letter in self.prefix]
+				lasso_str = [list(map(lambda x: str(int(x)), letter)) for letter in self.lasso]
+				return str(';'.join([','.join(letter) for letter in prefix_str])+' '+ ';'.join([','.join(letter) for letter in lasso_str]))
+
+
+	def __len__(self):
+		 return self.length
+
+
+class Sample:
+	'''
+	contains the sample of postive and negative examples
+	'''
+	def __init__(self, positive=[], negative=[], alphabet=[], is_words=True):
+
+		self.positive = positive
+		self.negative = negative
+		self.alphabet = alphabet
+		self.is_words = is_words
+		self.num_positives = len(self.positive)
+		self.num_negatives = len(self.negative)
+		self.operators=[]
+
+	
+	def extract_alphabet(self, is_word):
+		'''
+		extracts alphabet from the words/traces provided in the data
+		'''
+		alphabet = set()
+
+		if is_word:
+			for w in self.positive+self.negative:
+				alphabet = alphabet.union(set(w.vector))
+			self.alphabet = list(alphabet)
+
+		else:
+			self.alphabet = [chr(ord('p')+i) for i in range(len(self.positive[0].vector[0]))] 
+		
+
+
+	def readFromFile(self, filename):
+		'''
+		reads .trace/.word files to extract sample from it
+		'''
+		with open(filename, 'r') as file:
+			mode = 0
+			count=0
+			while True:
+				count
+				line=file.readline()
+				if line=='':
+					break
+
+				if line == '---\n':
+					mode+=1
+					continue
+
+				if mode==0:	
+					# can read from both word file type and trace file type
+					is_word = not (';' in line)
+					if is_word:
+						word_vector, lasso_start = lineToWord(line)
+						word = Trace(vector=word_vector, lasso_start=lasso_start, is_word=True)	 	
+						self.positive.append(word)
+					else:
+						trace_vector, lasso_start = lineToTrace(line)
+						trace = Trace(vector=trace_vector, lasso_start=lasso_start, is_word=False)	 	
+						self.positive.append(trace)
+
+				if mode==1:
+					
+					if is_word:
+						word_vector, lasso_start = lineToWord(line)
+						word = Trace(vector=word_vector, lasso_start=lasso_start, is_word=True)	 	
+						self.negative.append(word)
+					else:
+						trace_vector, lasso_start = lineToTrace(line)
+						trace = Trace(vector=trace_vector, lasso_start=lasso_start, is_word=False)	 	
+						self.negative.append(trace)
+
+				if mode==2:
+					self.operators = list(line.split(','))
+
+				if mode==3:
+					self.alphabet == list(line.split(','))
+
+
+		if mode != 3:		
+				self.extract_alphabet(is_word)
+
+
+	def isFormulaConsistent(self, formula):
+		'''
+		checks if the sample is consistent with given formula
+		'''
+		if formula == None:
+			return True
+		for w in self.positive:
+			if w.evaluateFormula(formula) == False:
+				print('positive', str(w))
+				return False
+
+		for w in self.negative:
+			if w.evaluateFormula(formula) == True:
+				print('negative',str(w))
+				return False
+		return True
+
+
+	#only words at the moment
+	def generator(self, formula=None, filename='generated.words', num_traces=None, length_traces=None, alphabet=['p','q','r'], length_range=(5,15), is_word=True, operators=['G', 'F', '!', 'U', '&','|', '->', 'X']):
+
+		if num_traces == None:
+			num_traces = random.randint(5, 100)
+
+		num_positives = 0
+		num_negatives = 0
+		ver=True
+		
+
+		while num_positives<num_traces or num_negatives<num_traces:
+
+			if is_word:
+				rand_word = ''
+				length_word = random.randint(length_range[0], length_range[1])
+				for j in range(length_word):
+					rand_letter = random.choice(alphabet)
+					rand_word+=rand_letter
+				final_trace = Trace(rand_word, is_word=is_word)
+
+			else:
+
+				length_trace = random.randint(length_range[0], length_range[1])
+				trace_vector = [ [random.randint(0,1) for _ in range(len(alphabet))] for _ in range(length_trace) ]
+				final_trace = Trace(trace_vector, is_word=is_word)
+
+			#check
+			if formula!=None:
+				ver = final_trace.evaluateFormula(formula)
+
+			if num_positives<num_traces:
+				if ver == True or formula==None:
+					self.positive.append(final_trace)
+					num_positives+=1
+					continue
+
+			if num_negatives<num_traces:
+				if ver==False or formula==None:
+					self.negative.append(final_trace) 
+					num_negatives+=1
+			self.operators=operators
+			#sys.stdout.write("\rGenerating sample: created %d positives, %d negatives "%(num_positives, num_negatives))
+			#sys.stdout.flush()
+		self.writeToFile(filename)
+
+	def writeToFile(self, filename):
+
+		with open(filename, 'w') as file:
+			for trace in self.positive:
+
+				file.write(str(trace)+'\n')
+			file.write('---\n')
+
+			for trace in self.negative:
+				file.write(str(trace)+'\n')
+
+			if self.operators!=[]:
+				file.write('---\n')
+				file.write(','.join(self.operators))
