@@ -11,7 +11,7 @@ def run_test():
 
 	parser = argparse.ArgumentParser()
 
-	parser.add_argument('--input_file', '-i', dest='input_file', default = './dummy.trace')
+	parser.add_argument('--input_file', '-i', dest='input_file', default = './dummy.words')
 	parser.add_argument('--timeout', '-t', dest='sample_sizes', default=[5], nargs='+', type=int)
 	parser.add_argument('--verbose', '-v', dest='verbose', default=False, action='count')
 
@@ -19,7 +19,7 @@ def run_test():
 	args,unknown = parser.parse_known_args()
 
 	input_file = args.input_file
-	file_type = 'word' if '.words' in input_file else 'trace'
+	is_word = True if '.words' in input_file else False
 	verbosity = int(args.verbose)
 	logging.basicConfig(format='%(message)s', level=logging_levels[verbosity])
 
@@ -35,15 +35,15 @@ def run_test():
 					
 
 	time1= time.time()
-	formula = inferLTL(sample, operators)
+	formula = inferLTL(sample, operators,is_word)
 	time1 = time.time()-time1
 	
 	if formula == None:
-		logging.info('No formula found') 
+		print('No formula found') 
 	else:
-		logging.info('Formula found %s'%formula.prettyPrint())	
+		print('Formula found %s'%formula.prettyPrint())	
 
-	logging.info("The time taken is: "+ str(round(time1,3))+ " secs") 
+	print("The time taken is: "+ str(round(time1,3))+ " secs") 
 
 	if verbosity>1:
 		ver = sample.isFormulaConsistent(formula)

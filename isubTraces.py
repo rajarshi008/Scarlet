@@ -159,7 +159,6 @@ class iSubTrace:
 
 							
 				#stores the calculated ones in the dp_table
-				
 				return self.letter2atom_table[(letter,width)]
 
 
@@ -220,8 +219,7 @@ class iSubTrace:
 				
 				if base_len < upper_bound:
 					self.len_isubtrace[(new_isubtrace,inv)] = base_len
-					isubtraces_list.append(new_isubtrace)
-				
+					isubtraces_list.append(new_isubtrace)		
 		return isubtraces_list
 
 
@@ -234,6 +232,7 @@ class iSubTrace:
 				for letter in trace.vector:	
 					for i in range(1,width+1):
 						all_atoms[i]= all_atoms[i].union(set(self.letter2atoms(letter, i, True)))
+
 		else:
 			for trace in self.sample.positive:
 				for letter in trace.vector:	
@@ -270,6 +269,7 @@ class iSubTrace:
 									set1=set1.intersection(set(self.ind_table[(word,pos,(j,))]))
 
 								self.ind_table[(word, pos, atom)]=list(set1)
+
 
 	def add2isubtrace(self, isubtrace1:tuple, isubtrace2:tuple, inv: bool, upper_bound: int):
 		'''
@@ -664,6 +664,7 @@ class iSubTrace:
 			
 			if ('&' not in self.operators and pt_length==1 and width==1) or ('&' in self.operators):
 				isubtrace_dict = self.R(pt_length, width, upper_bound, inv=False)
+
 		if pt_length <= self.max_negative_length:
 
 			if ('|' not in self.operators and pt_length==1 and width==1) or ('|' in self.operators):

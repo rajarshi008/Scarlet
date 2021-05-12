@@ -26,7 +26,7 @@ def lineToWord(line):
 	return (wordVector, lasso_start)  
 
 
-def convertFileType(wordfile, tracefile=None, operators=['F', '&']):
+def convertFileType(operators, wordfile, tracefile=None):
 	'''
 	converts words file type to trace file type
 	'''
@@ -60,7 +60,7 @@ class Trace:
 	'''
 	defines a sequences of letters, which could be a subset of propositions or symbol from an alphabet
 	'''
-	def __init__(self, vector, lasso_start=None, is_word=False):
+	def __init__(self, vector, is_word, lasso_start=None):
 			
 		self.vector = vector
 		self.length = len(vector)
@@ -69,7 +69,9 @@ class Trace:
 		if self.lasso_start == None:
 			self.is_finite = True
 		
-		self.vector_str = str(self)
+		if is_word==False:
+			self.vector_str = str(self)
+
 		if lasso_start != None:
 			self.is_finite = False
 			self.lasso_start = int(lasso_start)
@@ -162,7 +164,6 @@ class Trace:
 					val = self.vector[timestep] == label
 				else:
 					val = self.vector[timestep][ord(label)-ord('p')] # assumes  propositions to be p,q,...
-
 			elif label == '&':
 				val = self.truthValue(formula.left, timestep) and self.truthValue(formula.right, timestep)
 			
@@ -204,26 +205,17 @@ class Trace:
 
 
 	def __str__(self):
-
-		if self.is_finite:
-			if self.is_word:
-				return str(''.join(self.vector))
-			else:
-				vector_str = [list(map(lambda x: str(int(x)), letter)) for letter in self.vector]
-				return str(';'.join([','.join(letter) for letter in vector_str]))
-		else:
-			if self.is_word:	
-				return str(''.join(self.prefix)+' '+''.join(str(self.lasso)))
-			else:
-				
-				prefix_str = [list(map(lambda x: str(int(x)), letter)) for letter in self.prefix]
-				lasso_str = [list(map(lambda x: str(int(x)), letter)) for letter in self.lasso]
-				return str(';'.join([','.join(letter) for letter in prefix_str])+' '+ ';'.join([','.join(letter) for letter in lasso_str]))
-
+		#print(self.vector)
+		vector_str = [list(map(lambda x: str(int(x)), letter)) for letter in self.vector]
+		#rint(vector_str)
+		return str(';'.join([','.join(letter) for letter in vector_str]))
+	
 
 	def __len__(self):
 		 return self.length
 
+
+		
 
 class Sample:
 	'''
@@ -253,13 +245,30 @@ class Sample:
 
 		else:
 			self.alphabet = [chr(ord('p')+i) for i in range(len(self.positive[0].vector[0]))] 
+		self.alphabet.sort()
 		
+	
+
+	def word2trace(self, word):
+		one_hot_alphabet={}
+		for i in range(len(self.alphabet)):
+			one_hot_letter = [0]*len(self.alphabet)
+			letter = self.alphabet[i]
+			one_hot_letter[i] = 1
+			one_hot_alphabet[letter] = tuple(one_hot_letter)
+		trace_list=[]
+		for letter in word:
+			trace_list.append(one_hot_alphabet[letter])
+
+		return trace_list
+
 
 
 	def readFromFile(self, filename):
 		'''
 		reads .trace/.word files to extract sample from it
 		'''
+		is_word= ('.words' in filename)
 		with open(filename, 'r') as file:
 			mode = 0
 			count=0
@@ -275,7 +284,6 @@ class Sample:
 
 				if mode==0:	
 					# can read from both word file type and trace file type
-					is_word = not (';' in line)
 					if is_word:
 						word_vector, lasso_start = lineToWord(line)
 						word = Trace(vector=word_vector, lasso_start=lasso_start, is_word=True)	 	
@@ -305,7 +313,10 @@ class Sample:
 
 		if mode != 3:		
 				self.extract_alphabet(is_word)
-
+		for word in self.positive+ self.negative:
+			word.vector= self.word2trace(word.vector)
+			word.vector_str= str(word.vector)
+			word.is_word=False
 
 	def isFormulaConsistent(self, formula):
 		'''

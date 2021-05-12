@@ -92,15 +92,18 @@ def iteration_seq(max_len, max_width):
 
 
 
-def inferLTL(sample, operators):
-
+def inferLTL(sample, operators,is_word):
 
 	s = iSubTrace(sample, operators)
+
 
 	upper_bound = 4*s.max_positive_length
 	setcover = BooleanSetCover(sample, operators)
 	max_len = s.max_positive_length
-	max_width = len(sample.positive[0].vector[0])
+	if is_word:
+		max_width=1
+	else:
+		max_width = len(sample.positive[0].vector[0])
 	seq = iteration_seq(max_len, max_width)
 	positive_set = {i for i in range(len(sample.positive))}
 	negative_set = {i for i in range(len(sample.negative))}
