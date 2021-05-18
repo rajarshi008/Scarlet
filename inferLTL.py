@@ -1,10 +1,11 @@
-from booleanSetCover import BooleanSetCover
-from isubTraces import iSubTrace
-from formulaTree import Formula
-from sample import Sample
+from .booleanSetCover import BooleanSetCover
+from .isubTraces import iSubTrace
+from .formulaTree import Formula
+from .sample import Sample
 import time
 import heapq as hq
 import logging
+import csv
 '''
 Possible clean-ups:
 - upperbound can be class variable in iSubTrace 
@@ -91,16 +92,15 @@ def iteration_seq(max_len, max_width):
 	return seq
 
 
-
-def inferLTL(sample, operators,is_word):
+#csvname is only temporary:
+def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|']):
 
 	s = iSubTrace(sample, operators)
-
-
+	
 	upper_bound = 4*s.max_positive_length
 	setcover = BooleanSetCover(sample, operators)
 	max_len = s.max_positive_length
-	if is_word:
+	if sample.is_words:
 		max_width=1
 	else:
 		max_width = len(sample.positive[0].vector[0])
@@ -125,7 +125,7 @@ def inferLTL(sample, operators,is_word):
 		# 	print(cover_set[('>0', ('+0',))])
 		if cover_set=={}:
 			continue
-		
+
 		for isubtrace in cover_set.keys():
 
 			pos_friend_set = cover_set[isubtrace][0]
@@ -143,7 +143,7 @@ def inferLTL(sample, operators,is_word):
 			setcover.formula_dict[formula] = (pos_friend_set, neg_friend_set)
 			#score can be weighted by formula size 
 
-			setcover.score[formula] = (len(pos_friend_set) - len(neg_friend_set) + len(negative_set))/((formula.treeSize())**(0.5)+1)
+			setcover.score[formula] = (len(pos_friend_set) - len(neg_friend_set) + len(negative_set))
 			setcover.cover_size[formula]  = len(pos_friend_set) - len(neg_friend_set) + len(negative_set)
 			hq.heappush(setcover.heap, (-setcover.score[formula], formula))
 
@@ -158,13 +158,19 @@ def inferLTL(sample, operators,is_word):
 			current_covering_formula = covering_formula
 			logging.info("Already found: %s"%current_covering_formula)
 			logging.debug("Current formula upper bound %d"%upper_bound)
-
+			with open(csvname, 'w') as csvfile:
+				writer = csv.writer(csvfile)
+				writer.writerow([None, upper_bound, current_covering_formula.prettyPrint(), None])
+		
 		logging.debug('########Time taken for iteration %.3f########'%(time.time()-time1))
 
 
 	if current_covering_formula == None:
 		print("No formula found")
 		return None
+
+
+	
 
 	logging.debug("Setcover Time %.3f"%setcover_time)
 	return current_covering_formula

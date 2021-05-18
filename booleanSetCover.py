@@ -1,5 +1,5 @@
 import heapq as hq
-from formulaTree import Formula
+from .formulaTree import Formula
 import time
 import logging
 
@@ -64,7 +64,7 @@ class BooleanSetCover:
 		
 		best_formula_list = list(map(lambda x:x[0], sorted(best_formula_list, key=lambda x: x[1], reverse=True)))
 
-		logging.debug("List of best formulas: %s"%str([(i,self.cover_size[i]) for i in best_formula_list]))	
+		logging.debug("List of best formulas: %s"%str([(i,self.score[i]) for i in best_formula_list]))	
 		final_formula=None
 		
 		for best_formula in best_formula_list:
@@ -114,7 +114,8 @@ class BooleanSetCover:
 				if current_value == 0:
 					
 					if current_formula not in self.score:	
-						self.score[current_formula] = self.cover_size[current_formula]/((current_formula.treeSize())**(0.5)+1)
+						self.score[current_formula] = self.cover_size[current_formula]
+						print(current_formula, self.score[current_formula])
 						hq.heappush(self.heap, (-self.score[current_formula], current_formula))
 					
 					success = False

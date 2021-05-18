@@ -1,8 +1,8 @@
-from sample import Sample, Trace
-from formulaTree import Formula
+from .sample import Sample, Trace
+from .formulaTree import Formula
 import heapq as hq
 import time
-from booleanSetCover import BooleanSetCover
+from .booleanSetCover import BooleanSetCover
 import logging
 
 #from .booleanSetCover import BooleanSetCover
@@ -443,7 +443,8 @@ class iSubTrace:
 
 								#Manually eliminating formulas with last in case of formulas with G
 								
-								if inv:								
+								if inv:
+																
 									req_atoms = neg_props(nextisubtrace[-3])
 									last_digit_mod = max(len(current_superword)-last_digit, 0)
 									c=0
@@ -455,17 +456,16 @@ class iSubTrace:
 										new_neg_list.append([-1])
 										continue
 
+
 								new_list=[]
 								if existing_table:
-								  	count += 1
-								  	new_list = existing_table[1][k]
-								  	new_neg_list.append(new_list)
-								  	continue
+									count += 1
+									new_list = existing_table[1][k]
+									new_neg_list.append(new_list)
+									continue
 
 								else:
-
 									if nve_endpos_list[k]!=[]:
-									
 										if nextisubtrace[-2][0]=='>':
 											next_pos = nve_endpos_list[k][0]+last_digit
 											if next_pos <= len(current_superword):
@@ -473,7 +473,8 @@ class iSubTrace:
 											else:
 												new_list= []
 										else:
-											new_list=[m+last_digit for m in nve_endpos_list[k] if m+last_digit < len(current_superword) and is_sat(current_superword.vector[m+last_digit],last_atom)]
+											new_list=[m+last_digit for m in nve_endpos_list[k]\
+													 if m+last_digit < len(current_superword) and is_sat(current_superword.vector[m+last_digit],last_atom)]
 												
 									new_neg_list.append(new_list)
 
@@ -673,8 +674,8 @@ class iSubTrace:
 		logging.debug('Found isubtraces %d and reverse isubtraces %d'%(len(isubtrace_dict), len(isubtrace_dict_inv)))
 
 
-		# if pt_length==1 and width==1:
-		# 	print(isubtrace_dict[('>0', ('+0',))])
+		if pt_length==1 and width==1:
+			print(isubtrace_dict[('0',('+1',))])
 
 		# if pt_length==2 and width==1:
 		# 	print(isubtrace_dict[('>0', ('+0',), '>0', ('+1',))])

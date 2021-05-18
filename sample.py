@@ -1,4 +1,4 @@
-from formulaTree import Formula
+from .formulaTree import Formula
 import random
 import sys
 	
@@ -238,7 +238,7 @@ class Sample:
 		'''
 		alphabet = set()
 
-		if is_word:
+		if self.is_words:
 			for w in self.positive+self.negative:
 				alphabet = alphabet.union(set(w.vector))
 			self.alphabet = list(alphabet)
@@ -268,7 +268,7 @@ class Sample:
 		'''
 		reads .trace/.word files to extract sample from it
 		'''
-		is_word= ('.words' in filename)
+		self.is_words = ('.words' in filename)
 		with open(filename, 'r') as file:
 			mode = 0
 			count=0
@@ -284,7 +284,7 @@ class Sample:
 
 				if mode==0:	
 					# can read from both word file type and trace file type
-					if is_word:
+					if self.is_words:
 						word_vector, lasso_start = lineToWord(line)
 						word = Trace(vector=word_vector, lasso_start=lasso_start, is_word=True)	 	
 						self.positive.append(word)
@@ -295,7 +295,7 @@ class Sample:
 
 				if mode==1:
 					
-					if is_word:
+					if self.is_words:
 						word_vector, lasso_start = lineToWord(line)
 						word = Trace(vector=word_vector, lasso_start=lasso_start, is_word=True)	 	
 						self.negative.append(word)
@@ -312,11 +312,13 @@ class Sample:
 
 
 		if mode != 3:		
-				self.extract_alphabet(is_word)
-		for word in self.positive+ self.negative:
-			word.vector= self.word2trace(word.vector)
-			word.vector_str= str(word.vector)
-			word.is_word=False
+				self.extract_alphabet(self.is_words)
+		
+		if self.is_words:
+			for word in self.positive+ self.negative:
+				word.vector= self.word2trace(word.vector)
+				word.vector_str= str(word.vector)
+				word.is_word = False
 
 	def isFormulaConsistent(self, formula):
 		'''
@@ -337,7 +339,7 @@ class Sample:
 
 
 	#only words at the moment
-	def generator(self, formula=None, filename='generated.words', num_traces=None, length_traces=None, alphabet=['p','q','r'], length_range=(5,15), is_word=True, operators=['G', 'F', '!', 'U', '&','|', '->', 'X']):
+	def generator(self, formula=None, filename='generated.words', num_traces=None, length_traces=None, alphabet=['p','q','r'], length_range=(5,15), is_words=True, operators=['G', 'F', '!', 'U', '&','|', '->', 'X']):
 
 		if num_traces == None:
 			num_traces = random.randint(5, 100)
@@ -349,19 +351,19 @@ class Sample:
 
 		while num_positives<num_traces or num_negatives<num_traces:
 
-			if is_word:
+			if is_words:
 				rand_word = ''
 				length_word = random.randint(length_range[0], length_range[1])
 				for j in range(length_word):
 					rand_letter = random.choice(alphabet)
 					rand_word+=rand_letter
-				final_trace = Trace(rand_word, is_word=is_word)
+				final_trace = Trace(rand_word, is_word=is_words)
 
 			else:
 
 				length_trace = random.randint(length_range[0], length_range[1])
 				trace_vector = [ [random.randint(0,1) for _ in range(len(alphabet))] for _ in range(length_trace) ]
-				final_trace = Trace(trace_vector, is_word=is_word)
+				final_trace = Trace(trace_vector, is_word=is_words)
 
 			#check
 			if formula!=None:

@@ -1,5 +1,5 @@
-from inferLTL import inferLTL
-from sample import Sample
+from .inferLTL import inferLTL
+from .sample import Sample
 import argparse
 import logging
 import time
@@ -35,7 +35,7 @@ def run_test():
 					
 
 	time1= time.time()
-	formula = inferLTL(sample, operators,is_word)
+	formula = inferLTL(sample, operators)
 	time1 = time.time()-time1
 	
 	if formula == None:

@@ -1,5 +1,5 @@
-from sample import Sample, Trace, convertFileType
-from formulaTree import Formula
+from .sample import Sample, Trace, convertFileType
+from .formulaTree import Formula
 import argparse
 import os, shutil
 import datetime
