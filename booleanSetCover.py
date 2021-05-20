@@ -23,7 +23,7 @@ Take postraces as argument instead of formulas
 '''
 
 
-
+#Calculate the Boolean set cover from the covering set 
 
 class BooleanSetCover: 
 
@@ -40,33 +40,30 @@ class BooleanSetCover:
 		self.formula_dict = {}
 		self.operators = operators
 
-	#def initHeap(self, formula_dict):
-		"""
-		create a heap containing:
-		- all atomic formulas
-		- conjunctions and disjunctions of two atomic formulas
-		The heap is sorted by score (top element: maximal score)
-		"""
-
+	
+	#calculates the local score of a formula with respect to the best formula 
 	def score_local(self, formula, best_formula):
 
 		return (self.cover_size[formula]-self.cover_size[best_formula])/((formula.treeSize())**(0.5)+1)
 	
-
-
+	#we find best formulas from the current cover set
 	def find(self, upper_bound):
-		# We start by adding to the heap all atomic formulas
 
 		best_formula_list=[]
+
+		#get the best 5 formulas currently from the heap with the highest score
 		smallest_list = hq.nsmallest(5,self.heap)
 		for i in smallest_list:
 			best_formula_list.append((i[1],self.cover_size[i[1]]))
 		
+		#sort the best formulas with their cover size
 		best_formula_list = list(map(lambda x:x[0], sorted(best_formula_list, key=lambda x: x[1], reverse=True)))
 
 		logging.debug("List of best formulas: %s"%str([(i,self.score[i]) for i in best_formula_list]))	
+		
 		final_formula=None
 		
+
 		for best_formula in best_formula_list:
 
 			current_formula = best_formula
@@ -74,14 +71,15 @@ class BooleanSetCover:
 			t0=time.time()
 
 			success = True
+
+			#if the current formula size is greater than the upper-bound, we ignore them
 			if current_formula.treeSize() >= upper_bound:
 				continue
 
+			# We continue until we find a formula that covers the whole set
 			while self.cover_size[current_formula] < self.max_cover_size:
-				# We find the most interesting formula to combine with best_formula
 				
-				
-				# We look at all existing formulas
+				# we take "&" and "|" of all existing formulas in the heap with the best formula and check if it is better
 				value={}
 				for (_,formula) in self.heap[1:]:
 					
@@ -105,6 +103,7 @@ class BooleanSetCover:
 				current_value = 0
 				success=True
 				for formula in value.keys():
+					#if the resulting formula is better than the best formula then we continue with the resulting formula
 					
 					if value[formula] > current_value:
 						current_formula = formula
@@ -112,7 +111,10 @@ class BooleanSetCover:
 
 
 				if current_value == 0:
-					
+					'''
+					if we reach upto a formula that we cannot improve with the existing formulas, 
+					we push them to the heap as interesting formulas if it is already not in the heap
+					'''
 					if current_formula not in self.score:	
 						self.score[current_formula] = self.cover_size[current_formula]
 						print(current_formula, self.score[current_formula])
@@ -130,20 +132,9 @@ class BooleanSetCover:
 		
 		return final_formula, upper_bound
 
-	"""
-	Optimisations:
-	* We can replace "score" with "score / size",
-	or anything else that is increasing with score and decreasing with size
-	* Here the greediness is lazy: we only combine formulas with the best current formula.
-	We may want to do more combinations. 
-	The other extreme is to do a saturation algorithm: at each step we create all possible combinations.
-	We can have something in between: at each step we create combinations using only the 10 best formulas?
-	"""
-
+	
 	def size_formula(self, formula1, formula2, operator):
 		"""
-		a priori the size is formula1 + formula2 + 1
-		but it may differ if the two formulas can be factorised
 		"""
 		return formula1.size + formula2.size + 1
 

@@ -5,12 +5,11 @@ import time
 from .booleanSetCover import BooleanSetCover
 import logging
 
-#from .booleanSetCover import BooleanSetCover
 
 
 epsilon=tuple()
 inf_pos = 'end'
-inf_word = 'omega'
+
 
 '''
 #POSSIBLE OPTIMIZATIONS:
@@ -25,15 +24,9 @@ checking to several formulas of high length and width, can reduce that
 - (0, ), (1,2) are atoms. (1,2) is an atom of width 2 which means q&R.
 '''
 
-'''
-Operators: (F, &)
-F - length = 1, width=1 no need of adding & and | in booleanSetCover
-& - length = min_isubtive_length, width=max_num_propositions, add & in booleanSetCover
-'''
 
 
-
-#Satisfiability of an atom in a letter, e.g. (0,) and (2,) is true in (1,0,1) but (1,) is not
+#creates the dual atom
 def neg_props(atom: tuple)-> list:
 	neg_props = [] 
 	for i in atom:
@@ -45,7 +38,7 @@ def neg_props(atom: tuple)-> list:
 
 
 
-
+#Satisfiability of an atom in a letter, e.g. (0,) and (2,) is true in (1,0,1) but (1,) is not
 def is_sat(letter:tuple, atom:tuple) -> bool:
 
 	#check if the propositions in the atom are true in the letter
@@ -57,30 +50,35 @@ def is_sat(letter:tuple, atom:tuple) -> bool:
 
 
 
-#Defining the class PosTrace
+#Defining the class iSubTrace (indexed subtraces)
 class iSubTrace:
 
 	def __init__(self, sample, operators):
 		
 		self.sample = sample 
 		self.operators = operators
-		self.neg = '!' in self.operators
+		
 		self.num_positives = len(self.sample.positive)
 		self.num_negatives = len(self.sample.negative)
 
-		#we sort the sample of positive and negative words according to their lengths
-		#self.sample.positive = sorted(self.sample.positive, key=lambda x: len(x))
-		#self.sample.negative = sorted(self.sample.negative, key=lambda x: len(x))
+		#Value determining if "!" is allowed in the operators
+		self.neg = '!' in self.operators
+		
 
-		#Calculates the length of the shortest positive word
-		#self.min_positive_length = min([len(word) for word in self.sample.positive])
-		self.max_positive_length = max([len(word) for word in self.sample.positive])
-		self.max_negative_length = max([len(word) for word in self.sample.negative])
+		#Calculates the maximum length of the traces
+		self.max_positive_length = max([len(trace) for trace in self.sample.positive])
+		self.max_negative_length = max([len(trace) for trace in self.sample.negative])
 
-		#Initializing DP tables: 
-		# 	-Ind_table: For a (word, position, atom) stores all the positions the atom is satisfied in the word starting from the position (including the position)
-		#	-R_table: For (length, width) stores dictionaries for all the isubtraces of that length and width along with their end positions in all the words in the sample
-		#	-letter2atom_table: For (letter, width) stores all the possible atoms of that width that is satisfiable in that letter
+		'''
+		Initializing DP tables: 
+	 	
+	 	-Ind_table: For a (word, position, atom) stores all the positions the atom is satisfied in the word starting from the position (including the position)
+		-R_table: For (length, width) stores dictionaries for all the isubtraces of that length and width along with their end positions in all the words in the sample
+		-R_table_inv: R_table for the inv traces
+		-letter2atom_table: For (letter, width) stores all the possible atoms of that width that is satisfiable in that letter
+		-len_atom_table: Stores length of an atom
+		-len_isubtracë: Stores length of an isubtrace
+		'''
 		self.ind_table = {}
 		self.R_table = {}
 		self.R_table_inv = {}
@@ -93,6 +91,7 @@ class iSubTrace:
 		width = len(self.sample.positive[0].vector[0])
 		self.preComputeInd(width)
  
+	#Calculates length of an atom both with inv true and false
 	def len_atom(self, atom: tuple, inv: bool)->int:
 		try:
 			return self.len_atom_table[(atom, inv)]
@@ -162,10 +161,10 @@ class iSubTrace:
 				return self.letter2atom_table[(letter,width)]
 
 
-	
-	# Given a isubtrace of given width ending at a position and a diff and a letter appearing at position + diff, it outputs all possible isubtraces of one more length and same width
-	# 	given the length of FaXTL from it does not cross the upper_bound.
-	
+	'''
+	Given a isubtrace of given width ending at a position and a diff and a letter appearing at position + diff, it outputs all possible 
+	isubtraces of one more length and same width given the length of the formula derived is less than the upper_bound.
+	'''
 	def possiblePTraces(self, isubtrace:tuple, diff: int, letter: str, width: int, upper_bound: int, inv: bool):
 		
 		#list of all new isubtraces
