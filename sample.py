@@ -238,7 +238,7 @@ class Sample:
 		extracts alphabet from the words/traces provided in the data
 		'''
 		alphabet = set()
-		self.letter2pos={}
+		
 
 		if self.is_words:
 			for w in self.positive+self.negative:
@@ -247,9 +247,7 @@ class Sample:
 
 		else:
 			self.alphabet = [chr(ord('p')+i) for i in range(len(self.positive[0].vector[0]))] 
-		self.alphabet.sort()
-		for i in range(len(self.alphabet)):
-			self.letter2pos[self.alphabet[i]]=i
+		
 
 		
 	
@@ -310,14 +308,19 @@ class Sample:
 						self.negative.append(trace)
 
 				if mode==2:
-					self.operators = list(line.split(','))
-
+					self.operators = list(line.strip().split(','))
 				if mode==3:
-					self.alphabet == list(line.split(','))
+					self.alphabet = list(line.split(','))
 
 
 		if mode != 3:		
 				self.extract_alphabet(self.is_words)
+		
+
+		self.alphabet.sort()
+		self.letter2pos={}
+		for i in range(len(self.alphabet)):
+			self.letter2pos[self.alphabet[i]]=i
 		
 		if self.is_words:
 			for word in self.positive+ self.negative:

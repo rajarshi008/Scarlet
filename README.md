@@ -31,7 +31,6 @@ Each trace is a sequence of letter separated by `;`. Each letter represents the 
 A example of a trace is `1,0,1;0,0,0` which consists of two letters each of which define the values of three propositions (by deafult consider to be `p,q,r`). 
 
 
-
 ### Generating Traces
 
 For generating traces, one needs to run `python genBenchmarks.py`. By default, this generates traces that are consistent with the formulas provided in `formulas.txt`. You can run `genBenchmarks.py` with the following arguments:
