@@ -82,7 +82,7 @@ class SimpleTree:
 			return self.label + '(' + self.left.__repr__() + ',' + self.right.__repr__() + ')'
 
 '''
-A class for encoding syntax Trees and syntax DAGs of PSL formulas
+A class for encoding syntax Trees and syntax DAGs of LTL formulas
 '''
 
 class Formula(SimpleTree):
@@ -142,6 +142,7 @@ class Formula(SimpleTree):
 	def getAllVariables(self):
 		allNodes = list(set(self.getAllNodes()))
 		return [ node for node in allNodes if node._isLeaf() == True ]
+	
 	def getDepth(self):
 		if self.left == None and self.right == None:
 			return 0

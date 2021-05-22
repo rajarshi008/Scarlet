@@ -1,8 +1,8 @@
-from .sample import Sample, Trace
-from .formulaTree import Formula
+from sample import Sample, Trace
+from formulaTree import Formula
 import heapq as hq
 import time
-from .booleanSetCover import BooleanSetCover
+from booleanSetCover import BooleanSetCover
 import logging
 
 
@@ -672,9 +672,6 @@ class iSubTrace:
 
 		logging.debug('Found isubtraces %d and reverse isubtraces %d'%(len(isubtrace_dict), len(isubtrace_dict_inv)))
 
-
-		if pt_length==1 and width==1:
-			print(isubtrace_dict[('0',('+1',))])
 
 		# if pt_length==2 and width==1:
 		# 	print(isubtrace_dict[('>0', ('+0',), '>0', ('+1',))])

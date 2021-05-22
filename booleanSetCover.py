@@ -1,5 +1,5 @@
 import heapq as hq
-from .formulaTree import Formula
+from formulaTree import Formula
 import time
 import logging
 
@@ -117,7 +117,6 @@ class BooleanSetCover:
 					'''
 					if current_formula not in self.score:	
 						self.score[current_formula] = self.cover_size[current_formula]
-						print(current_formula, self.score[current_formula])
 						hq.heappush(self.heap, (-self.score[current_formula], current_formula))
 					
 					success = False
@@ -131,11 +130,4 @@ class BooleanSetCover:
 				final_formula = current_formula
 		
 		return final_formula, upper_bound
-
-	
-	def size_formula(self, formula1, formula2, operator):
-		"""
-		"""
-		return formula1.size + formula2.size + 1
-
 

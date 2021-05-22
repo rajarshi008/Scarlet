@@ -1,6 +1,6 @@
 ## Collab (Tentative)
 
-We solve the problem of learning LTL formulas from a sample consisting of traces partitioned into positive and negative. Most previous approaches that use enumeration over all LTL formulas to search for concise ones consistent with the sample checking consistency with the sample. Unlike other methods we essentially search from the set of subsequences generated from the traces in the sample and 
+We solve the problem of learning LTL formulas from a sample consisting of traces partitioned into positive and negative. Most previous approaches that use enumeration over all LTL formulas to search for concise ones consistent with the sample checking consistency with the sample. Unlike other methods we essentially enumerate subsequences from the traces in the sample from which LTL formulas can be generated in a straightforward manner.
 
 ---
 
@@ -28,25 +28,25 @@ For running Collab, run `python run_tests`. By default, this will run Collab on 
 
 The input files consist of traces separated as positives and negatives, separated by `---`.
 Each trace is a sequence of letter separated by `;`. Each letter represents the truth value of atomic propositions.
-A example of a trace is `1,0,1;0,0,0;1,1,1` which consists of three letters which define the values of propositions `p,q,r`. 
+A example of a trace is `1,0,1;0,0,0` which consists of two letters each of which define the values of three propositions (by deafult consider to be `p,q,r`). 
 
 
 
 ### Generating Traces
 
-For generating traces, one needs to run `python genBenchamrks.py`. By default, this generates traces that are consistent with the formulas provided in `formulas.txt`. You can run `genBenchmarks.py` with the following arguments:
+For generating traces, one needs to run `python genBenchmarks.py`. By default, this generates traces that are consistent with the formulas provided in `formulas.txt`. You can run `genBenchmarks.py` with the following arguments:
 
 |Argument        |Meaning
 |----------------|------------------------------
-|--formula_file \<file_name>| For specifying the file containing all of the formulas (in prefix notation).
-|--operators \<list_of_int>| For specifying the operators to be used during the execution of Collab.
-|--size | List of sample_size, i.e., number of positive traces and number of negative traces in each sample.  
+|--formula_file <file_name>| For specifying the file containing all of the formulas (in prefix notation).
+|--operators <list_of_operators>| For specifying the operators to be used during the execution of Collab.
+|--size <list_of_tuple>| List of sample_size, i.e., number of positive traces and number of negative traces (separated by comma) in each sample.  
 |--lengths <list_of_tuple>| For specifying the length range for each trace in the samples 
 |-o <output_folder>| For specifying the name of the folder in which samples are generated.
 |-h | Outputs the help.
 
 
-
+<!---
 ### Large-scale Testing
 
 Use `python queue_maker.py` to run a solver on a whole benchmark on a Redis server.
@@ -61,4 +61,4 @@ You can run `queue_maker` with the following arguments:
 |-h | Outputs the help.
 
 
-Then use `python queue_maker.py --compile` to compile all the results.
+Then use `python queue_maker.py --compile` to compile all the results.-->

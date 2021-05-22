@@ -1,8 +1,9 @@
-from .inferLTL import inferLTL
-from .sample import Sample
+from inferLTL import inferLTL
+from sample import Sample
 import argparse
 import logging
 import time
+import multiprocessing
 
 
 logging_levels = {0:logging.WARNING, 1:logging.INFO, 2:logging.DEBUG}
@@ -11,16 +12,17 @@ def run_test():
 
 	parser = argparse.ArgumentParser()
 
-	parser.add_argument('--input_file', '-i', dest='input_file', default = './dummy.words')
-	parser.add_argument('--timeout', '-t', dest='sample_sizes', default=[5], nargs='+', type=int)
+	parser.add_argument('--input_file', '-i', dest='input_file', default = './dummy.trace')
+	parser.add_argument('--timeout', '-t', dest='timeout', default=9, type=int)
+	parser.add_argument('--outputcsv', '-o', dest='csvname', default='./result.csv')
 	parser.add_argument('--verbose', '-v', dest='verbose', default=False, action='count')
-
-
 	args,unknown = parser.parse_known_args()
 
 	input_file = args.input_file
 	is_word = True if '.words' in input_file else False
+	timeout = float(args.timeout)
 	verbosity = int(args.verbose)
+	csvname = args.csvname
 	logging.basicConfig(format='%(message)s', level=logging_levels[verbosity])
 
 	
@@ -34,31 +36,15 @@ def run_test():
 		logging.info('Default operators used: %s'%''.join(operators))	
 					
 
-	time1= time.time()
-	formula = inferLTL(sample, operators)
-	time1 = time.time()-time1
+	#Starting timeout
+	p = multiprocessing.Process(target=inferLTL, args=(sample, csvname, operators))
+	p.start()
+	p.join(timeout)
+	if p.is_alive():
+		logging.debug("Timeout reached, check your output in results folder")
+		p.terminate()
+		p.join()	
 	
-	if formula == None:
-		print('No formula found') 
-	else:
-		print('Formula found %s'%formula.prettyPrint())	
-
-	print("The time taken is: "+ str(round(time1,3))+ " secs") 
-
-	if verbosity>1:
-		ver = sample.isFormulaConsistent(formula)
-		if not ver:
-			logging.error("Inferred formula that is inconsistent, please report to the authors")
-			return
-		else:
-			logging.debug("Inferred formula is correct")
-
-	
-	
-
-	
-
-
 
 
 run_test()

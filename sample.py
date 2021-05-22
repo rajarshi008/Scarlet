@@ -1,4 +1,4 @@
-from .formulaTree import Formula
+from formulaTree import Formula
 import random
 import sys
 	
@@ -338,18 +338,17 @@ class Sample:
 		return True
 
 
-	#only words at the moment
-	def generator(self, formula=None, filename='generated.words', num_traces=None, length_traces=None, alphabet=['p','q','r'], length_range=(5,15), is_words=True, operators=['G', 'F', '!', 'U', '&','|', '->', 'X']):
+	def generator(self, formula=None, filename='generated.words', num_traces=(5,5), length_traces=None, alphabet=['p','q','r'], length_range=(5,15), is_words=True, operators=['G', 'F', '!', 'U', '&','|', '->', 'X']):
 
-		if num_traces == None:
-			num_traces = random.randint(5, 100)
 
 		num_positives = 0
+		total_num_positives = num_traces[0]
 		num_negatives = 0
+		total_num_negatives = num_traces[1]
 		ver=True
 		
 
-		while num_positives<num_traces or num_negatives<num_traces:
+		while num_positives<total_num_positives or num_negatives<total_num_negatives:
 
 			if is_words:
 				rand_word = ''
@@ -369,13 +368,13 @@ class Sample:
 			if formula!=None:
 				ver = final_trace.evaluateFormula(formula)
 
-			if num_positives<num_traces:
+			if num_positives<total_num_positives:
 				if ver == True or formula==None:
 					self.positive.append(final_trace)
 					num_positives+=1
 					continue
 
-			if num_negatives<num_traces:
+			if num_negatives<total_num_negatives:
 				if ver==False or formula==None:
 					self.negative.append(final_trace) 
 					num_negatives+=1
