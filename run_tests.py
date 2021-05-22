@@ -13,7 +13,7 @@ def run_test():
 	parser = argparse.ArgumentParser()
 
 	parser.add_argument('--input_file', '-i', dest='input_file', default = './dummy.trace')
-	parser.add_argument('--timeout', '-t', dest='timeout', default=9, type=int)
+	parser.add_argument('--timeout', '-t', dest='timeout', default=900, type=int)
 	parser.add_argument('--outputcsv', '-o', dest='csvname', default='./result.csv')
 	parser.add_argument('--verbose', '-v', dest='verbose', default=False, action='count')
 	args,unknown = parser.parse_known_args()
@@ -25,17 +25,17 @@ def run_test():
 	csvname = args.csvname
 	logging.basicConfig(format='%(message)s', level=logging_levels[verbosity])
 
-	
 	sample = Sample()
 	sample.readFromFile(input_file)
 	operators = sample.operators
 
-
 	if operators==[]:
 		operators = ['F', 'G', 'X', '&', '|', '!']
-		logging.info('Default operators used: %s'%''.join(operators))	
+		logging.info('Default operators used: %s'%','.join(operators))	
+	else:
+		logging.info('Operators used: %s'%','.join(operators))
 					
-
+	
 	#Starting timeout
 	p = multiprocessing.Process(target=inferLTL, args=(sample, csvname, operators))
 	p.start()
@@ -45,6 +45,4 @@ def run_test():
 		p.terminate()
 		p.join()	
 	
-
-
 run_test()

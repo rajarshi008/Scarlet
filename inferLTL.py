@@ -12,6 +12,7 @@ Possible clean-ups:
 - 
 
 '''
+#alphabet=[]
 
 
 #BY DEFAULT p,q,r... alphabet
@@ -24,15 +25,15 @@ def isubTrace2Formula(isubtrace: tuple):
 		first_digit = int(isubtrace[0].strip('>'))
 		first_atom = isubtrace[1]#('>0',('+0','-1'), ...)
 		if first_atom[0][0] == '+': 
-			form_atom = Formula(chr(ord('p')+int(first_atom[0][1:])))
+			form_atom = Formula(alphabet[int(first_atom[0][1:])])
 		else:
-			form_atom = Formula(['!', Formula(chr(ord('p')+int(first_atom[0][1:])))])
+			form_atom = Formula(['!', Formula(alphabet[int(first_atom[0][1:])])])
 
 		for i in first_atom[1:]:
 			if i[0] == '+':
-				form_atom = Formula(['&', form_atom, Formula(chr(ord('p')+int(i[1:])))])
+				form_atom = Formula(['&', form_atom, Formula(alphabet[int(i[1:])])])
 			else:
-				form_atom = Formula(['&', form_atom, Formula(['!', Formula(chr(ord('p')+int(i[1:])))])])
+				form_atom = Formula(['&', form_atom, Formula(['!', Formula(alphabet[int(i[1:])])])])
 		
 		if len(isubtrace)>2:
 			next_formula = Formula(['&', form_atom, isubTrace2Formula(isubtrace[2:])])
@@ -53,9 +54,9 @@ def isubTrace2Formula(isubtrace: tuple):
 
 		for i in first_atom[1:]:
 			if i[0] == '-':
-				form_atom = Formula(['|', form_atom, Formula(chr(ord('p')+int(i[1:])))])
+				form_atom = Formula(['|', form_atom, Formula(alphabet[int(i[1:])])])
 			else:
-				form_atom = Formula(['|', form_atom, Formula(['!', Formula(chr(ord('p')+int(i[1:])))])])
+				form_atom = Formula(['|', form_atom, Formula(['!', Formula(alphabet[int(i[1:])])])])
 		
 		if len(isubtrace)>3:
 			next_formula = Formula(['|', form_atom, isubTrace2Formula(('!',)+isubtrace[3:])])
@@ -94,8 +95,10 @@ def iteration_seq(max_len, max_width):
 
 #csvname is only temporary:
 def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|']):
-
+	time_counter = time.time()
 	s = iSubTrace(sample, operators)
+	global alphabet
+	alphabet=sample.alphabet
 	
 	upper_bound = 4*s.max_positive_length
 	setcover = BooleanSetCover(sample, operators)
@@ -111,7 +114,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|']):
 	current_covering_formula = None
 	setcover_time = 0
 
-	time_counter = time.time() 
+	 
 	for (length, width) in seq:
 		logging.info("-------------Finding from length %d and width %d isubtraces-------------"%(length,width))
 		time1 = time.time()

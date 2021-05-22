@@ -88,7 +88,8 @@ class iSubTrace:
 		self.len_atom_table = {}
 
 		#Precomputing the Ind_table for atoms of all possible widths
-		width = len(self.sample.positive[0].vector[0])
+		
+		width = len(self.sample.positive[0].vector[0]) if not self.sample.is_words else 1
 		self.preComputeInd(width)
  
 	#Calculates length of an atom both with inv true and false

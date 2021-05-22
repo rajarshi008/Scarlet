@@ -130,7 +130,7 @@ class Trace:
 			return modpos
 	'''
 
-	def evaluateFormula(self, formula):
+	def evaluateFormula(self, formula,letter2pos):
 		'''
 		evalutates formula on trace
 		'''
@@ -139,14 +139,15 @@ class Trace:
 		self.truthAssignmentTable = {node: [None for _ in range(self.length)] for node in nodes}
 
 
-		return self.truthValue(formula, 0)
+		return self.truthValue(formula, 0,letter2pos)
 
-	def truthValue(self, formula, timestep):
+	def truthValue(self, formula, timestep, letter2pos):
 		'''
 		evaluates formula on trace starting from timestep
 		'''
 
 		futureTracePositions = self.futurePos(timestep)
+
 
 		tableValue = self.truthAssignmentTable[formula][timestep]
 		if tableValue != None:
@@ -163,38 +164,38 @@ class Trace:
 				if self.is_word:
 					val = self.vector[timestep] == label
 				else:
-					val = self.vector[timestep][ord(label)-ord('p')] # assumes  propositions to be p,q,...
+					val = self.vector[timestep][letter2pos[label]] # assumes  propositions to be p,q,...
 			elif label == '&':
-				val = self.truthValue(formula.left, timestep) and self.truthValue(formula.right, timestep)
+				val = self.truthValue(formula.left, timestep,letter2pos) and self.truthValue(formula.right, timestep,letter2pos)
 			
 			elif label == '|':
-				val = self.truthValue(formula.left, timestep) or self.truthValue(formula.right, timestep)
+				val = self.truthValue(formula.left, timestep, letter2pos) or self.truthValue(formula.right, timestep, letter2pos)
 			
 			elif label == '!':
-				val = not self.truthValue(formula.left, timestep)
+				val = not self.truthValue(formula.left, timestep, letter2pos)
 			
 			elif label == '->':
-				val = not self.truthValue(formula.left, timestep) or self.truthValue(formula.right, timestep)
+				val = not self.truthValue(formula.left, timestep, letter2pos) or self.truthValue(formula.right, timestep, letter2pos)
 			
 			elif label == 'F':
-				val = max([self.truthValue(formula.left, futureTimestep) for futureTimestep in futureTracePositions])
+				val = max([self.truthValue(formula.left, futureTimestep, letter2pos) for futureTimestep in futureTracePositions])
 			
 			elif label == 'G':
-				val = min([self.truthValue(formula.left, futureTimestep) for futureTimestep in futureTracePositions])
+				val = min([self.truthValue(formula.left, futureTimestep, letter2pos) for futureTimestep in futureTracePositions])
 			
 			elif label == 'U':
 				val = max(
-					[self.truthValue(formula.right, futureTimestep) for futureTimestep in futureTracePositions]) == True \
+					[self.truthValue(formula.right, futureTimestep, letter2pos) for futureTimestep in futureTracePositions]) == True \
 					   and ( \
-								   self.truthValue(formula.right, timestep) \
+								   self.truthValue(formula.right, timestep, letter2pos) \
 								   or \
-								   (self.truthValue(formula.left, timestep) and self.truthValue(formula,
-																								self.nextPos(timestep))) \
+								   (self.truthValue(formula.left, timestep, letter2pos) and self.truthValue(formula,
+																								self.nextPos(timestep), letter2pos)) \
 						   )
 
 			elif label == 'X':
 				try:
-					val = self.truthValue(formula.left, self.nextPos(timestep))
+					val = self.truthValue(formula.left, self.nextPos(timestep), letter2pos)
 				except:
 					val = False
 				
@@ -237,6 +238,7 @@ class Sample:
 		extracts alphabet from the words/traces provided in the data
 		'''
 		alphabet = set()
+		self.letter2pos={}
 
 		if self.is_words:
 			for w in self.positive+self.negative:
@@ -246,6 +248,9 @@ class Sample:
 		else:
 			self.alphabet = [chr(ord('p')+i) for i in range(len(self.positive[0].vector[0]))] 
 		self.alphabet.sort()
+		for i in range(len(self.alphabet)):
+			self.letter2pos[self.alphabet[i]]=i
+
 		
 	
 
@@ -327,12 +332,12 @@ class Sample:
 		if formula == None:
 			return True
 		for w in self.positive:
-			if w.evaluateFormula(formula) == False:
+			if w.evaluateFormula(formula,self.letter2pos) == False:
 				print('positive', str(w))
 				return False
 
 		for w in self.negative:
-			if w.evaluateFormula(formula) == True:
+			if w.evaluateFormula(formula,self.letter2pos) == True:
 				print('negative',str(w))
 				return False
 		return True
