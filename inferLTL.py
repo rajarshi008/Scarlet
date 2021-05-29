@@ -48,9 +48,9 @@ def isubTrace2Formula(isubtrace: tuple):
 		first_digit = int(isubtrace[1].strip('>'))
 		first_atom = isubtrace[2]#('>0',('+0','-1'), ...)
 		if first_atom[0][0] == '-': 
-			form_atom = Formula(chr(ord('p')+int(first_atom[0][1:])))
+			form_atom = Formula(alphabet[int(first_atom[0][1:])])
 		else:
-			form_atom = Formula(['!', Formula(chr(ord('p')+int(first_atom[0][1:])))])
+			form_atom = Formula(['!', Formula(alphabet[int(first_atom[0][1:])])])
 
 		for i in first_atom[1:]:
 			if i[0] == '-':

@@ -39,13 +39,18 @@ def neg_props(atom: tuple)-> list:
 
 
 #Satisfiability of an atom in a letter, e.g. (0,) and (2,) is true in (1,0,1) but (1,) is not
-def is_sat(letter:tuple, atom:tuple) -> bool:
+def is_sat(letter:tuple, atom:tuple, last: bool) -> bool:
 
 	#check if the propositions in the atom are true in the letter
-	for pos in atom:
-		if letter[int(pos[1:])] == (pos[0]!='+'):
-			return False
-	return True
+	if atom == 'last' and last:
+		return True
+	elif atom == 'last' and not last:
+		return False
+	else:
+		for pos in atom:
+			if letter[int(pos[1:])] == (pos[0]!='+'):
+				return False
+		return True
 
 
 
@@ -166,7 +171,7 @@ class iSubTrace:
 	Given a isubtrace of given width ending at a position and a diff and a letter appearing at position + diff, it outputs all possible 
 	isubtraces of one more length and same width given the length of the formula derived is less than the upper_bound.
 	'''
-	def possiblePTraces(self, isubtrace:tuple, diff: int, letter: str, width: int, upper_bound: int, inv: bool):
+	def possiblePTraces(self, isubtrace:tuple, diff: int, letter: str, width: int, upper_bound: int, inv: bool, last: bool):
 		
 		#list of all new isubtraces
 		isubtraces_list = []
@@ -175,7 +180,8 @@ class iSubTrace:
 		atoms = []
 		for i in range(1,width+1):
 			atoms+=self.letter2atoms(letter, i, inv)
-		
+		if last:
+			atoms.append('last')
 		#Given difference d, the process of appending >0,>1, ..., >d-1 atoms to the isubtrace
 		if 'X' not in self.operators:
 			diff = 0
@@ -248,6 +254,11 @@ class iSubTrace:
 		for word_vec in self.sample.positive+ self.sample.negative:
 				
 				word=word_vec.vector_str
+				self.ind_table[(word, len(word_vec), 'last')] = []
+				self.ind_table[(word, inf_pos, 'last')] = []
+				for pos in range(len(word_vec)-1, -1, -1):
+					self.ind_table[(word, pos, 'last')] = [len(word_vec)-1]
+
 				for atom in all_atoms[1]:
 					self.ind_table[(word, inf_pos, atom)]=[]
 					self.ind_table[(word, len(word_vec), atom)]=[]
@@ -359,7 +370,11 @@ class iSubTrace:
 
 					for i in range(1,len(base_traces[p])-j):
 						letter = base_traces[p].vector[i+j]
-						nextisubtraces = self.possiblePTraces(isubtrace, i, letter, width, upper_bound, inv)
+						if i+j-1 == base_traces[p]:
+							last = True
+						else:
+							last = False
+						nextisubtraces = self.possiblePTraces(isubtrace, i, letter, width, upper_bound, inv, last)
 						for nextisubtrace in nextisubtraces:
 							
 							if nextisubtrace in new_isubtrace_dict.keys():
@@ -401,7 +416,6 @@ class iSubTrace:
 										new_pos_list.append([-1])
 										continue
 
-
 								new_list = []
 								if existing_table:
 								  	count += 1
@@ -426,7 +440,7 @@ class iSubTrace:
 												new_list= []
 										else:
 											new_list= [m+last_digit for m in pve_endpos_list[k] \
-														if m+last_digit < len(current_superword) and is_sat(current_superword.vector[m+last_digit],last_atom)]
+														if m+last_digit < len(current_superword) and is_sat(current_superword.vector[m+last_digit],last_atom, (m+last_digit)==len(current_superword)-1)]
 
 									new_pos_list.append(new_list)
 
@@ -474,7 +488,7 @@ class iSubTrace:
 												new_list= []
 										else:
 											new_list=[m+last_digit for m in nve_endpos_list[k]\
-													 if m+last_digit < len(current_superword) and is_sat(current_superword.vector[m+last_digit],last_atom)]
+													 if m+last_digit < len(current_superword) and is_sat(current_superword.vector[m+last_digit],last_atom, (m+last_digit)==len(current_superword)-1)]
 												
 									new_neg_list.append(new_list)
 
@@ -579,7 +593,11 @@ class iSubTrace:
 				for i in range(0,len(base_traces[p])):
 
 					letter = base_traces[p].vector[i]
-					nextisubtraces = self.possiblePTraces(epsilon, i, letter, width, upper_bound, inv)
+					if i == len(base_traces[p]):
+						last = True
+					else:
+						last = False
+					nextisubtraces = self.possiblePTraces(epsilon, i, letter, width, upper_bound, inv, last)
 					for nextisubtrace in nextisubtraces:
 						if nextisubtrace in new_isubtrace_dict.keys():
 							continue
@@ -612,7 +630,7 @@ class iSubTrace:
 								else:
 									new_list= []
 							else:
-								new_list= [m+last_digit for m in pve_endpos_list[k] if m+last_digit < len(current_superword) and is_sat(current_superword.vector[m+last_digit],last_atom)]
+								new_list= [m+last_digit for m in pve_endpos_list[k] if m+last_digit < len(current_superword) and is_sat(current_superword.vector[m+last_digit],last_atom, m+last_digit==len(current_superword)-1)]
 							
 							new_pos_list.append(new_list)
 					
@@ -636,7 +654,7 @@ class iSubTrace:
 									new_list= []
 							else:
 
-								new_list=[m+last_digit for m in nve_endpos_list[k] if m+last_digit < len(current_superword) and is_sat(current_superword.vector[m+last_digit],last_atom)]
+								new_list=[m+last_digit for m in nve_endpos_list[k] if m+last_digit < len(current_superword) and is_sat(current_superword.vector[m+last_digit],last_atom, m+last_digit==len(current_superword)-1)]
 									
 							new_neg_list.append(new_list)
 
