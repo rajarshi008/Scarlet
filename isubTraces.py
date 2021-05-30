@@ -31,9 +31,9 @@ def neg_props(atom: tuple)-> list:
 	neg_props = [] 
 	for i in atom:
 		if i[0]=='+':
-			neg_props.append(('-'+i[1],))
+			neg_props.append(('-'+i[1:],))
 		else:
-			neg_props.append(('+'+i[1],))
+			neg_props.append(('+'+i[1:],))
 	return neg_props
 
 
@@ -42,15 +42,16 @@ def neg_props(atom: tuple)-> list:
 def is_sat(letter:tuple, atom:tuple, last: bool) -> bool:
 
 	#check if the propositions in the atom are true in the letter
-	if atom == 'last' and last:
-		return True
-	elif atom == 'last' and not last:
-		return False
-	else:
-		for pos in atom:
+	
+	for pos in atom:
+		if pos == '+-1' and not last:
+			return False
+		elif pos == '--1' and last:
+			return False
+		elif pos != '+-1' and pos != '--1':
 			if letter[int(pos[1:])] == (pos[0]!='+'):
 				return False
-		return True
+	return True
 
 
 
@@ -95,7 +96,7 @@ class iSubTrace:
 		#Precomputing the Ind_table for atoms of all possible widths
 		
 		width = len(self.sample.positive[0].vector[0]) if not self.sample.is_words else 1
-		self.preComputeInd(width)
+		self.preComputeInd(width+1)
  
 	#Calculates length of an atom both with inv true and false
 	def len_atom(self, atom: tuple, inv: bool)->int:
@@ -123,6 +124,9 @@ class iSubTrace:
 					return self.letter2atom_table[(letter, width, '+')]
 		except:
 			#calculates width 1 satisfiable atoms
+			if width==0:
+				return tuple()
+
 			if width==1:
 				if self.neg:
 					self.letter2atom_table[(letter, width, '+-')] = [('+'+str(i),) for i in range(len(letter)) if letter[i]==1] + \
@@ -135,7 +139,6 @@ class iSubTrace:
 					else:
 						self.letter2atom_table[(letter, width, '+')] = [('+'+str(i),) for i in range(len(letter)) if letter[i]==1]
 						return self.letter2atom_table[(letter, width, '+')]
-				
 			else:
 				#recursively calculates for width >1
 				atoms = [] 
@@ -181,7 +184,15 @@ class iSubTrace:
 		for i in range(1,width+1):
 			atoms+=self.letter2atoms(letter, i, inv)
 		if last:
-			atoms.append('last')
+			atoms+= [('+-1',)]
+			for i in range(1, width):
+				atoms+=list(map(lambda x: x+('+-1',), self.letter2atoms(letter, i, inv)))
+		else:
+			atoms+= [('--1',)]
+			for i in range(1, width):
+				atoms+=list(map(lambda x: x+('--1',), self.letter2atoms(letter, i, inv)))
+
+
 		#Given difference d, the process of appending >0,>1, ..., >d-1 atoms to the isubtrace
 		if 'X' not in self.operators:
 			diff = 0
@@ -194,7 +205,6 @@ class iSubTrace:
 						continue
 
 					new_isubtrace = isubtrace+('>'+str(i),atom)
-					
 					base_len=self.len_isubtrace[(isubtrace, inv)] + 1 + (i+1) + self.len_atom(atom, inv)
 					if base_len >= upper_bound:
 						break
@@ -238,37 +248,50 @@ class iSubTrace:
 				for letter in trace.vector:	
 					for i in range(1,width+1):
 						all_atoms[i]= all_atoms[i].union(set(self.letter2atoms(letter, i, True)))
-
+						all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('+-1',), self.letter2atoms(letter, i-1, True))))
+						all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('--1',), self.letter2atoms(letter, i-1, True))))
 		else:
 			for trace in self.sample.positive:
 				for letter in trace.vector:	
 					for i in range(1,width+1):
 						all_atoms[i]= all_atoms[i].union(set(self.letter2atoms(letter, i, True)))
+						all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('+-1',), self.letter2atoms(letter, i-1, True))))
+						all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('--1',), self.letter2atoms(letter, i-1, True))))
 
 			for trace in self.sample.negative:
 				for letter in trace.vector:	
 					for i in range(1,width+1):
 						all_atoms[i]= all_atoms[i].union(set(self.letter2atoms(letter, i, False)))
+						all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('+-1',), self.letter2atoms(letter, i-1, False))))
+						all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('--1',), self.letter2atoms(letter, i-1, False))))
 
 
 		for word_vec in self.sample.positive+ self.sample.negative:
 				
 				word=word_vec.vector_str
-				self.ind_table[(word, len(word_vec), 'last')] = []
-				self.ind_table[(word, inf_pos, 'last')] = []
+
+				#We represent last symbol by -1
+				self.ind_table[(word, len(word_vec), ('+-1',))] = []
+				self.ind_table[(word, inf_pos, ('+-1',))] = []
 				for pos in range(len(word_vec)-1, -1, -1):
-					self.ind_table[(word, pos, 'last')] = [len(word_vec)-1]
+					self.ind_table[(word, pos, ('+-1',))] = [len(word_vec)-1]
+
+				self.ind_table[(word, len(word_vec), ('--1',))] = []
+				self.ind_table[(word, inf_pos, ('--1',))] = []
+				for pos in range(len(word_vec)-1, -1, -1):
+					self.ind_table[(word, pos, ('--1',))] = list(range(pos,len(word_vec)-1))
 
 				for atom in all_atoms[1]:
 					self.ind_table[(word, inf_pos, atom)]=[]
 					self.ind_table[(word, len(word_vec), atom)]=[]
 					for pos in range(len(word_vec)-1,-1,-1):
 						
-						if word_vec.vector[pos][int(atom[0][1:])] == (atom[0][0]=='+'):#checking if atom starts with ! implicitly
-							self.ind_table[(word, pos, atom)]=[pos]+self.ind_table[(word, pos+1, atom)]
-						else:
-							self.ind_table[(word, pos, atom)]=self.ind_table[(word, pos+1, atom)]
-		
+						if atom[0][1:] != '-1':
+							if word_vec.vector[pos][int(atom[0][1:])] == (atom[0][0]=='+'):#checking if atom starts with ! implicitly
+								self.ind_table[(word, pos, atom)]=[pos]+self.ind_table[(word, pos+1, atom)]
+							else:
+								self.ind_table[(word, pos, atom)]=self.ind_table[(word, pos+1, atom)]
+
 				if width>1:				
 					for i in range(2,width+1):
 						for atom in all_atoms[i]:
@@ -370,7 +393,7 @@ class iSubTrace:
 
 					for i in range(1,len(base_traces[p])-j):
 						letter = base_traces[p].vector[i+j]
-						if i+j-1 == base_traces[p]:
+						if i+j+1 == len(base_traces[p]):
 							last = True
 						else:
 							last = False
@@ -379,6 +402,8 @@ class iSubTrace:
 							
 							if nextisubtrace in new_isubtrace_dict.keys():
 								continue
+
+
 							new_pos_list=[]
 							new_neg_list=[]
 							c=0
@@ -439,6 +464,7 @@ class iSubTrace:
 											else:
 												new_list= []
 										else:
+
 											new_list= [m+last_digit for m in pve_endpos_list[k] \
 														if m+last_digit < len(current_superword) and is_sat(current_superword.vector[m+last_digit],last_atom, (m+last_digit)==len(current_superword)-1)]
 
@@ -572,7 +598,7 @@ class iSubTrace:
 		if pt_length > self.max_positive_length:
 			raise Exception("Wrong length")
 
-		if width > len(self.sample.positive[0].vector[0]):
+		if width > len(self.sample.positive[0].vector[0])+1:
 			raise Exception("Wrong width")
 
 		if pt_length==1 and width==1:
@@ -591,12 +617,13 @@ class iSubTrace:
 
 			for p in range(base_traces_num):
 				for i in range(0,len(base_traces[p])):
-
 					letter = base_traces[p].vector[i]
-					if i == len(base_traces[p]):
+					
+					if i+1 == len(base_traces[p]):
 						last = True
 					else:
 						last = False
+
 					nextisubtraces = self.possiblePTraces(epsilon, i, letter, width, upper_bound, inv, last)
 					for nextisubtrace in nextisubtraces:
 						if nextisubtrace in new_isubtrace_dict.keys():
@@ -617,9 +644,8 @@ class iSubTrace:
 							last_digit = int(nextisubtrace[-2].strip('>'))
 
 							if inv:
-								if len(current_superword)<last_digit:
+								if len(current_superword)-1<last_digit:
 									new_pos_list.append([-1])
-
 									continue
 
 							if nextisubtrace[0][0]=='>':
@@ -691,9 +717,6 @@ class iSubTrace:
 
 		logging.debug('Found isubtraces %d and reverse isubtraces %d'%(len(isubtrace_dict), len(isubtrace_dict_inv)))
 
-
-		# if pt_length==2 and width==1:
-		# 	print(isubtrace_dict[('>0', ('+0',), '>0', ('+1',))])
 
 		cover_set = {}
 		#victims_full = {}

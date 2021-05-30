@@ -198,7 +198,10 @@ class Trace:
 				if self.is_word:
 					val = self.vector[timestep] == label
 				else:
-					val = self.vector[timestep][letter2pos[label]] # assumes  propositions to be p,q,...
+					if label == 'L':
+						val = (len(self.vector)-1 == timestep)
+					else:
+						val = self.vector[timestep][letter2pos[label]] # assumes  propositions to be p,q,...
 			
 
 			self.truthAssignmentTable[formula][timestep] = val
