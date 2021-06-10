@@ -48,9 +48,9 @@ def isubTrace2Formula(isubtrace: tuple):
 		first_digit = int(isubtrace[1].strip('>'))
 		first_atom = isubtrace[2]#('>0',('+0','-1'), ...)
 		if first_atom[0][0] == '-': 
-			form_atom = Formula(chr(ord('p')+int(first_atom[0][1:])))
+			form_atom = Formula(alphabet[int(first_atom[0][1:])])
 		else:
-			form_atom = Formula(['!', Formula(chr(ord('p')+int(first_atom[0][1:])))])
+			form_atom = Formula(['!', Formula(alphabet[int(first_atom[0][1:])])])
 
 		for i in first_atom[1:]:
 			if i[0] == '-':
@@ -67,8 +67,9 @@ def isubTrace2Formula(isubtrace: tuple):
 			next_formula = Formula(['G', next_formula])
 
 		for i in range(first_digit):
+			#next_formula = Formula(['|', Formula(['X', next_formula]), Formula('L')])
 			next_formula = Formula(['X', next_formula])
-		
+
 	return next_formula
 
 
@@ -94,33 +95,36 @@ def iteration_seq(max_len, max_width):
 
 
 #csvname is only temporary:
-def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|']):
+def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=True):
 	time_counter = time.time()
 	s = iSubTrace(sample, operators)
 	
 	global alphabet
 	alphabet=sample.alphabet
+
+	if last:
+		alphabet.append('L')
 	
 	upper_bound = 4*s.max_positive_length
 	setcover = BooleanSetCover(sample, operators)
 	max_len = s.max_positive_length
 	if sample.is_words:
-		max_width=1
+		max_width = 2
 	else:
-		max_width = len(sample.positive[0].vector[0])
+		max_width = len(sample.positive[0].vector[0])+1
 	seq = iteration_seq(max_len, max_width)
 	positive_set = {i for i in range(len(sample.positive))}
 	negative_set = {i for i in range(len(sample.negative))}
 	full_set = (positive_set, negative_set)
-	current_covering_formula = None
+	covering_formula = None
 	setcover_time = 0
 
-	 
 	for (length, width) in seq:
 		logging.info("-------------Finding from length %d and width %d isubtraces-------------"%(length,width))
 		time1 = time.time()
 		if width>upper_bound:
 			break
+
 		if 3*length + width -3 >= upper_bound:
 			continue
 
@@ -144,52 +148,43 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|']):
 				formula.size = s.len_isubtrace[(isubtrace[1:], True)]
 			setcover.formula_dict[formula] = (pos_friend_set, neg_friend_set)
 			#score can be weighted by formula size 
-
 			setcover.score[formula] = (len(pos_friend_set) - len(neg_friend_set) + len(negative_set))
 			setcover.cover_size[formula]  = len(pos_friend_set) - len(neg_friend_set) + len(negative_set)
 			hq.heappush(setcover.heap, (-setcover.score[formula], formula))
 
 			
 		t0=time.time()
-		covering_formula, upper_bound = setcover.find(upper_bound)
+		current_covering_formula, upper_bound = setcover.find(upper_bound)
 		t1=time.time()
 		setcover_time+=t1-t0
 
 
-		if covering_formula != current_covering_formula:
+		if current_covering_formula != None and covering_formula != current_covering_formula:
 			#upper_bound = covering_formula.treeSize()
-			current_covering_formula = covering_formula
-			logging.info("Already found: %s"%current_covering_formula)
+			covering_formula = current_covering_formula
+			logging.info("Already found: %s"%covering_formula)
 			logging.debug("Current formula upper bound %d"%upper_bound)
 			
 			if csvname != None:
 				time_elapsed = round(time.time() - time_counter,3)
 				with open(csvname, 'w') as csvfile:
 					writer = csv.writer(csvfile)
-					writer.writerow([time_elapsed, current_covering_formula.size, current_covering_formula.prettyPrint(), None])
+					writer.writerow([time_elapsed, covering_formula.size, covering_formula.prettyPrint(), None])
 			
 		logging.debug('########Time taken for iteration %.3f########'%(time.time()-time1))
 
 	logging.debug("Setcover Time %.3f"%setcover_time)
 		
-	if current_covering_formula == None:
+	if covering_formula == None:
 		logging.warning("No formula found")
-		return
 	else:
 		time_elapsed = time.time() - time_counter
-		logging.warning("Final formula found %s"%current_covering_formula.prettyPrint())
+		logging.warning("Final formula found %s"%covering_formula.prettyPrint())
 		logging.warning("Time taken is: "+ str(round(time_elapsed,3))+ " secs") 
 
-	
-	ver = sample.isFormulaConsistent(current_covering_formula)
+	ver = sample.isFormulaConsistent(covering_formula)
 	if not ver:
 		logging.error("Inferred formula that is inconsistent, please report to the authors")
 		return
 	else:
 		logging.debug("Inferred formula is correct")
-	
-
-
-
-
-

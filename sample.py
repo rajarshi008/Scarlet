@@ -160,11 +160,6 @@ class Trace:
 			elif label == 'false':
 				val = False
 
-			elif label.islower():
-				if self.is_word:
-					val = self.vector[timestep] == label
-				else:
-					val = self.vector[timestep][letter2pos[label]] # assumes  propositions to be p,q,...
 			elif label == '&':
 				val = self.truthValue(formula.left, timestep,letter2pos) and self.truthValue(formula.right, timestep,letter2pos)
 			
@@ -199,7 +194,16 @@ class Trace:
 				except:
 					val = False
 				
+			else:	
+				if self.is_word:
+					val = self.vector[timestep] == label
+				else:
+					if label == 'L':
+						val = (len(self.vector)-1 == timestep)
+					else:
+						val = self.vector[timestep][letter2pos[label]] # assumes  propositions to be p,q,...
 			
+
 			self.truthAssignmentTable[formula][timestep] = val
 			return val
 
@@ -401,6 +405,7 @@ class Sample:
 
 			for trace in self.negative:
 				file.write(str(trace)+'\n')
+
 
 			if self.operators!=[]:
 				file.write('---\n')
