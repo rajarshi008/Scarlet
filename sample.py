@@ -404,4 +404,8 @@ class Sample:
 
 			if self.operators!=[]:
 				file.write('---\n')
-				file.write(','.join(self.operators))
+				file.write(','.join(self.operators)+'\n')
+
+			if self.alphabet != []:
+				file.write('---\n')
+				file.write(','.join(self.alphabet))
