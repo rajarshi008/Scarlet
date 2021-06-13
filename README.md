@@ -17,7 +17,7 @@ For running Collab, run `python run_tests`. By default, this will run Collab on 
 |Argument        |Meaning
 |----------------|------------------------------
 |-i \<file_name>| For specifying the path of the input file.
-|-v | For output a detailed log of Collab's execution
+|-v | For output a detailed log of Collab's executiongenerator
 |-vv | For output a even more detailed log of Collab's execution
 |-t <timeout>| For specifying the time duration for which Collab is allowed to run (it will return the best formula it has found till then)
 |-o <result_file_name>| For specifying the name of the output csv file
@@ -44,7 +44,8 @@ For generating traces, one needs to run `python genBenchmarks.py`. By default, t
 |-o <output_folder>| For specifying the name of the folder in which samples are generated.
 |-h | Outputs the help.
 
-
+The output is provided in a folder that is named with the current date and time. The file names contain the following information: 
+`Formula no.`:(`pos examples`, `neg examples`)ml-`(median length of traces)`
 <!---
 ### Large-scale Testing
 

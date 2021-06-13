@@ -81,8 +81,8 @@ def main():
 	parser.add_argument('--formula_file', dest='formula_file', default = 'formulas.txt')
 	parser.add_argument('--trace_type', dest='trace_type', default = 'trace')
 	parser.add_argument('--operators', dest='operators', default = ['F', 'G', 'X', '!', '&', '|'], type=list)
-	parser.add_argument('--size', dest='sample_sizes', default=[(5, 5), (10, 10)], nargs='+', type=tupleList)
-	parser.add_argument('--lengths', dest='trace_lengths', default=[(7, 9), (10, 12)], nargs='+', type=tupleList)
+	parser.add_argument('--size', dest='sample_sizes', default=[(100,100)], nargs='+', type=tupleList)
+	parser.add_argument('--lengths', dest='trace_lengths', default=[(10, 12)], nargs='+', type=tupleList)
 	parser.add_argument('--output_folder', dest='output_folder', default = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
 	parser.add_argument('--syslite', dest='syslite', action='store_true', default=True)
 
@@ -94,7 +94,7 @@ def main():
 	trace_lengths = list(args.trace_lengths)
 	output_folder = args.output_folder
 	syslite = bool(args.syslite)
-	operators = list(args.operators)s
+	operators = list(args.operators)
 	print(sample_sizes, trace_lengths)
 
 	#For generating a fresh set of benchmarks
