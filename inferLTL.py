@@ -77,19 +77,19 @@ def isubTrace2Formula(isubtrace: tuple):
 def iteration_seq(max_len, max_width):
 
 	seq=[]
-	min_val = min(max_len, max_width)
+	min_val = max_len+max_width
 	curr_sum=2
-	while curr_sum<min_val*2:
+	while curr_sum<min_val:
 		for j in range(1,curr_sum):
 			if curr_sum-j<= max_len and j<=max_width:
 				seq.append((curr_sum-j,j))
 
 		curr_sum=curr_sum+1
 	
-	if max_len>min_val:
-		seq+=[(i,min_val) for i in range(min_val, max_len+1)]
-	else:
-		seq+=[(min_val,i) for i in range(min_val, max_width+1)]
+	# if max_len>min_val:
+	# 	seq+=[(i,min_val) for i in range(min_val, max_len+1)]
+	# else:
+	# 	seq+=[(min_val,i) for i in range(min_val, max_width+1)]
 
 	return seq
 
@@ -98,6 +98,7 @@ def iteration_seq(max_len, max_width):
 def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=True):
 	time_counter = time.time()
 	s = iSubTrace(sample, operators)
+	
 	global alphabet
 	alphabet=sample.alphabet
 
