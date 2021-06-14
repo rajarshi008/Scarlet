@@ -82,8 +82,20 @@ class BooleanSetCover:
 				# we take "&" and "|" of all existing formulas in the heap with the best formula and check if it is better
 				value={}
 				for (_,formula) in self.heap[1:]:
-					
+
+# P = Sort(Q)
+# P = (Sort, pointer_to_Q)
+# P2 = Sort(Q)
+# hash_table[str(Q)] = hash_
+# if format(Q) in hash_table:
+# 	hash_ = hash_table[str(Q)]
+# 	P = (Sort, hash_)
+# else:
+# 	hash_table[Q] = ...	
+
 					if '&' in self.operators:
+						# could check whether it has a shared prefix of X and G
+						# to make the conjunction smaller
 						new_formula = Formula(['&', current_formula, formula])
 						new_formula.size = current_formula.size + formula.size + 1
 						if new_formula.treeSize() <= upper_bound:
@@ -92,6 +104,8 @@ class BooleanSetCover:
 							value[new_formula] = self.score_local(new_formula, current_formula)
 							
 					if '|' in self.operators:
+						# could check whether it has a shared prefix of X and F
+						# to make the disjunction smaller
 						new_formula = Formula(['|', current_formula, formula])
 						new_formula.size = current_formula.size + formula.size + 1
 						if new_formula.treeSize() <= upper_bound:

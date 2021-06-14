@@ -100,6 +100,8 @@ class Formula(SimpleTree):
 		else:
 			super().__init__(formulaArg)
 
+		# self.eval = [word][pos] = True / False
+
 	def __lt__(self, other):
 
 		if self.getDepth() < other.getDepth():
@@ -235,3 +237,14 @@ class TreeToFormula(Transformer):
             return str(args[0])
         def unary_operator(self, args):
             return str(args[0])
+
+# class SetofFormulas():
+# 	__init__:
+# 	hash_table
+
+# 	def create_formula(Q):
+# 		if format(Q) in hash_table:
+# 			hash_ = hash_table[str(Q)]
+# 			P = (Sort, hash_)
+# 		else:
+# 			hash_table[Q] = ...	
