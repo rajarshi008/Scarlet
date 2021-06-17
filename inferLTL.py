@@ -85,7 +85,6 @@ def iteration_seq(max_len, max_width):
 	Example:
 	TO DO 
 	'''
-
 	seq=[]
 	min_val = max_len+max_width
 	curr_sum=2
@@ -137,7 +136,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=Tru
 	full_set = (positive_set, negative_set)
 	covering_formula = None
 	setcover_time = 0
-
+	print(max_len, max_width,seq)
 	for (length, width) in seq:
 		logging.info("-------------Finding from length %d and width %d isubtraces-------------"%(length,width))
 		time1 = time.time()
@@ -175,6 +174,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=Tru
 				continue
 
 			formula = isubTrace2Formula(isubtrace)
+			#Is the formula equivalent to some existing formula? if yes, ignore it.
 			if isubtrace[0]!='!':
 				formula.size = s.len_isubtrace[(isubtrace,False)]
 			else:

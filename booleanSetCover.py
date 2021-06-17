@@ -1,5 +1,5 @@
 import heapq as hq
-from formulaTree import Formula
+from formulaTree import Formula, merge
 import time
 import logging
 
@@ -42,9 +42,9 @@ class BooleanSetCover:
 
 	
 	#calculates the local score of a formula with respect to the best formula 
-	def score_local(self, formula, best_formula):
+	def score_local(self, formula, current_formula):
 
-		return (self.cover_size[formula]-self.cover_size[best_formula])/((formula.treeSize())**(0.5)+1)
+		return (self.cover_size[formula]-self.cover_size[current_formula])/((formula.treeSize())**(0.5)+1)
 	
 	#we find best formulas from the current cover set
 	def find(self, upper_bound):
@@ -96,21 +96,27 @@ class BooleanSetCover:
 					if '&' in self.operators:
 						# could check whether it has a shared prefix of X and G
 						# to make the conjunction smaller
-						new_formula = Formula(['&', current_formula, formula])
+						
+						new_formula = merge('&', current_formula, formula)
+						#print(current_formula, formula, new_formula, '&')
 						new_formula.size = current_formula.size + formula.size + 1
-						if new_formula.treeSize() <= upper_bound:
-							self.formula_dict[new_formula] = (self.formula_dict[formula][0].intersection(self.formula_dict[best_formula][0]), self.formula_dict[formula][1].intersection(self.formula_dict[best_formula][1]))
-							self.cover_size[new_formula] = len(self.formula_dict[new_formula][0]) - len(self.formula_dict[new_formula][1])+ len(self.negative_set)
+						if new_formula.size <= upper_bound:
+							if new_formula not in self.formula_dict:
+								self.formula_dict[new_formula] = (self.formula_dict[formula][0].intersection(self.formula_dict[current_formula][0]), self.formula_dict[formula][1].intersection(self.formula_dict[current_formula][1]))
+								self.cover_size[new_formula] = len(self.formula_dict[new_formula][0]) - len(self.formula_dict[new_formula][1])+ len(self.negative_set)
 							value[new_formula] = self.score_local(new_formula, current_formula)
-							
+								
 					if '|' in self.operators:
 						# could check whether it has a shared prefix of X and F
 						# to make the disjunction smaller
-						new_formula = Formula(['|', current_formula, formula])
+						new_formula = merge('|', current_formula, formula)
+						#print(current_formula, formula, new_formula, '|')
 						new_formula.size = current_formula.size + formula.size + 1
-						if new_formula.treeSize() <= upper_bound:
-							self.formula_dict[new_formula] = (self.formula_dict[formula][0].union(self.formula_dict[best_formula][0]), self.formula_dict[formula][1].union(self.formula_dict[best_formula][1]))
-							self.cover_size[new_formula] = len(self.formula_dict[new_formula][0]) - len(self.formula_dict[new_formula][1])+ len(self.negative_set)
+						if new_formula.size <= upper_bound:
+							if new_formula not in self.formula_dict:
+								
+								self.formula_dict[new_formula] = (self.formula_dict[formula][0].union(self.formula_dict[current_formula][0]), self.formula_dict[formula][1].union(self.formula_dict[current_formula][1]))
+								self.cover_size[new_formula] = len(self.formula_dict[new_formula][0]) - len(self.formula_dict[new_formula][1])+ len(self.negative_set)
 							value[new_formula] = self.score_local(new_formula, current_formula)
 							
 					
