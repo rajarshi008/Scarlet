@@ -39,14 +39,14 @@ def neg_props(atom: tuple)-> list:
 
 
 #Satisfiability of an atom in a letter, e.g. (0,) and (2,) is true in (1,0,1) but (1,) is not
-def is_sat(letter:tuple, atom:tuple, last: bool) -> bool:
+def is_sat(letter:tuple, atom:tuple, is_end: bool) -> bool:
 
 	#check if the propositions in the atom are true in the letter
 	
 	for pos in atom:
-		if pos == '+-1' and not last:
+		if pos == '+-1' and not is_end:
 			return False
-		elif pos == '--1' and last:
+		elif pos == '--1' and is_end:
 			return False
 		elif pos != '+-1' and pos != '--1':
 			if letter[int(pos[1:])] == (pos[0]!='+'):
@@ -59,10 +59,11 @@ def is_sat(letter:tuple, atom:tuple, last: bool) -> bool:
 #Defining the class iSubTrace (indexed subtraces)
 class iSubTrace:
 
-	def __init__(self, sample, operators):
+	def __init__(self, sample, operators,last):
 		
 		self.sample = sample 
 		self.operators = operators
+		self.last=last
 		
 		self.num_positives = len(self.sample.positive)
 		self.num_negatives = len(self.sample.negative)
@@ -174,7 +175,7 @@ class iSubTrace:
 	Given a isubtrace of given width ending at a position and a diff and a letter appearing at position + diff, it outputs all possible 
 	isubtraces of one more length and same width given the length of the formula derived is less than the upper_bound.
 	'''
-	def possiblePTraces(self, isubtrace:tuple, diff: int, letter: str, width: int, upper_bound: int, inv: bool, last: bool):
+	def possiblePTraces(self, isubtrace:tuple, diff: int, letter: str, width: int, upper_bound: int, inv: bool, is_end: bool):
 		
 		#list of all new isubtraces
 		isubtraces_list = []
@@ -183,14 +184,16 @@ class iSubTrace:
 		atoms = []
 		for i in range(1,width+1):
 			atoms+=self.letter2atoms(letter, i, inv)
-		if last:
-			atoms+= [('+-1',)]
-			for i in range(1, width):
-				atoms+=list(map(lambda x: x+('+-1',), self.letter2atoms(letter, i, inv)))
-		else:
-			atoms+= [('--1',)]
-			for i in range(1, width):
-				atoms+=list(map(lambda x: x+('--1',), self.letter2atoms(letter, i, inv)))
+
+		if self.last:
+			if is_end:
+				atoms+= [('+-1',)]
+				for i in range(1, width):
+					atoms+=list(map(lambda x: x+('+-1',), self.letter2atoms(letter, i, inv)))
+			else:
+				atoms+= [('--1',)]
+				for i in range(1, width):
+					atoms+=list(map(lambda x: x+('--1',), self.letter2atoms(letter, i, inv)))
 
 
 		#Given difference d, the process of appending >0,>1, ..., >d-1 atoms to the isubtrace
@@ -394,10 +397,10 @@ class iSubTrace:
 					for i in range(1,len(base_traces[p])-j):
 						letter = base_traces[p].vector[i+j]
 						if i+j+1 == len(base_traces[p]):
-							last = True
+							is_end = True
 						else:
-							last = False
-						nextisubtraces = self.possiblePTraces(isubtrace, i, letter, width, upper_bound, inv, last)
+							is_end = False
+						nextisubtraces = self.possiblePTraces(isubtrace, i, letter, width, upper_bound, inv, is_end)
 						for nextisubtrace in nextisubtraces:
 							
 							if nextisubtrace in new_isubtrace_dict.keys():
@@ -620,11 +623,11 @@ class iSubTrace:
 					letter = base_traces[p].vector[i]
 					
 					if i+1 == len(base_traces[p]):
-						last = True
+						is_end = True
 					else:
-						last = False
+						is_end = False
 
-					nextisubtraces = self.possiblePTraces(epsilon, i, letter, width, upper_bound, inv, last)
+					nextisubtraces = self.possiblePTraces(epsilon, i, letter, width, upper_bound, inv, is_end)
 					for nextisubtrace in nextisubtraces:
 						if nextisubtrace in new_isubtrace_dict.keys():
 							continue
@@ -743,7 +746,9 @@ class iSubTrace:
 		#if case==1:
 		#	victims = victims_full
 
+		#print(cover_set)
 		return cover_set
+
 
 	
 	#Finding the shortest isubtrace	

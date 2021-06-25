@@ -96,7 +96,7 @@ def iteration_seq(max_len, max_width):
 	return seq
 
 #csvname is only temporary:
-def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=True):
+def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=False):
 	time_counter = time.time()
 
 	# while():
@@ -106,7 +106,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=Tru
 
 
 	# set of methods for indexed subsequences
-	s = iSubTrace(sample, operators)
+	s = iSubTrace(sample, operators,last)
 	
 	global alphabet
 	alphabet=sample.alphabet
@@ -136,7 +136,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=Tru
 	full_set = (positive_set, negative_set)
 	covering_formula = None
 	setcover_time = 0
-	print(max_len, max_width,seq)
+	#print(max_len, max_width,seq)
 	for (length, width) in seq:
 		logging.info("-------------Finding from length %d and width %d isubtraces-------------"%(length,width))
 		time1 = time.time()
@@ -182,6 +182,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=Tru
 			setcover.formula_dict[formula] = (pos_friend_set, neg_friend_set)
 			#score can be weighted by formula size 
 			setcover.score[formula] = (len(pos_friend_set) - len(neg_friend_set) + len(negative_set))
+			#print(isubtrace, formula, len(pos_friend_set),len(neg_friend_set),len(negative_set), setcover.score[formula] )
 			setcover.cover_size[formula]  = len(pos_friend_set) - len(neg_friend_set) + len(negative_set)
 			hq.heappush(setcover.heap, (-setcover.score[formula], formula))
 

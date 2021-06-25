@@ -119,7 +119,7 @@ class BooleanSetCover:
 								self.cover_size[new_formula] = len(self.formula_dict[new_formula][0]) - len(self.formula_dict[new_formula][1])+ len(self.negative_set)
 							value[new_formula] = self.score_local(new_formula, current_formula)
 							
-					
+			
 				current_value = 0
 				success=True
 				for formula in value.keys():
