@@ -210,11 +210,13 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=Fal
 	logging.debug("Setcover Time %.3f"%setcover_time)
 		
 	if covering_formula == None:
-		logging.warning("No formula found")
+		logging.warning("No formula found")\
+		return covering_formula
 	else:
 		time_elapsed = time.time() - time_counter
 		logging.warning("Final formula found %s"%covering_formula.prettyPrint())
 		logging.warning("Time taken is: "+ str(round(time_elapsed,3))+ " secs") 
+		return covering_formula
 
 	ver = sample.isFormulaConsistent(covering_formula)
 	if not ver:
