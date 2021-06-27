@@ -130,7 +130,7 @@ class Trace:
 			return modpos
 	'''
 
-	def evaluateFormula(self, formula,letter2pos):
+	def evaluateFormula(self, formula, letter2pos):
 		'''
 		evalutates formula on trace
 		'''
@@ -358,7 +358,7 @@ class Sample:
 		num_negatives = 0
 		total_num_negatives = num_traces[1]
 		ver=True
-		
+		letter2pos = {alphabet[i]:i for i in range(len(alphabet))}
 
 		while num_positives<total_num_positives or num_negatives<total_num_negatives:
 
@@ -378,7 +378,7 @@ class Sample:
 
 			#check
 			if formula!=None:
-				ver = final_trace.evaluateFormula(formula)
+				ver = final_trace.evaluateFormula(formula, letter2pos)
 
 			if num_positives<total_num_positives:
 				if ver == True or formula==None:

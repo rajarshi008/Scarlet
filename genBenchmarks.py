@@ -81,8 +81,8 @@ def main():
 	parser.add_argument('--formula_file', dest='formula_file', default = 'formulas.txt')
 	parser.add_argument('--trace_type', dest='trace_type', default = 'trace')
 	parser.add_argument('--operators', dest='operators', default = ['F', 'G', 'X', '!', '&', '|'], type=list)
-	parser.add_argument('--size', dest='sample_sizes', default=[(100,100)], nargs='+', type=tupleList)
-	parser.add_argument('--lengths', dest='trace_lengths', default=[(10, 12)], nargs='+', type=tupleList)
+	parser.add_argument('--size', dest='sample_sizes', default=[(50,50),(100,100),(200, 200)], nargs='+', type=tupleList)
+	parser.add_argument('--lengths', dest='trace_lengths', default=[(8,10),(10, 12),(12,14)], nargs='+', type=tupleList)
 	parser.add_argument('--output_folder', dest='output_folder', default = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
 	parser.add_argument('--syslite', dest='syslite', action='store_true', default=True)
 
