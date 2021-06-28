@@ -53,7 +53,7 @@ def generateBenchmarks(formula_file, trace_type, sample_sizes, trace_lengths, op
 				for length_range in trace_lengths:
 						length_mean = (length_range[0]+length_range[1])//2
 						sample=Sample(positive=[], negative=[])
-						trace_file = traces_folder+'f:'+str(formula_num)+'-'+ 'nw:'+str(size)+'-'+'ml:'+str(length_mean)+'.trace'
+						trace_file = traces_folder+'f:'+str(formula_num)+'-'+'nw:'+str((size[0]+size[1])//2)+'-'+'ml:'+str(length_mean)+'.trace'
 						
 						if trace_type == 'words':
 							word_file = words_folder+'f:'+ str(formula_num)+'-'+ 'nw:'+str(size)+'-'+ 'ml:'+str(length_mean)+'.words'
@@ -82,7 +82,7 @@ def main():
 	parser.add_argument('--trace_type', dest='trace_type', default = 'trace')
 	parser.add_argument('--operators', dest='operators', default = ['F', 'G', 'X', '!', '&', '|'], type=list)
 	parser.add_argument('--size', dest='sample_sizes', default=[(50,50),(100,100),(200, 200)], nargs='+', type=tupleList)
-	parser.add_argument('--lengths', dest='trace_lengths', default=[(8,10),(10, 12),(12,14)], nargs='+', type=tupleList)
+	parser.add_argument('--lengths', dest='trace_lengths', default=[(8,10),(10,12),(12,14)], nargs='+', type=tupleList)
 	parser.add_argument('--output_folder', dest='output_folder', default = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
 	parser.add_argument('--syslite', dest='syslite', action='store_true', default=True)
 
