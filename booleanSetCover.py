@@ -83,16 +83,6 @@ class BooleanSetCover:
 				value={}
 				for (_,formula) in self.heap[1:]:
 
-# P = Sort(Q)
-# P = (Sort, pointer_to_Q)
-# P2 = Sort(Q)
-# hash_table[str(Q)] = hash_
-# if format(Q) in hash_table:
-# 	hash_ = hash_table[str(Q)]
-# 	P = (Sort, hash_)
-# else:
-# 	hash_table[Q] = ...	
-
 					if '&' in self.operators:
 						# could check whether it has a shared prefix of X and G
 						# to make the conjunction smaller

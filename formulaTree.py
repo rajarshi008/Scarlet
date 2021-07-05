@@ -6,7 +6,6 @@ from lark import Lark, Transformer
 unary_operators = ['G', 'F', '!', 'X']
 binary_operators = ['&', '|', 'U', '->']
 
-
 class SimpleTree:
 	def __init__(self, label = "dummy"):	
 		self.left = None
@@ -14,7 +13,8 @@ class SimpleTree:
 		self.label = label
 	
 	def __hash__(self):
-		return hash((self.label, self.left, self.right))
+		# return hash((self.label, self.left, self.right))
+		return hash(self.label) + id(self.left) + id(self.right)
 	
 	def __eq__(self, other):
 		if other == None:
@@ -237,18 +237,6 @@ class TreeToFormula(Transformer):
             return str(args[0])
         def unary_operator(self, args):
             return str(args[0])
-
-# class SetofFormulas():
-# 	__init__:
-# 	hash_table
-
-# 	def create_formula(Q):
-# 		if format(Q) in hash_table:
-# 			hash_ = hash_table[str(Q)]
-# 			P = (Sort, hash_)
-# 		else:
-# 			hash_table[Q] = ...	
-
 
 def merge(operator, formula1, formula2):
 	if formula1.label == formula2.label:

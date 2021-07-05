@@ -12,13 +12,6 @@ Possible clean-ups:
 - 
 
 '''
-#alphabet=[]
-
-'''
-X-subsequence 	X^{i_1 -1} a_1 AND (X^{i_2 - 1} a_2 AND (...))
-F-subsequence = subsequence	F a_1 AND (F a_2 AND (...))
-indexed subsequence:	mix of both
-'''
 
 #BY DEFAULT p,q,r... alphabet
 def isubTrace2Formula(isubtrace: tuple):
