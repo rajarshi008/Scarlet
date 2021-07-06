@@ -59,12 +59,66 @@ class Trace:
 	defines a sequences of letters, which could be a subset of propositions or symbol from an alphabet
 	'''
 	def __init__(self, vector, is_word, lasso_start=None):
+			
 		self.vector = vector
 		self.length = len(vector)
+		self.lasso_start = lasso_start
 		self.is_word = is_word
+		if self.lasso_start == None:
+			self.is_finite = True
+		
+		if is_word==False:
+			self.vector_str = str(self)
 
-	def copy(self):
-		return self.__init__(self.vector, self.is_word)
+		if lasso_start != None:
+			self.is_finite = False
+			self.lasso_start = int(lasso_start)
+			if self.lasso_start >= self.length:
+				raise Exception(
+					"lasso start = %s is greater than any value in trace (trace length = %s) -- must be smaller" % (
+					self.lasso_start, self.length))
+
+			self.lasso_length = self.length - self.lasso_start
+			self.prefix_length = self.length - self.lasso_length
+
+			self.lasso = self.vector[self.lasso_start:self.length]
+			self.prefix = self.vector[:self.lasso_start] 
+
+	
+	def nextPos(self, currentPos):
+		'''
+		returns the next position in the trace
+		'''
+		if self.is_finite:
+			if currentPos < self.length:
+				return currentPos+1
+			else:
+				return None
+		else:
+			if currentPos == self.length - 1:
+				return self.lasso_start
+			else:
+				return currentPos + 1
+
+	
+	def futurePos(self, currentPos):
+		'''
+		returns all the relevant future positions	
+		'''
+		futurePositions = []
+		if self.is_finite:
+			futurePositions = list(range(currentPos, self.length))
+		else:
+			alreadyGathered = set()
+			while currentPos not in alreadyGathered:
+				futurePositions.append(currentPos)
+				alreadyGathered.add(currentPos)
+				currentPos = self.nextPos(currentPos)
+			futurePositions.append(currentPos)
+		return futurePositions
+
+	#def copy(self):
+	#	return self.__init__(self.vector, self.is_word)
 
 	def evaluateFormula(self, formula, letter2pos):
 		'''
@@ -83,7 +137,7 @@ class Trace:
 		if tableValue != None:
 			return tableValue
 		else:
-			label = formula.label
+			label = formula.label 
 			if label == 'true':
 				val = True
 			elif label == 'false':
@@ -266,7 +320,7 @@ class Sample:
 				rand_word += rand_letter
 			return Trace(rand_word, is_word=True)
 		else:
-			trace_vector = [ [random.randint(0,1) for _ in range(len(alphabet))] for _ in range(length_trace) ]
+			trace_vector = [ [random.randint(0,1) for _ in range(len(alphabet))] for _ in range(length) ]
 			return Trace(trace_vector, is_word=False)
 
 	def generator(self, 
@@ -277,7 +331,7 @@ class Sample:
 		alphabet = ['p','q','r'], 
 		length_range=(5,15), 
 		is_words=True, 
-		operators=['G', 'F', '!', 'U', '&','|', '->', 'X']):
+		operators=['G', 'F', '!', 'U', '&','|', 'X']):
 
 		num_positives = 0
 		total_num_positives = num_traces[0]
@@ -323,7 +377,8 @@ class Sample:
 			rand_letter = random.choice(alphabet)
 		else:
 			rand_letter = [random.randint(0,1) for _ in range(len(alphabet))]
-		trace[rand_position] = rand_letter
+		trace.vector[rand_position] = rand_letter
+		return trace
 
 	def generator_random_walk(self, 
 		formula=None, 
@@ -333,7 +388,7 @@ class Sample:
 		alphabet = ['p','q','r'], 
 		length_range=(5,15), 
 		is_words=True, 
-		operators=['G', 'F', '!', 'U', '&','|', '->', 'X']):
+		operators=['G', 'F', '!', '&','|', 'X']):
 
 		total_num_positives = num_traces[0]
 		total_num_negatives = num_traces[1]
@@ -347,13 +402,13 @@ class Sample:
 			
 			first_trace = self.random_trace(alphabet, length, is_words)
 			first_ver = first_trace.evaluateFormula(formula, letter2pos)
-
-			second_trace = self.copy(first_trace)
+			
+			second_trace = Trace(first_trace.vector[:], first_trace.is_word)
 			second_ver = second_trace.evaluateFormula(formula, letter2pos)
 
 			i = 0
 			while first_ver == second_ver and i < 1e6:
-				second_trace = self.random_edit(second_trace, alphabet, length, is_words)
+				second_trace = self.random_edit(second_trace, alphabet, is_words)
 				second_ver = second_trace.evaluateFormula(formula, letter2pos)
 				i += 1
 			assert(first_ver != second_ver)

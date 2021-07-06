@@ -246,28 +246,31 @@ class iSubTrace:
 	def preComputeInd(self, width: int):
 
 		all_atoms={i: set() for i in range(1,width+1)}
+		#print(width)
 		if self.neg:
 			for trace in self.sample.positive+self.sample.negative:
 				for letter in trace.vector:	
 					for i in range(1,width+1):
 						all_atoms[i]= all_atoms[i].union(set(self.letter2atoms(letter, i, True)))
-						all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('+-1',), self.letter2atoms(letter, i-1, True))))
-						all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('--1',), self.letter2atoms(letter, i-1, True))))
+						if self.last:
+							all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('+-1',), self.letter2atoms(letter, i-1, True))))
+							all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('--1',), self.letter2atoms(letter, i-1, True))))
 		else:
 			for trace in self.sample.positive:
 				for letter in trace.vector:	
 					for i in range(1,width+1):
 						all_atoms[i]= all_atoms[i].union(set(self.letter2atoms(letter, i, True)))
-						all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('+-1',), self.letter2atoms(letter, i-1, True))))
-						all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('--1',), self.letter2atoms(letter, i-1, True))))
+						if self.last:
+							all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('+-1',), self.letter2atoms(letter, i-1, True))))
+							all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('--1',), self.letter2atoms(letter, i-1, True))))
 
 			for trace in self.sample.negative:
 				for letter in trace.vector:	
 					for i in range(1,width+1):
 						all_atoms[i]= all_atoms[i].union(set(self.letter2atoms(letter, i, False)))
-						all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('+-1',), self.letter2atoms(letter, i-1, False))))
-						all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('--1',), self.letter2atoms(letter, i-1, False))))
-
+						if self.last:
+							all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('+-1',), self.letter2atoms(letter, i-1, False))))
+							all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('--1',), self.letter2atoms(letter, i-1, False))))
 
 		for word_vec in self.sample.positive+ self.sample.negative:
 				

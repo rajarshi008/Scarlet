@@ -91,18 +91,21 @@ def iteration_seq(max_len, max_width):
 #csvname is only temporary:
 def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=False):
 	time_counter = time.time()
-
+	print('InferLTL', csvname)
 	# while():
 	# 	alphabet += best5formulas from the heap
 	# alphabet = [a,b,c]
 	# alphabet = [phi1,phi2,a,b,c]
 
-
+	f=open(csvname,'w')
+	f.close()
 	# set of methods for indexed subsequences
 	s = iSubTrace(sample, operators,last)
 	
 	global alphabet
 	alphabet=sample.alphabet
+
+
 
 	if last:
 		alphabet.append('L')
@@ -194,9 +197,9 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=Fal
 			
 			if csvname != None:
 				time_elapsed = round(time.time() - time_counter,3)
-				with open(csvname, 'w') as csvfile:
+				with open(csvname, 'a+') as csvfile:
 					writer = csv.writer(csvfile)
-					writer.writerow([time_elapsed, covering_formula.size, covering_formula.prettyPrint(), None])
+					writer.writerow([time_elapsed, covering_formula.size, covering_formula.prettyPrint()])
 			
 		logging.debug('########Time taken for iteration %.3f########'%(time.time()-time1))
 
@@ -207,6 +210,11 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=Fal
 		return covering_formula
 	else:
 		time_elapsed = time.time() - time_counter
+		if csvname != None:
+			time_elapsed = round(time.time() - time_counter,3)
+			with open(csvname, 'a+') as csvfile:
+				writer = csv.writer(csvfile)
+				writer.writerow([time_elapsed, covering_formula.size, covering_formula.prettyPrint()])
 		logging.warning("Final formula found %s"%covering_formula.prettyPrint())
 		logging.warning("Time taken is: "+ str(round(time_elapsed,3))+ " secs") 
 		return covering_formula
