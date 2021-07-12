@@ -1,10 +1,12 @@
 import pdb
 import re 
 from lark import Lark, Transformer
+from graphviz import Source
 
 
 unary_operators = ['G', 'F', '!', 'X']
 binary_operators = ['&', '|', 'U', '->']
+
 
 class SimpleTree:
 	def __init__(self, label = "dummy"):	
@@ -239,6 +241,9 @@ class TreeToFormula(Transformer):
             return str(args[0])
 
 def merge(operator, formula1, formula2):
+	"""
+	merges common operators from 2 formulas
+	"""
 	if formula1.label == formula2.label:
 		if operator == "&":
 				if formula1.label == 'X' or formula1.label == 'G':
@@ -275,5 +280,53 @@ def merge(operator, formula1, formula2):
 		
 	return Formula([operator, formula1, formula2])
 	
-		
+
+
+
+
+def display(formula):
+	'''
+	displays the formula in jpg format
+	'''
+	formula_queue = []
+	formula_id = {formula: 1}
+	edges = []
+
+	if formula.left != None:
+		formula_queue.append(formula.left)
+		formula_id[formula.left] = 2*formula_id[formula]
+		edges.append((formula_id[formula],formula_id[formula.left]))
+	if formula.right != None:
+		formula_queue.append(formula.right)
+		formula_id[formula.right] = 2*formula_id[formula]+1
+		edges.append((formula_id[formula],formula_id[formula.right]))
+
+	while formula_queue != []:
+		curr_formula = formula_queue.pop()
+		print(curr_formula)
+		if curr_formula.left != None:
+			formula_queue.append(curr_formula.left)
+			formula_id[curr_formula.left] = 2*formula_id[curr_formula]
+			edges.append((formula_id[curr_formula],formula_id[curr_formula.left]))
+		if curr_formula.right != None:
+			formula_queue.append(curr_formula.right)
+			formula_id[curr_formula.right] = 2*formula_id[curr_formula]+1
+			edges.append((formula_id[curr_formula],formula_id[curr_formula.right]))
+
+
+	dot_str =  "digraph g {\n"
+
+
+	for formula in formula_id:
+		dot_str += ('{} [label="{}"]\n'.format(formula_id[formula], formula.label))
+	for edge in edges:
+		dot_str += ('{} -> {}\n'.format(edge[0],edge[1]))
+
+
+	dot_str += ("}\n")
+	s = Source(dot_str, filename="test.gv", format="png")
+	s.view()
 	
+
+
+formula = Formula.convertTextToFormula("G(X(&(p,q)))")

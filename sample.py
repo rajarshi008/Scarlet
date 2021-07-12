@@ -1,6 +1,7 @@
 from formulaTree import Formula
 import random
 import sys
+from convert2dfa import DFA, ltl2dfa
 	
 
 
@@ -299,12 +300,10 @@ class Sample:
 			return True
 		for w in self.positive:
 			if w.evaluateFormula(formula,self.letter2pos) == False:
-				print('positive', str(w))
 				return False
 
 		for w in self.negative:
 			if w.evaluateFormula(formula,self.letter2pos) == True:
-				print('negative', str(w))
 				return False
 		return True
 
@@ -422,6 +421,56 @@ class Sample:
 
 		self.operators = operators
 		self.writeToFile(filename)
+
+	
+	def generator_dfa(self, 
+		formula=None, 
+		filename='generated.words', 
+		num_traces=(5,5), 
+		length_traces=None, 
+		alphabet = ['p','q','r'], 
+		length_range=(5,15), 
+		is_words=True, 
+		operators=['G', 'F', '!', 'U', '&','|', 'X']):
+
+		num_positives = 0
+		total_num_positives = num_traces[0]
+		num_negatives = 0
+		total_num_negatives = num_traces[1]
+		ver = True
+		letter2pos = {alphabet[i]:i for i in range(len(alphabet))}
+
+		#convertLTL2dfa
+		ltldfa = ltl2dfa(formula, letter2pos)
+
+		while num_positives < total_num_positives:
+
+			length = random.randint(length_range[0], length_range[1])
+			word = ltldfa.generate_random_word_length(length)
+			assert(ltldfa.is_word_in(word)==True)
+			trace = Trace([list(letter) for letter in word], is_word=False)
+
+			if trace not in self.positive:
+				self.positive.append(trace)
+				num_positives += 1
+			
+		ltldfa_complement = ltldfa.complement()
+
+		while num_negatives < total_num_negatives:
+
+			length = random.randint(length_range[0], length_range[1])
+			word = ltldfa_complement.generate_random_word_length(length)
+			trace = Trace([list(letter) for letter in word], is_word=False)
+			assert(ltldfa.is_word_in(word)==False)
+			
+			if trace not in self.negative:
+				self.negative.append(trace)
+				num_negatives += 1
+
+
+		self.operators = operators
+		self.writeToFile(filename)
+
 
 	def writeToFile(self, filename):
 

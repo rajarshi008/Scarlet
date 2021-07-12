@@ -55,7 +55,7 @@ def compile(benchmark_folder):
 def main():
 
 	timeout = 900
-	benchmark_folder = 'first_test/TracesFiles'
+	benchmark_folder = 'check/TracesFiles'
 	
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--compile', dest='compile_results', action='store_true', default=False)
