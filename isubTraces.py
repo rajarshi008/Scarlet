@@ -730,7 +730,7 @@ class iSubTrace:
 		for isubtrace in isubtrace_dict.keys():
 
 			pos_friend_set = {i for i in range(self.num_positives) if isubtrace_dict[isubtrace][0][i]!=[]}
-			neg_friend_set = {i for i in range(self.num_negatives) if isubtrace_dict[isubtrace][1][i]!=[]}
+			neg_friend_set = {self.num_positives+i for i in range(self.num_negatives) if isubtrace_dict[isubtrace][1][i]!=[]}
 			#Not sure about this, can put this if necessary
 			# if len(victim_set) == self.num_negatives:
 			# 	case=1
@@ -742,9 +742,8 @@ class iSubTrace:
 		for isubtrace in isubtrace_dict_inv.keys():
 
 			pos_friend_set = {i for i in range(self.num_positives) if isubtrace_dict_inv[isubtrace][0][i]==[]}
-			neg_friend_set = {i for i in range(self.num_negatives) if isubtrace_dict_inv[isubtrace][1][i]==[]}
+			neg_friend_set = {self.num_positives+i for i in range(self.num_negatives) if isubtrace_dict_inv[isubtrace][1][i]==[]}
 			
-
 			cover_set[('!',)+isubtrace] = (pos_friend_set, neg_friend_set)
 		#if case==1:
 		#	victims = victims_full

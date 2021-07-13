@@ -6,6 +6,7 @@ import time
 import heapq as hq
 import logging
 import csv
+from decisionTree import DTlearner
 '''
 Possible clean-ups:
 - upperbound can be class variable in iSubTrace 
@@ -102,6 +103,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=Fal
 	# set of methods for indexed subsequences
 	s = iSubTrace(sample, operators,last)
 	
+	choice = "DT"
 	global alphabet
 	alphabet=sample.alphabet
 
@@ -112,7 +114,6 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=Fal
 	
 	upper_bound = 4*s.max_positive_length
 	# set of methods for Boolean set cover
-	setcover = BooleanSetCover(sample, operators)
 	max_len = s.max_positive_length
 	if sample.is_words:
 		if last:
@@ -128,8 +129,14 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=Fal
 	# sequence of pairs (l,w) representing lengths and widths
 	seq = iteration_seq(max_len, max_width)
 	positive_set = {i for i in range(len(sample.positive))}
-	negative_set = {i for i in range(len(sample.negative))}
+	negative_set = {len(positive_set)+i for i in range(len(sample.negative))}
 	full_set = (positive_set, negative_set)
+	
+	if choice == "DT":
+		boolcomb = DTlearner(sample, operators)
+	if choice == "SC":
+		boolcomb = BooleanSetCover(sample, operators)
+	
 	covering_formula = None
 	setcover_time = 0
 	#print(max_len, max_width,seq)
@@ -165,7 +172,6 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=Fal
 			pos_friend_set = cover_set[isubtrace][0]
 			neg_friend_set = cover_set[isubtrace][1]
 
-
 			if neg_friend_set == negative_set:
 				continue
 
@@ -175,16 +181,23 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=Fal
 				formula.size = s.len_isubtrace[(isubtrace,False)]
 			else:
 				formula.size = s.len_isubtrace[(isubtrace[1:], True)]
-			setcover.formula_dict[formula] = (pos_friend_set, neg_friend_set)
-			#score can be weighted by formula size 
-			setcover.score[formula] = (len(pos_friend_set) - len(neg_friend_set) + len(negative_set))
-			#print(isubtrace, formula, len(pos_friend_set),len(neg_friend_set),len(negative_set), setcover.score[formula] )
-			setcover.cover_size[formula]  = len(pos_friend_set) - len(neg_friend_set) + len(negative_set)
-			hq.heappush(setcover.heap, (-setcover.score[formula], formula))
+			
+			if choice=="SC":
+
+				boolcomb.formula_dict[formula] = (pos_friend_set, neg_friend_set)
+				#score can be weighted by formula size
+				boolcomb.score[formula] = (len(pos_friend_set) - len(neg_friend_set) + len(negative_set))
+				#print(isubtrace, formula, len(pos_friend_set),len(neg_friend_set),len(negative_set), setcover.score[formula] )
+				boolcomb.cover_size[formula]  = len(pos_friend_set) - len(neg_friend_set) + len(negative_set)
+				hq.heappush(boolcomb.heap, (-boolcomb.score[formula], formula))
+			
+			if choice=="DT":
+				
+				boolcomb.formula_dict[formula] = (pos_friend_set, neg_friend_set)
 
 			
 		t0=time.time()
-		current_covering_formula, upper_bound = setcover.find(upper_bound)
+		current_covering_formula, upper_bound = boolcomb.find(upper_bound)
 		t1=time.time()
 		setcover_time+=t1-t0
 
@@ -217,7 +230,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=Fal
 				writer.writerow([time_elapsed, covering_formula.size, covering_formula.prettyPrint()])
 		logging.warning("Final formula found %s"%covering_formula.prettyPrint())
 		logging.warning("Time taken is: "+ str(round(time_elapsed,3))+ " secs") 
-		return covering_formula
+		#return covering_formula
 
 	ver = sample.isFormulaConsistent(covering_formula)
 	if not ver:

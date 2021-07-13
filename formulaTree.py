@@ -175,8 +175,10 @@ class Formula(SimpleTree):
 
 	def treeSize(self):
 		if self.size == None:
+			if self.label == 'true' or self.label == 'false':
+				self.size = 0
 			if self.left == None and self.right == None:
-				return 1
+				self.size = 1
 			leftSize=0
 			rightSize=0
 			if self.left != None:
