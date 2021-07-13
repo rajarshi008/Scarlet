@@ -107,8 +107,6 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=Fal
 	global alphabet
 	alphabet=sample.alphabet
 
-
-
 	if last:
 		alphabet.append('L')
 	
