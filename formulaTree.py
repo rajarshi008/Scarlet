@@ -331,4 +331,4 @@ def display(formula):
 	
 
 
-formula = Formula.convertTextToFormula("G(X(&(p,q)))")
+#formula = Formula.convertTextToFormula("G(X(&(p,q)))")

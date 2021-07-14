@@ -130,6 +130,8 @@ class DFA:
 				self.number_of_words.update({(state, i):0 for state in self.states})
 				for state in self.states:
 					for letter in self.alphabet:
+						#print(letter, state)
+						#print(self.transitions[state][letter])
 						for next_state in self.transitions[state][letter]:
 							self.number_of_words[(state, i)] += self.number_of_words[(next_state, i-1)]
 
@@ -171,39 +173,41 @@ class DFA:
 
 def atom2letters(atom_string, letter2pos):
 	# preprocessing of atom strings
-	
+	atom_string = atom_string.replace(' ' ,'')
 
 	alphabet = list(letter2pos.keys())
 
+	atomlist = atom_string.split('|')
+	all_letter_list= set()
+	for atom_disjuncts in atomlist:
+		sign = {letter:0 for letter in alphabet}
+		if atom_string != 'true':
+			atoms = atom_disjuncts.split('&')
+			for prop in atoms:
+				if prop[0]=='~':
+					sign[prop[1]] = -1
+				else:
+					sign[prop[0]] = 1
+		letter_list = [[]]
+		for letter in alphabet:
+			new_letter_list = []
+			if sign[letter] == 0:
+				for l in letter_list:
+					new_letter_list.append(l+[0])
+					new_letter_list.append(l+[1])
+			
+			if sign[letter] == 1:
+				for l in letter_list:
+					new_letter_list.append(l+[1])
 
-	sign = {letter:0 for letter in alphabet}
-	if atom_string != 'true':
-		atom_string = atom_string.replace(' ' ,'')
-		atoms = atom_string.split('&')
-		for prop in atoms:
-			if prop[0]=='~':
-				sign[prop[1]] = -1
-			else:
-				sign[prop[0]] = 1
-	letter_list = [[]]
-	for letter in alphabet:
-		new_letter_list = []
-		if sign[letter] == 0:
-			for l in letter_list:
-				new_letter_list.append(l+[0])
-				new_letter_list.append(l+[1])
-		
-		if sign[letter] == 1:
-			for l in letter_list:
-				new_letter_list.append(l+[1])
+			if sign[letter] == -1:
+				for l in letter_list:
+					new_letter_list.append(l+[0])
+			letter_list = new_letter_list
 
-		if sign[letter] == -1:
-			for l in letter_list:
-				new_letter_list.append(l+[0])
-		letter_list = new_letter_list
-
-	letter_list = [tuple(l) for l in letter_list]
-	return letter_list
+		letter_list = set([tuple(l) for l in letter_list])
+		all_letter_list= all_letter_list.union(letter_list)
+	return list(all_letter_list)
 
 
 
@@ -270,11 +274,13 @@ def dot2DFA(dot_string, letter2pos):
 
 
 	formula_dfa = DFA(init_state, final_states, transitions)
-	formula_dfa.show()
+	#formula_dfa.show()
 	#print(formula_dfa)
 	return formula_dfa
 
-# letter2pos = {'p':0, 'q':1, 'r':2}
+#letter2pos = {'p':0, 'q':1, 'r':2}
+#print(atom2letters('true', letter2pos))
+
 # dfa = (ltl2dfa('dummy', letter2pos))
 # dfa_c = dfa.complement()
 # print(dfa_c)
