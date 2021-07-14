@@ -8,7 +8,7 @@ import multiprocessing
 
 logging_levels = {0:logging.WARNING, 1:logging.INFO, 2:logging.DEBUG}
 
-def run_test(input_file='./dummy.trace', timeout=900, outputcsv='./result.csv'):
+def run_test(input_file='./dummy.trace', timeout=900, outputcsv='./result.csv', method='SC'):
 
 	#print(input_file, timeout, outputcsv)
 	parser = argparse.ArgumentParser()
@@ -17,14 +17,18 @@ def run_test(input_file='./dummy.trace', timeout=900, outputcsv='./result.csv'):
 	parser.add_argument('--timeout', '-t', dest='timeout', default=str(timeout), type=int)
 	parser.add_argument('--outputcsv', '-o', dest='csvname', default= outputcsv)
 	parser.add_argument('--verbose', '-v', dest='verbose', default=False, action='count')
+	parser.add_argument('--method', '-m', dest='method', default = method) 
 	args,unknown = parser.parse_known_args()
 
 	input_file = args.input_file
 	is_word = True if '.words' in input_file else False
 	timeout = float(args.timeout)
 	verbosity = 2
+	method = args.method
+	print(method)
 	csvname = args.csvname
-	print(csvname)
+
+
 	logging.basicConfig(format='%(message)s', level=logging_levels[verbosity])
 
 	sample = Sample(positive=[],negative=[])
@@ -39,7 +43,7 @@ def run_test(input_file='./dummy.trace', timeout=900, outputcsv='./result.csv'):
 					
 	
 	#Starting timeout
-	p = multiprocessing.Process(target=inferLTL, args=(sample, csvname, operators))
+	p = multiprocessing.Process(target=inferLTL, args=(sample, csvname, operators, method))
 	p.start()
 	p.join(timeout)
 	if p.is_alive():
@@ -47,4 +51,4 @@ def run_test(input_file='./dummy.trace', timeout=900, outputcsv='./result.csv'):
 		p.terminate()
 		p.join()	
 	
-run_test()
+#run_test()
