@@ -90,7 +90,7 @@ def iteration_seq(max_len, max_width):
 	return seq
 
 #csvname is only temporary:
-def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=False):
+def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='SC', last=False):
 	time_counter = time.time()
 	print('InferLTL', csvname)
 	# while():
@@ -103,7 +103,6 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=Fal
 	# set of methods for indexed subsequences
 	s = iSubTrace(sample, operators,last)
 	
-	choice = "DT"
 	global alphabet
 	alphabet=sample.alphabet
 
@@ -130,9 +129,9 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=Fal
 	negative_set = {len(positive_set)+i for i in range(len(sample.negative))}
 	full_set = (positive_set, negative_set)
 	
-	if choice == "DT":
+	if method == "DT":
 		boolcomb = DTlearner(sample, operators)
-	if choice == "SC":
+	if method == "SC":
 		boolcomb = BooleanSetCover(sample, operators)
 	
 	covering_formula = None
@@ -180,7 +179,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=Fal
 			else:
 				formula.size = s.len_isubtrace[(isubtrace[1:], True)]
 			
-			if choice=="SC":
+			if method == "SC":
 
 				boolcomb.formula_dict[formula] = (pos_friend_set, neg_friend_set)
 				#score can be weighted by formula size
@@ -189,7 +188,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], last=Fal
 				boolcomb.cover_size[formula]  = len(pos_friend_set) - len(neg_friend_set) + len(negative_set)
 				hq.heappush(boolcomb.heap, (-boolcomb.score[formula], formula))
 			
-			if choice=="DT":
+			if method =="DT":
 				
 				boolcomb.formula_dict[formula] = (pos_friend_set, neg_friend_set)
 

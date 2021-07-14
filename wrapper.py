@@ -11,7 +11,7 @@ Run the following:
 rq worker -b -q genGraphs &
 '''
 
-def run_tests(benchmark_folder, timeout):
+def run_in_queue(benchmark_folder, timeout, method):
 	trace_file_list = []
 	for root, dirs, files in os.walk(benchmark_folder):
 		for file in files:
@@ -19,13 +19,14 @@ def run_tests(benchmark_folder, timeout):
 				trace_file_name = str(os.path.join(root, file))
 				trace_file_list.append(trace_file_name)
 
+
 	redis_conn = Redis()
 	q = Queue('genGraphs', connection=redis_conn)
 	q.empty()
 	
 	for trace_file in trace_file_list:
 		outputcsv = trace_file+'-out.csv'
-		q.enqueue(run_test, args=(trace_file, timeout, outputcsv), timeout=timeout+10)
+		q.enqueue(run_test, args=(trace_file, timeout, outputcsv, method), job_timeout=timeout+10)
 	print('Length of queue', len(q))
 
 #Compiling
@@ -55,15 +56,16 @@ def compile(benchmark_folder):
 def main():
 
 	timeout = 900
-	benchmark_folder = 'check/TracesFiles'
-	
+	benchmark_folder = '14Jul-meet/TracesFiles'
+	method = 'DT'
+
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--compile', dest='compile_results', action='store_true', default=False)
 	args,unknown = parser.parse_known_args()
 
 	compile_results = bool(args.compile_results)
 	if not compile_results:
-		run_tests(benchmark_folder, timeout)
+		run_in_queue(benchmark_folder, timeout, method)
 	else:
 		compile(benchmark_folder)
 
