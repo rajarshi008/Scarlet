@@ -214,7 +214,6 @@ def ltl2dfa(formula, letter2pos):
 	# possiblilties to use the infix or the prefix form
 
 	#formula_str = formula.prettyPrint()
-	formula = Formula.convertTextToFormula("|(G(!(p)),F(&(p, F(q))))")
 	formula_str = formula.prettyPrint()
 
 	parser = LTLfParser()
@@ -271,6 +270,8 @@ def dot2DFA(dot_string, letter2pos):
 
 
 	formula_dfa = DFA(init_state, final_states, transitions)
+	formula_dfa.show()
+	#print(formula_dfa)
 	return formula_dfa
 
 # letter2pos = {'p':0, 'q':1, 'r':2}
