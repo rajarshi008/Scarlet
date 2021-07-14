@@ -8,7 +8,7 @@ import multiprocessing
 
 logging_levels = {0:logging.WARNING, 1:logging.INFO, 2:logging.DEBUG}
 
-def run_test(input_file='./dummy.trace', timeout=900, outputcsv='./result.csv', method='SC'):
+def run_test(input_file='./dummy.trace', timeout=900, outputcsv='./result.csv', method='DT'):
 
 	#print(input_file, timeout, outputcsv)
 	parser = argparse.ArgumentParser()
@@ -51,4 +51,4 @@ def run_test(input_file='./dummy.trace', timeout=900, outputcsv='./result.csv', 
 		p.terminate()
 		p.join()	
 	
-#run_test()
+run_test()

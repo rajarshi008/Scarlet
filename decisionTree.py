@@ -44,7 +44,7 @@ class DTlearner:
 					best_formula = formula
 					score = formula_score
 
-			if best_formula.treeSize() > upper_bound:
+			if best_formula.treeSize() > upper_bound or cover_dict == {}:
 				return None
 
 			split1_set = (cover_dict[best_formula][0], cover_dict[best_formula][1])
@@ -56,7 +56,6 @@ class DTlearner:
 			else:
 				break
 
-	
 
 		cover_dict1 = {}
 		cover_dict2 = {}
@@ -68,7 +67,8 @@ class DTlearner:
 		formula1 = self.learn(split1_set, cover_dict1, upper_bound-best_formula.treeSize()-1)
 		formula2 = self.learn(split2_set, cover_dict2, upper_bound-best_formula.treeSize()-1) # can furthur reduce the size of this tree
 
-
+		if formula1 == None or formula2 == None:
+			return None
 
 		print(best_formula, formula1, formula2)
 		if formula1 == Formula('true'):
