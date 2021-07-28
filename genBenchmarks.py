@@ -57,12 +57,16 @@ def generateBenchmarks(formula_file, trace_type, sample_sizes, trace_lengths, op
 						
 						if trace_type == 'words':
 							word_file = words_folder+'f:'+ str(formula_num)+'-'+ 'nw:'+str(size)+'-'+ 'ml:'+str(length_mean)+'.words'
-							sample.generator_dfa(formula=formula, length_range=length_range, num_traces=size, filename=word_file, is_words=(trace_type=='words'), operators=operators)
+							sample.generator_dfa_in_batch(formula=formula, length_range=length_range, num_traces=size, filename=word_file, is_words=(trace_type=='words'), operators=operators)
 							# sample.generator(formula=formula, length_range=length_range, num_traces=size, filename=word_file, is_word=(trace_type=='words'))
 							convertFileType(wordfile=word_file, tracefile=trace_file, operators=operators)
 						else:
-							sample.generator_dfa(formula=formula, length_range=length_range, num_traces=size, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
+							sample.generator_dfa_in_batch(formula=formula, length_range=length_range, num_traces=size, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
 							# sample.generator(formula=formula, length_range=length_range, num_traces=size, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
+
+
+						if sample.isFormulaConsistent(formula):
+							print("Formula is consistent with sample")
 
 						if syslite:
 							syslite_file = syslite_folder +'f:'+str(formula_num)+'-'+ 'nw:'+str((size[0]+size[1])//2)+'-'+'ml:'+str(length_mean)+'.trace'
@@ -83,8 +87,8 @@ def main():
 	parser.add_argument('--formula_file', dest='formula_file', default = 'formulas.txt')
 	parser.add_argument('--trace_type', dest='trace_type', default = 'trace')
 	parser.add_argument('--operators', dest='operators', default = ['F', 'G', 'X', '!', '&', '|'], type=list)
-	parser.add_argument('--size', dest='sample_sizes', default=[(20,20), (50,50), (100,100)], nargs='+', type=tupleList)
-	parser.add_argument('--lengths', dest='trace_lengths', default=[(4,6), (8,10), (12,14)], nargs='+', type=tupleList)
+	parser.add_argument('--size', dest='sample_sizes', default=[(20,20),(50,50),(100,100)], nargs='+', type=tupleList)
+	parser.add_argument('--lengths', dest='trace_lengths', default=[(3,4)], nargs='+', type=tupleList)
 	parser.add_argument('--output_folder', dest='output_folder', default = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
 	parser.add_argument('--syslite', dest='syslite', action='store_true', default=True)
 

@@ -467,9 +467,49 @@ class Sample:
 				self.negative.append(trace)
 				num_negatives += 1
 
-
 		self.operators = operators
 		self.writeToFile(filename)
+
+
+	def generator_dfa_in_batch(self, 
+		formula=None,
+		filename='generated.words', 
+		num_traces=(5,5), 
+		length_traces=None, 
+		alphabet = ['p','q','r'], 
+		length_range=(5,15), 
+		is_words=True, 
+		operators=['G', 'F', '!', 'U', '&','|', 'X']):
+
+
+		print("ETA hochhe")
+		total_num_positives = num_traces[0]
+		total_num_negatives = num_traces[1]
+		ver = True
+		letter2pos = {alphabet[i]:i for i in range(len(alphabet))}
+
+		#convertLTL2dfa
+		ltldfa = ltl2dfa(formula, letter2pos)
+
+		words_list = ltldfa.generate_random_words_in_batch(length_range, total_num_positives)
+		for word in words_list:
+			trace = Trace([list(letter) for letter in word], is_word=False)
+			self.positive.append(trace)
+			assert(ltldfa.is_word_in(word)==True)
+
+		ltldfa_complement = ltldfa.complement()
+
+		words_list = ltldfa_complement.generate_random_words_in_batch(length_range, total_num_negatives)
+		for word in words_list:
+			trace = Trace([list(letter) for letter in word], is_word=False)
+			self.negative.append(trace)
+			assert(ltldfa.is_word_in(word)==False)
+			
+		self.alphabet = alphabet
+		self.letter2pos = {alphabet[i]:i for i in range(len(alphabet))}
+		self.operators = operators
+		self.writeToFile(filename)
+
 
 
 	def writeToFile(self, filename):

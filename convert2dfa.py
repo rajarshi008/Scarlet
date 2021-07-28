@@ -1,4 +1,4 @@
-from ltlf2dfa.parser.ltlf import LTLfParser
+#from ltlf2dfa.parser.ltlf import LTLfParser
 from graphviz import Source
 from formulaTree import Formula
 import random
@@ -23,6 +23,7 @@ class DFA:
 		state = self.init_state
 		for letter in word:
 			state = self.transitions[state][letter]
+			
 		return state in self.final_states
 
 	def complement(self):
@@ -132,8 +133,8 @@ class DFA:
 					for letter in self.alphabet:
 						#print(letter, state)
 						#print(self.transitions[state][letter])
-						for next_state in self.transitions[state][letter]:
-							self.number_of_words[(state, i)] += self.number_of_words[(next_state, i-1)]
+						next_state = self.transitions[state][letter]
+						self.number_of_words[(state, i)] += self.number_of_words[(next_state, i-1)]
 
 
 
@@ -165,9 +166,79 @@ class DFA:
 			next_transition = random.choices(transition_list, weights=prob_list)[0]
 			state = next_transition[1]
 			
-			rand_word+=(next_transition[0],)
+			rand_word+=(next_transition[0],)	
 		return rand_word
 
+
+	def generate_random_words_in_batch(self, length_range, batch_size):
+
+		epsilon = 0.01
+		
+		if self.calculated_till < length_range[1]:
+			self.generate_num_accepting_words(length_range[1])
+
+		word_list = []
+		last_path = [] 
+		prob_dict = {}
+		transition_count = {}
+
+		for num in range(batch_size):
+			
+			rand_word = tuple()
+			state = self.init_state
+			length = random.randint(length_range[0], length_range[1])
+			
+			
+			for i in range(1,length+1):
+				
+				non_sink_transitions = [] #letters which lead to some accepting states
+				prob_list = []
+				count_list = []
+
+				for letter in self.alphabet:
+					
+					next_state = self.transitions[state][letter]
+					
+					if (state, letter, next_state) not in transition_count:
+						transition_count[(state, letter, next_state)] = 0
+					
+					#print(next_state, self.number_of_words[(next_state, length-i)], length-i)
+					if self.number_of_words[(next_state, length-i)] != 0:
+						non_sink_transitions.append((state, letter, next_state))
+						
+
+
+					count_list.append(transition_count[(state, letter, next_state)])
+
+
+				num_accepted_trans = len(non_sink_transitions)
+				total_count = sum(count_list)
+				
+				for j in range(len(self.alphabet)):
+					next_state = self.transitions[state][self.alphabet[j]]
+					if self.number_of_words[(next_state, length-i)] != 0:
+						if num_accepted_trans == 1:
+							transition_prob = 1
+						elif total_count == 0:
+							transition_prob = (1/num_accepted_trans)
+						else:
+							transition_prob = (1/num_accepted_trans)*(1-(count_list[j]/total_count))
+					
+						prob_list.append(transition_prob)
+				
+				
+				
+				prob_list = [(i/sum(prob_list)) for i in prob_list]
+				#print(state, non_sink_transitions, prob_list)
+				next_transition = random.choices(non_sink_transitions, weights=prob_list)[0]
+				transition_count[next_transition] += 1
+				#print("Count", transition_count)
+				state = next_transition[2]
+				rand_word+=(next_transition[1],)
+			
+			word_list.append(rand_word)		
+
+		return word_list
 
 
 
@@ -217,22 +288,18 @@ def ltl2dfa(formula, letter2pos):
 	# convert formula into formulastring
 	# possiblilties to use the infix or the prefix form
 
-	#formula_str = formula.prettyPrint()
 	formula_str = formula.prettyPrint()
 
 	parser = LTLfParser()
 	
 	formula = parser(formula_str)       # returns an LTLfFormula
 
-	#d = atom2letters(alphabet = alphabet)
+	d = atom2letters(alphabet = alphabet)
 	original_dfa = formula.to_dfa() # using atoms
-	
-
 
 	d = original_dfa
 	return dot2DFA(original_dfa, letter2pos)
-	# prints "G(a -> X (b))"
-
+	
 	# create a map from propostitions to the corresponding digits
 
 
@@ -287,3 +354,19 @@ def dot2DFA(dot_string, letter2pos):
 # dfa_c.show()
 # print(dfa_c.generate_random_word_length(10))
 #print(str(dfa))
+
+# ltl = "|(X(X(q)),&(F(p),X(q)))"
+# f = Formula().convertTextToFormula(ltl)
+# letter2pos = {'p':0, 'q':1}
+# dfa = ltl2dfa(f, letter2pos)
+# dfa1 = dfa.complement()
+
+# # print("Started")
+# l= dfa1.generate_random_words_in_batch((10,15), 100000)
+# # print("Ended")
+# for word in l:
+#  	if dfa.is_word_in(word):
+#  		print(word)
+
+#dfa = DFA(1, [2], {1:{'a':2, 'b':2, 'c':1}, 2:{'a':1, 'b':3, 'c':3}, 3:{'a':3, 'b':3, 'c':3}})
+#dfa.show()

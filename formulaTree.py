@@ -7,7 +7,6 @@ from graphviz import Source
 unary_operators = ['G', 'F', '!', 'X']
 binary_operators = ['&', '|', 'U', '->']
 
-
 class SimpleTree:
 	def __init__(self, label = "dummy"):	
 		self.left = None
@@ -175,10 +174,12 @@ class Formula(SimpleTree):
 
 	def treeSize(self):
 		if self.size == None:
-			if self.label == 'true' or self.label == 'false':
-				self.size = 0
 			if self.left == None and self.right == None:
-				self.size = 1
+				if self.label == 'true' or self.label == 'false':
+					self.size = 0
+					print("Eta hocche")
+				else:
+					self.size = 1
 			leftSize=0
 			rightSize=0
 			if self.left != None:
@@ -188,7 +189,7 @@ class Formula(SimpleTree):
 			self.size = 1+ leftSize + rightSize
 
 		return self.size
-		
+
 
 	@classmethod
 	def convertTextToFormula(cls, formulaText):
@@ -329,6 +330,11 @@ def display(formula):
 	s = Source(dot_str, filename="test.gv", format="png")
 	s.view()
 	
+
+formula_true = Formula('true')
+formula_false = Formula('false')
+formula_true.size = 0
+formula_false.size = 0
 
 
 #formula = Formula.convertTextToFormula("G(X(&(p,q)))")

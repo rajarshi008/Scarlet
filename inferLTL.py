@@ -6,7 +6,7 @@ import time
 import heapq as hq
 import logging
 import csv
-from decisionTree import DTlearner
+from decisionTree import DTlearner, DecisionTree
 '''
 Possible clean-ups:
 - upperbound can be class variable in iSubTrace 
@@ -77,7 +77,7 @@ def iteration_seq(max_len, max_width):
 	patterns of length l and width w
 
 	Example:
-	TO DO 
+	TO DO
 	'''
 	seq=[]
 	min_val = max_len+max_width
@@ -109,7 +109,17 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 	if last:
 		alphabet.append('L')
 	
-	upper_bound = 4*s.max_positive_length
+	if sample.is_words:
+		absolute_upper_bound = (2*s.max_positive_length + s.max_positive_length - 1)*s.num_positives - 1
+	else:
+		absolute_upper_bound = (2*s.max_positive_length*len(alphabet) + s.max_positive_length - 1)*s.num_positives - 1
+
+	reasonable_upper_bound = 50 # What should be this value?
+
+	upper_bound = min(absolute_upper_bound, reasonable_upper_bound)
+
+	print("Absolute upper bound", absolute_upper_bound)
+	print("Reasonable upper bound", reasonable_upper_bound)
 	# set of methods for Boolean set cover
 	max_len = s.max_positive_length
 	if sample.is_words:
@@ -228,8 +238,12 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 		logging.warning("Final formula found %s"%covering_formula.prettyPrint())
 		logging.warning("Time taken is: "+ str(round(time_elapsed,3))+ " secs") 
 		#return covering_formula
+	
+	if isinstance(covering_formula, DecisionTree):
+		ver = sample.isFormulaConsistent(covering_formula.convert2LTL())
+	else:
+		ver = sample.isFormulaConsistent(covering_formula)
 
-	ver = sample.isFormulaConsistent(covering_formula)
 	if not ver:
 		logging.error("Inferred formula is inconsistent, please report to the authors")
 		return

@@ -88,7 +88,7 @@ class BooleanSetCover:
 						
 						new_formula = merge('&', current_formula, formula)
 						#print(current_formula, formula, new_formula, '&')
-						new_formula.size = current_formula.size + formula.size + 1
+						new_formula.size = new_formula.treeSize()
 						if new_formula.size <= upper_bound:
 							if new_formula not in self.formula_dict:
 								self.formula_dict[new_formula] = (self.formula_dict[formula][0].intersection(self.formula_dict[current_formula][0]), self.formula_dict[formula][1].intersection(self.formula_dict[current_formula][1]))
@@ -100,7 +100,7 @@ class BooleanSetCover:
 						# to make the disjunction smaller
 						new_formula = merge('|', current_formula, formula)
 						#print(current_formula, formula, new_formula, '|')
-						new_formula.size = current_formula.size + formula.size + 1
+						new_formula.size = new_formula.treeSize()
 						if new_formula.size <= upper_bound:
 							if new_formula not in self.formula_dict:
 								

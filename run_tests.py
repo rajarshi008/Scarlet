@@ -8,7 +8,7 @@ import multiprocessing
 
 logging_levels = {0:logging.WARNING, 1:logging.INFO, 2:logging.DEBUG}
 
-def run_test(input_file='./dummy.trace', timeout=900, outputcsv='./result.csv', method='DT'):
+def run_test(input_file='./dummy.trace', timeout=900, outputcsv='./result.csv', method='SC'):
 
 	#print(input_file, timeout, outputcsv)
 	parser = argparse.ArgumentParser()
@@ -25,12 +25,10 @@ def run_test(input_file='./dummy.trace', timeout=900, outputcsv='./result.csv', 
 	timeout = float(args.timeout)
 	verbosity = 2
 	method = args.method
-	print(method)
 	csvname = args.csvname
 
 
 	logging.basicConfig(format='%(message)s', level=logging_levels[verbosity])
-
 	sample = Sample(positive=[],negative=[])
 	sample.readFromFile(input_file)
 	operators = sample.operators
@@ -41,7 +39,6 @@ def run_test(input_file='./dummy.trace', timeout=900, outputcsv='./result.csv', 
 	else:
 		logging.info('Operators used: %s'%','.join(operators))
 					
-	
 	#Starting timeout
 	p = multiprocessing.Process(target=inferLTL, args=(sample, csvname, operators, method))
 	p.start()
@@ -51,4 +48,4 @@ def run_test(input_file='./dummy.trace', timeout=900, outputcsv='./result.csv', 
 		p.terminate()
 		p.join()	
 	
-run_test()
+run_test(input_file='dummy.trace', method='DT')

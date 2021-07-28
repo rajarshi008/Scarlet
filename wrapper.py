@@ -55,8 +55,8 @@ def compile(benchmark_folder):
 
 def main():
 
-	timeout = 900
-	benchmark_folder = '14Jul-meet/TracesFiles'
+	timeout = 300
+	benchmark_folder = 'third-check/TracesFiles'
 	method = 'DT'
 
 	parser = argparse.ArgumentParser()
