@@ -1,0 +1,31 @@
+File Name
+29Jul-check/TracesFiles/f:7-nw:50-ml:3.trace,0.074,5,((F p) | (X q)),0.142,5,((F p) | (X q)),1
+29Jul-check/TracesFiles/f:7-nw:100-ml:3.trace,0.15,5,((F p) | (X q)),0.268,5,((F p) | (X q)),1
+29Jul-check/TracesFiles/f:6-nw:50-ml:3.trace,0.07,2,(F p),0.073,2,(F p),1
+29Jul-check/TracesFiles/f:10-nw:100-ml:3.trace,1.161,20,(((((F (X (X p))) & (F (X q))) | (X q)) & (F p)) | (F (p & (X q))))
+29Jul-check/TracesFiles/f:5-nw:50-ml:3.trace,0.58,9,((F (p & (F q))) | (G (! p))),2.639,9,((F (p & (F q))) | (G (! p))),1
+29Jul-check/TracesFiles/f:1-nw:100-ml:3.trace,0.147,3,(G (! p)),0.152,3,(G (! p)),1
+29Jul-check/TracesFiles/f:10-nw:20-ml:3.trace,0.043,7,((F (X q)) & (F (X p))),0.249,7,((F (X q)) & (F (X p))),1
+29Jul-check/TracesFiles/f:4-nw:50-ml:3.trace,0.57,7,(G ((! q) | (G (! p)))),0.738,7,(G ((! q) | (G (! p)))),1
+29Jul-check/TracesFiles/f:2-nw:50-ml:3.trace,0.626,11,(((X q) & (F p)) | (X (q & (X r)))),16.113,11,(((X q) & (F p)) | (X (q & (X r)))),1
+29Jul-check/TracesFiles/f:6-nw:100-ml:3.trace,0.15,2,(F p),0.153,2,(F p),1
+29Jul-check/TracesFiles/f:3-nw:50-ml:3.trace,0.81,22,(((((G (! q)) | q) | (G (! p))) | ((! p) & (X q))) | (G ((! p) | (G q)))),1.155,21,(((((G (! q)) | q) | (G (! p))) | ((! p) & (X q))) | (G ((! p) | q))),12.676,18,(((G ((! p) | (G (q | (G (! q)))))) | q) | ((! p) & (X q))),17.281,17,(((G (((! p) | q) | (G (! q)))) | q) | ((! p) & (X q)))
+29Jul-check/TracesFiles/f:8-nw:20-ml:3.trace,7.424,13,(X (X (q & (G (r | (G (p | (G (! r))))))))),8.759,12,(X (X (q & (G ((p | r) | (G (! r))))))),21.023,12,(X (X (q & (G ((p | r) | (G (! r))))))),1
+29Jul-check/TracesFiles/f:1-nw:50-ml:3.trace,0.071,3,(G (! p)),0.076,3,(G (! p)),1
+29Jul-check/TracesFiles/f:9-nw:20-ml:3.trace,0.046,8,((X (q | (X q))) & (F p)),0.588,8,((X (q | (X q))) & (F p)),1
+29Jul-check/TracesFiles/f:5-nw:100-ml:3.trace,1.069,9,((F (p & (F q))) | (G (! p))),5.204,9,((F (p & (F q))) | (G (! p))),1
+29Jul-check/TracesFiles/f:5-nw:20-ml:3.trace,0.294,9,((F (p & (F q))) | (G (! p))),1.247,9,((F (p & (F q))) | (G (! p))),1
+29Jul-check/TracesFiles/f:10-nw:50-ml:3.trace,0.083,7,((F (X q)) & (F (X p))),0.454,7,((F (X q)) & (F (X p))),1
+29Jul-check/TracesFiles/f:4-nw:20-ml:3.trace,0.244,7,(G ((! q) | (G (! p)))),0.31,7,(G ((! q) | (G (! p)))),1
+29Jul-check/TracesFiles/f:7-nw:20-ml:3.trace,0.036,5,((F p) | (X q)),0.07,5,((F p) | (X q)),1
+29Jul-check/TracesFiles/f:8-nw:100-ml:3.trace
+29Jul-check/TracesFiles/f:6-nw:20-ml:3.trace,0.032,2,(F p),0.034,2,(F p),1
+29Jul-check/TracesFiles/f:3-nw:100-ml:3.trace,1.361,22,(((((G (! q)) | q) | (G (! p))) | ((! p) & (X q))) | (G ((! p) | (G q)))),1.658,21,(((((G (! q)) | q) | (G (! p))) | ((! p) & (X q))) | (G ((! p) | q))),19.57,18,(((G ((! p) | (G (q | (G (! q)))))) | q) | ((! p) & (X q))),25.779,11,((G (((! p) | q) | (G (! q)))) | q),42.31,11,((G (((! p) | q) | (G (! q)))) | q),1
+29Jul-check/TracesFiles/f:8-nw:50-ml:3.trace
+29Jul-check/TracesFiles/f:4-nw:100-ml:3.trace,1.01,7,(G ((! q) | (G (! p)))),1.294,7,(G ((! q) | (G (! p)))),1
+29Jul-check/TracesFiles/f:1-nw:20-ml:3.trace,0.033,3,(G (! p)),0.037,3,(G (! p)),1
+29Jul-check/TracesFiles/f:9-nw:50-ml:3.trace,0.097,12,(((X (q | (X q))) & (F p)) | (X (X q))),0.616,8,(X ((X q) | (q & (F p)))),1.446,8,(X ((X q) | (q & (F p)))),1
+29Jul-check/TracesFiles/f:2-nw:20-ml:3.trace,0.061,14,((X ((X r) & q)) | ((X ((G q) | q)) & (F p))),0.357,11,(((X q) & (F p)) | (X (q & (X r)))),7.445,11,(((X q) & (F p)) | (X (q & (X r)))),1
+29Jul-check/TracesFiles/f:2-nw:100-ml:3.trace,1.126,11,(((X q) & (F p)) | (X (q & (X r)))),27.745,11,(((X q) & (F p)) | (X (q & (X r)))),1
+29Jul-check/TracesFiles/f:9-nw:100-ml:3.trace,1.109,17,((((X ((X q) | q)) & (F p)) | (X (X (G q)))) | (X (X q)))
+29Jul-check/TracesFiles/f:3-nw:20-ml:3.trace,0.051,11,(((X (X (G (! q)))) | q) | (G (! p))),6.976,11,(((X (X (G (! q)))) | q) | (G (! p))),1
