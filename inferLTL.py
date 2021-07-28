@@ -234,11 +234,11 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 			time_elapsed = round(time.time() - time_counter,3)
 			with open(csvname, 'a+') as csvfile:
 				writer = csv.writer(csvfile)
-				writer.writerow([time_elapsed, covering_formula.size, covering_formula.prettyPrint()])
+				writer.writerow([time_elapsed, covering_formula.size, covering_formula.prettyPrint(), 1])
 		logging.warning("Final formula found %s"%covering_formula.prettyPrint())
 		logging.warning("Time taken is: "+ str(round(time_elapsed,3))+ " secs") 
 		#return covering_formula
-	
+
 	if isinstance(covering_formula, DecisionTree):
 		ver = sample.isFormulaConsistent(covering_formula.convert2LTL())
 	else:
