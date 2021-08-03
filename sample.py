@@ -308,7 +308,7 @@ class Sample:
 		return True
 
 	def random_trace(self, 
-		alphabet = ['p','q','r'], 
+		alphabet = ['a','b','c','d'], 
 		length = 5,
 		is_words = True):
 
@@ -476,13 +476,11 @@ class Sample:
 		filename='generated.words', 
 		num_traces=(5,5), 
 		length_traces=None, 
-		alphabet = ['p','q','r'], 
-		length_range=(5,15), 
-		is_words=True, 
+		alphabet = ['p'], 
+		length_range=(5,15),
+		is_words=True,
 		operators=['G', 'F', '!', 'U', '&','|', 'X']):
 
-
-		print("ETA hochhe")
 		total_num_positives = num_traces[0]
 		total_num_negatives = num_traces[1]
 		ver = True

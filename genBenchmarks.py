@@ -47,6 +47,7 @@ def generateBenchmarks(formula_file, trace_type, sample_sizes, trace_lengths, op
 		formula_num=0
 		for line in file:
 			formula = Formula.convertTextToFormula(line)
+			print(formula)
 			formula_num+=1
 			print('---------------Generating Benchmarks for formula %s---------------'%formula.prettyPrint())
 			for size in sample_sizes:
@@ -87,8 +88,8 @@ def main():
 	parser.add_argument('--formula_file', dest='formula_file', default = 'formulas.txt')
 	parser.add_argument('--trace_type', dest='trace_type', default = 'trace')
 	parser.add_argument('--operators', dest='operators', default = ['F', 'G', 'X', '!', '&', '|'], type=list)
-	parser.add_argument('--size', dest='sample_sizes', default=[(20,20),(50,50),(100,100)], nargs='+', type=tupleList)
-	parser.add_argument('--lengths', dest='trace_lengths', default=[(3,4)], nargs='+', type=tupleList)
+	parser.add_argument('--size', dest='sample_sizes', default=[(10000,10000)], nargs='+', type=tupleList)
+	parser.add_argument('--lengths', dest='trace_lengths', default=[(10,10)], nargs='+', type=tupleList)
 	parser.add_argument('--output_folder', dest='output_folder', default = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
 	parser.add_argument('--syslite', dest='syslite', action='store_true', default=True)
 

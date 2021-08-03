@@ -48,4 +48,4 @@ def run_test(input_file='./dummy.trace', timeout=900, outputcsv='./result.csv', 
 		p.terminate()
 		p.join()	
 	
-run_test(input_file='dummy.trace', method='DT')
+run_test(input_file='dummy.trace', method='SC')

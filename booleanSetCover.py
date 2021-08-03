@@ -51,7 +51,7 @@ class BooleanSetCover:
 
 		best_formula_list=[]
 		#get the best 5 formulas currently from the heap with the highest score
-		smallest_list = hq.nsmallest(5,self.heap)
+		smallest_list = hq.nsmallest(10,self.heap)
 		for i in smallest_list:
 			best_formula_list.append((i[1],self.cover_size[i[1]]))
 		
@@ -80,12 +80,11 @@ class BooleanSetCover:
 				
 				# we take "&" and "|" of all existing formulas in the heap with the best formula and check if it is better
 				value={}
-				for (_,formula) in self.heap[1:]:
-
+				for (_,formula) in self.heap:
 					if '&' in self.operators:
 						# could check whether it has a shared prefix of X and G
 						# to make the conjunction smaller
-						
+
 						new_formula = merge('&', current_formula, formula)
 						#print(current_formula, formula, new_formula, '&')
 						new_formula.size = new_formula.treeSize()
@@ -94,6 +93,8 @@ class BooleanSetCover:
 								self.formula_dict[new_formula] = (self.formula_dict[formula][0].intersection(self.formula_dict[current_formula][0]), self.formula_dict[formula][1].intersection(self.formula_dict[current_formula][1]))
 								self.cover_size[new_formula] = len(self.formula_dict[new_formula][0]) - len(self.formula_dict[new_formula][1])+ len(self.negative_set)
 							value[new_formula] = self.score_local(new_formula, current_formula)
+
+
 
 					if '|' in self.operators:
 						# could check whether it has a shared prefix of X and F
@@ -107,7 +108,8 @@ class BooleanSetCover:
 								self.formula_dict[new_formula] = (self.formula_dict[formula][0].union(self.formula_dict[current_formula][0]), self.formula_dict[formula][1].union(self.formula_dict[current_formula][1]))
 								self.cover_size[new_formula] = len(self.formula_dict[new_formula][0]) - len(self.formula_dict[new_formula][1])+ len(self.negative_set)
 							value[new_formula] = self.score_local(new_formula, current_formula)
-							
+						
+					
 				current_value = 0
 				success = True
 				for formula in value.keys():

@@ -1,4 +1,4 @@
-#from ltlf2dfa.parser.ltlf import LTLfParser
+from ltlf2dfa.parser.ltlf import LTLfParser
 from graphviz import Source
 from formulaTree import Formula
 import random
@@ -282,8 +282,6 @@ def atom2letters(atom_string, letter2pos):
 
 
 
-		
-
 def ltl2dfa(formula, letter2pos):
 	# convert formula into formulastring
 	# possiblilties to use the infix or the prefix form
@@ -294,10 +292,9 @@ def ltl2dfa(formula, letter2pos):
 	
 	formula = parser(formula_str)       # returns an LTLfFormula
 
-	d = atom2letters(alphabet = alphabet)
+	#d = atom2letters(alphabet = alphabet)
 	original_dfa = formula.to_dfa() # using atoms
 
-	d = original_dfa
 	return dot2DFA(original_dfa, letter2pos)
 	
 	# create a map from propostitions to the corresponding digits
