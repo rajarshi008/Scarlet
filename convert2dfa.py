@@ -180,17 +180,26 @@ class DFA:
 		word_list = []
 		last_path = [] 
 		prob_dict = {}
+		length_list = list(range(length_range[0], length_range[1]+1))
+		valid_length = []
+		for l in length_list:
+			if self.number_of_words[(self.init_state,l)] != 0:
+				valid_length.append(l)
+		
+		if valid_length == []:
+			raise Exception('Not traces with the given lengths') 
+
 		transition_count = {}
 
+		num=0
 		for num in range(batch_size):
 			
 			rand_word = tuple()
 			state = self.init_state
-			length = random.randint(length_range[0], length_range[1])
+			length = random.choice(valid_length)
 			
 			
 			for i in range(1,length+1):
-				
 				non_sink_transitions = [] #letters which lead to some accepting states
 				prob_list = []
 				count_list = []
@@ -229,14 +238,14 @@ class DFA:
 				
 				
 				prob_list = [(i/sum(prob_list)) for i in prob_list]
-				#print(state, non_sink_transitions, prob_list)
+	
 				next_transition = random.choices(non_sink_transitions, weights=prob_list)[0]
 				transition_count[next_transition] += 1
 				#print("Count", transition_count)
 				state = next_transition[2]
 				rand_word+=(next_transition[1],)
 			
-			word_list.append(rand_word)		
+			word_list.append(rand_word)	
 
 		return word_list
 
@@ -290,7 +299,7 @@ def ltl2dfa(formula, letter2pos):
 
 	parser = LTLfParser()
 	
-	formula = parser(formula_str)       # returns an LTLfFormula
+	formula = parser(formula_str) # returns an LTLfFormula
 
 	#d = atom2letters(alphabet = alphabet)
 	original_dfa = formula.to_dfa() # using atoms

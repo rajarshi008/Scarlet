@@ -280,8 +280,6 @@ class Sample:
 		if mode != 3:		
 				self.extract_alphabet(self.is_words)
 		
-
-		self.alphabet.sort()
 		self.letter2pos={}
 		for i in range(len(self.alphabet)):
 			self.letter2pos[self.alphabet[i]]=i
@@ -308,7 +306,7 @@ class Sample:
 		return True
 
 	def random_trace(self, 
-		alphabet = ['a','b','c','d'], 
+		alphabet = ['p','q','r'], 
 		length = 5,
 		is_words = True):
 
@@ -476,7 +474,7 @@ class Sample:
 		filename='generated.words', 
 		num_traces=(5,5), 
 		length_traces=None, 
-		alphabet = ['p'], 
+		alphabet = ['p','q','r'], 
 		length_range=(5,15),
 		is_words=True,
 		operators=['G', 'F', '!', 'U', '&','|', 'X']):

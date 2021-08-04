@@ -31,6 +31,7 @@ def run_test(input_file='./dummy.trace', timeout=900, outputcsv='./result.csv', 
 	logging.basicConfig(format='%(message)s', level=logging_levels[verbosity])
 	sample = Sample(positive=[],negative=[])
 	sample.readFromFile(input_file)
+	print(sample.alphabet)
 	operators = sample.operators
 
 	if operators==[]:
@@ -48,4 +49,4 @@ def run_test(input_file='./dummy.trace', timeout=900, outputcsv='./result.csv', 
 		p.terminate()
 		p.join()	
 	
-run_test(input_file='dummy.trace', method='SC')
+run_test(input_file='dummy.words', method='SC')

@@ -30,7 +30,7 @@ def genSysliteTraces(input_file, output_file):
  	f.writelines(allLines)
 
 
-def generateBenchmarks(formula_file, trace_type, sample_sizes, trace_lengths, operators, output_folder = '.', syslite=False):
+def generateBenchmarks(formula_file, trace_type, sample_sizes, trace_lengths, operators, output_folder = '.', syslite=False, gen_method='dfa_method'):
 
 	traces_folder = output_folder+'/TracesFiles/' 
 	os.makedirs(traces_folder)
@@ -46,8 +46,12 @@ def generateBenchmarks(formula_file, trace_type, sample_sizes, trace_lengths, op
 	with open(formula_file, 'r') as file:
 		formula_num=0
 		for line in file:
-			formula = Formula.convertTextToFormula(line)
-			print(formula)
+			formula_text, alphabet = line.split(';')
+			alphabet = alphabet.split(',')
+			alphabet[-1] = alphabet[-1].rstrip('\n')
+			print(alphabet)
+			formula = Formula.convertTextToFormula(formula_text)
+	
 			formula_num+=1
 			print('---------------Generating Benchmarks for formula %s---------------'%formula.prettyPrint())
 			for size in sample_sizes:
@@ -58,11 +62,26 @@ def generateBenchmarks(formula_file, trace_type, sample_sizes, trace_lengths, op
 						
 						if trace_type == 'words':
 							word_file = words_folder+'f:'+ str(formula_num)+'-'+ 'nw:'+str(size)+'-'+ 'ml:'+str(length_mean)+'.words'
-							sample.generator_dfa_in_batch(formula=formula, length_range=length_range, num_traces=size, filename=word_file, is_words=(trace_type=='words'), operators=operators)
+							if gen_method=='dfa_method':
+								sample.generator_dfa_in_batch(formula=formula, length_range=length_range, num_traces=size, alphabet=alphabet, filename=word_file, is_words=(trace_type=='words'), operators=operators)
 							# sample.generator(formula=formula, length_range=length_range, num_traces=size, filename=word_file, is_word=(trace_type=='words'))
+							elif gen_method=='random':
+								sample.generator(formula=formula, length_range=length_range, num_traces=size, alphabet=alphabet, filename=word_file, is_words=(trace_type=='words'), operators=operators)
+							elif gen_method=='random_walk':
+								sample.generator_random_walk(formula=formula, length_range=length_range, num_traces=size, alphabet=alphabet, filename=word_file, is_words=(trace_type=='words'), operators=operators)
+
+
 							convertFileType(wordfile=word_file, tracefile=trace_file, operators=operators)
 						else:
-							sample.generator_dfa_in_batch(formula=formula, length_range=length_range, num_traces=size, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
+
+							if gen_method=='dfa_method':
+								sample.generator_dfa_in_batch(formula=formula, length_range=length_range, num_traces=size, alphabet=alphabet, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
+							elif gen_method=='random':
+								sample.generator(formula=formula, length_range=length_range, num_traces=size, alphabet=alphabet, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
+							elif gen_method=='random_walk':
+								sample.generator_random_walk(formula=formula, length_range=length_range, num_traces=size, alphabet=alphabet, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
+							
+
 							# sample.generator(formula=formula, length_range=length_range, num_traces=size, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
 
 
@@ -85,13 +104,14 @@ def main():
 
 	parser = argparse.ArgumentParser()
 
-	parser.add_argument('--formula_file', dest='formula_file', default = 'formulas.txt')
+	parser.add_argument('--formula_file', dest='formula_file', default = 'flie_formulas.txt')
 	parser.add_argument('--trace_type', dest='trace_type', default = 'trace')
 	parser.add_argument('--operators', dest='operators', default = ['F', 'G', 'X', '!', '&', '|'], type=list)
-	parser.add_argument('--size', dest='sample_sizes', default=[(10000,10000)], nargs='+', type=tupleList)
-	parser.add_argument('--lengths', dest='trace_lengths', default=[(10,10)], nargs='+', type=tupleList)
+	parser.add_argument('--size', dest='sample_sizes', default=[(20,20),(50,50),(100,100),(200,200)], nargs='+', type=tupleList)
+	parser.add_argument('--lengths', dest='trace_lengths', default=[(6,8),(8,10),(10,12)], nargs='+', type=tupleList)
 	parser.add_argument('--output_folder', dest='output_folder', default = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
 	parser.add_argument('--syslite', dest='syslite', action='store_true', default=True)
+	parser.add_argument('--generation_method', dest='gen_method', default='dfa_method')
 
 	args,unknown = parser.parse_known_args()
 
@@ -102,7 +122,7 @@ def main():
 	output_folder = args.output_folder
 	syslite = bool(args.syslite)
 	operators = list(args.operators)
-	print(sample_sizes, trace_lengths)
+	gen_method = args.gen_method
 
 	#For generating a fresh set of benchmarks
 	if os.path.exists(output_folder):
@@ -110,7 +130,7 @@ def main():
 
 	os.makedirs(output_folder)
 	shutil.copyfile(formula_file, output_folder+'/'+formula_file)
-	generateBenchmarks(formula_file, trace_type, sample_sizes, trace_lengths, operators, output_folder, syslite)
+	generateBenchmarks(formula_file, trace_type, sample_sizes, trace_lengths, operators, output_folder, syslite, gen_method)
 
  
 if __name__=='__main__':
