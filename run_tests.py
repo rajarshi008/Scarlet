@@ -47,6 +47,6 @@ def run_test(input_file='./dummy.trace', timeout=900, outputcsv='./result.csv', 
 	if p.is_alive():
 		logging.debug("Timeout reached, check your output in results folder")
 		p.terminate()
-		p.join()	
+		p.join()
 	
-run_test(input_file='dummy.words', method='SC')
+run_test(input_file='dummy.trace', method='SC')

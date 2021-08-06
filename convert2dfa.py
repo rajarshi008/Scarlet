@@ -34,7 +34,7 @@ class DFA:
 		d = DFA(self.init_state, comp_final_states, dict(self.transitions))
 		return d
 
-	def show(self):
+	def show(self, filename="test.gv"):
 		'''
 		Produces an image of the DFA
 		'''
@@ -56,8 +56,8 @@ class DFA:
 			for letter in tran.keys():
 				dot_str += ('{} -> {}[label="{}"]\n'.format(s1, tran[letter], letter))
 		dot_str += ("}\n")
-
-		s = Source(dot_str, filename="test.gv", format="png")
+		
+		s = Source(dot_str, filename=filename, format="png")
 		s.view()
 		
 

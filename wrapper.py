@@ -55,7 +55,7 @@ def compile(benchmark_folder):
 
 def main():
 
-	timeout = 300
+	timeout = 200
 	benchmark_folder = 'third-check/TracesFiles'
 	method = 'DT'
 

@@ -46,20 +46,23 @@ class DecisionTree:
 				left_id = 2*curr_id 
 				tree_queue.insert(0,(curr_tree.left,left_id))
 				tree_id[left_id] = curr_tree.left
-				edges.append((curr_id,left_id))
+				edges.append((curr_id,left_id,0))
 			
 			if curr_tree.right != None:
 				right_id = 2*curr_id+1
 				tree_queue.insert(0,(curr_tree.right, right_id))
 				tree_id[right_id] = curr_tree.right
-				edges.append((curr_id,right_id))
+				edges.append((curr_id,right_id,1))
 
 		dot_str =  "digraph g {\n"
 
 		for i in tree_id:
 			dot_str += ('{} [label="{}"]\n'.format(i, tree_id[i].label))
 		for edge in edges:
-			dot_str += ('{} -> {}\n'.format(edge[0],edge[1]))
+			if edge[2]:
+				dot_str += ('{} -> {}\n [style= {}]'.format(edge[0],edge[1],'dashed'))
+			else:
+				dot_str += ('{} -> {}\n [style= {}]'.format(edge[0],edge[1],'solid'))
 
 		dot_str += ("}\n")
 		
@@ -106,6 +109,13 @@ class DecisionTree:
 			final_formula = first_disjunct
 
 		return final_formula
+
+	def __eq__(self, other):
+		if other == None:
+			return False
+		else:
+			return self.label == other.label and self.left == other.left and self.right == other.right
+
 
 	def prettyPrint(self):
 		return self.convert2LTL().prettyPrint()
