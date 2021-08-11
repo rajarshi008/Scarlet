@@ -146,10 +146,14 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 	
 	covering_formula = None
 	setcover_time = 0
-	#print(max_len, max_width,seq)
+	
+	f1= Formula.convertTextToFormula('F(&(p,q))')
+	f2= Formula.convertTextToFormula('F(&(r,s))')
+	
 	for (length, width) in seq:
 		logging.info("-------------Finding from length %d and width %d isubtraces-------------"%(length,width))
 		time1 = time.time()
+		
 		if width>upper_bound:
 			break
 
@@ -170,6 +174,8 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 		# letter = (X^10 (a and F b) AND sub2)
 		# letter2 = X^10 (a and F b) OR sub3
 
+		s.preComputeInd_next(width)
+
 		cover_set = s.coverSet(length, width, upper_bound)
 		if cover_set=={}:
 			continue
@@ -184,6 +190,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 
 			formula = isubTrace2Formula(isubtrace)
 			#Is the formula equivalent to some existing formula? if yes, ignore it.
+
 			if isubtrace[0]!='!':
 				formula.size = s.len_isubtrace[(isubtrace,False)]
 			else:
@@ -196,6 +203,12 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 				boolcomb.score[formula] = (len(pos_friend_set) - len(neg_friend_set) + len(negative_set))
 				#print(isubtrace, formula, len(pos_friend_set),len(neg_friend_set),len(negative_set), setcover.score[formula] )
 				boolcomb.cover_size[formula]  = len(pos_friend_set) - len(neg_friend_set) + len(negative_set)
+
+				if formula == f1:
+					print(f1.prettyPrint(), boolcomb.cover_size[formula])
+				if formula == f2:
+					print(f2.prettyPrint(), boolcomb.cover_size[formula])
+
 				hq.heappush(boolcomb.heap, (-boolcomb.score[formula], formula))
 			
 			if method =="DT":
@@ -249,3 +262,5 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 		return
 	else:
 		logging.debug("Inferred formula is correct")
+
+	return covering_formula

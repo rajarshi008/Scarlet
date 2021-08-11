@@ -51,7 +51,7 @@ class BooleanSetCover:
 
 		best_formula_list=[]
 		#get the best 5 formulas currently from the heap with the highest score
-		smallest_list = hq.nsmallest(10,self.heap)
+		smallest_list = hq.nsmallest(5,self.heap)
 		for i in smallest_list:
 			best_formula_list.append((i[1],self.cover_size[i[1]]))
 		

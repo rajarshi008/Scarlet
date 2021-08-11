@@ -96,8 +96,8 @@ class iSubTrace:
 
 		#Precomputing the Ind_table for atoms of all possible widths
 		
-		width = len(self.sample.positive[0].vector[0]) if not self.sample.is_words else 1
-		self.preComputeInd(width+1)
+		#width = len(self.sample.positive[0].vector[0]) if not self.sample.is_words else 1
+		self.preComputeInd_init()
  
 	#Calculates length of an atom both with inv true and false
 	def len_atom(self, atom: tuple, inv: bool)->int:
@@ -243,36 +243,34 @@ class iSubTrace:
 
 
 	#precomputing the ind_table
-	def preComputeInd(self, width: int):
+	def preComputeInd_init(self):
 
-		all_atoms={i: set() for i in range(1,width+1)}
+		self.all_atoms = {1: set()}
 		#print(width)
 		if self.neg:
 			for trace in self.sample.positive+self.sample.negative:
 				for letter in trace.vector:	
-					for i in range(1,width+1):
-						all_atoms[i]= all_atoms[i].union(set(self.letter2atoms(letter, i, True)))
-						if self.last:
-							all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('+-1',), self.letter2atoms(letter, i-1, True))))
-							all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('--1',), self.letter2atoms(letter, i-1, True))))
+				
+					self.all_atoms[1]= self.all_atoms[1].union(set(self.letter2atoms(letter, 1, True)))
+					if self.last:
+						self.all_atoms[1]= self.all_atoms[1].union(set(map(lambda x: x+('+-1',), self.letter2atoms(letter, 0, True))))
+						self.all_atoms[1]= self.all_atoms[1].union(set(map(lambda x: x+('--1',), self.letter2atoms(letter, 0, True))))
 		else:
 			for trace in self.sample.positive:
 				for letter in trace.vector:	
-					for i in range(1,width+1):
-						all_atoms[i]= all_atoms[i].union(set(self.letter2atoms(letter, i, True)))
-						if self.last:
-							all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('+-1',), self.letter2atoms(letter, i-1, True))))
-							all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('--1',), self.letter2atoms(letter, i-1, True))))
+					self.all_atoms[1] = self.all_atoms[1].union(set(self.letter2atoms(letter, 1, False)))
+					if self.last:
+						self.all_atoms[1]= self.all_atoms[1].union(set(map(lambda x: x+('+-1',), self.letter2atoms(letter, 0, False))))	
+						#self.all_atoms[i]= self.all_atoms[i].union(set(map(lambda x: x+('--1',), self.letter2atoms(letter, i-1, True))))
 
 			for trace in self.sample.negative:
 				for letter in trace.vector:	
-					for i in range(1,width+1):
-						all_atoms[i]= all_atoms[i].union(set(self.letter2atoms(letter, i, False)))
-						if self.last:
-							all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('+-1',), self.letter2atoms(letter, i-1, False))))
-							all_atoms[i]= all_atoms[i].union(set(map(lambda x: x+('--1',), self.letter2atoms(letter, i-1, False))))
+					self.all_atoms[1]= self.all_atoms[1].union(set(self.letter2atoms(letter, 1, True)))
+					if self.last:
+						#self.all_atoms[i]= self.all_atoms[i].union(set(map(lambda x: x+('+-1',), self.letter2atoms(letter, i-1, False))))
+						self.all_atoms[1]= self.all_atoms[1].union(set(map(lambda x: x+('--1',), self.letter2atoms(letter, 0, True))))
 
-		for word_vec in self.sample.positive+ self.sample.negative:
+		for word_vec in self.sample.positive + self.sample.negative:
 				
 				word=word_vec.vector_str
 
@@ -287,7 +285,7 @@ class iSubTrace:
 				for pos in range(len(word_vec)-1, -1, -1):
 					self.ind_table[(word, pos, ('--1',))] = list(range(pos,len(word_vec)-1))
 
-				for atom in all_atoms[1]:
+				for atom in self.all_atoms[1]:
 					self.ind_table[(word, inf_pos, atom)]=[]
 					self.ind_table[(word, len(word_vec), atom)]=[]
 					for pos in range(len(word_vec)-1,-1,-1):
@@ -298,17 +296,51 @@ class iSubTrace:
 							else:
 								self.ind_table[(word, pos, atom)]=self.ind_table[(word, pos+1, atom)]
 
-				if width>1:				
-					for i in range(2,width+1):
-						for atom in all_atoms[i]:
-							self.ind_table[(word, inf_pos, atom)]=[]
-							self.ind_table[(word, len(word_vec), atom)]=[]
-							for pos in range(len(word_vec)):
-								set1=set(self.ind_table[(word,pos,(atom[0],))])
-								for j in atom[1:]:
-									set1=set1.intersection(set(self.ind_table[(word,pos,(j,))]))
+				
+	
+	def preComputeInd_next(self, width: int):
+		try:
+			self.all_atoms[width]
+			return
+		except:
+			self.all_atoms[width] = set()
+			if self.neg:
+				for trace in self.sample.positive+self.sample.negative:
+					for letter in trace.vector:	
+					
+						self.all_atoms[width]= self.all_atoms[width].union(set(self.letter2atoms(letter, width, True)))
+						if self.last:
+							self.all_atoms[width]= self.all_atoms[width].union(set(map(lambda x: x+('+-1',), self.letter2atoms(letter, width-1, True))))
+							self.all_atoms[width]= self.all_atoms[width].union(set(map(lambda x: x+('--1',), self.letter2atoms(letter, width-1, True))))
+			else:
+				for trace in self.sample.positive:
+					for letter in trace.vector:	
+						self.all_atoms[width] = self.all_atoms[width].union(set(self.letter2atoms(letter, width, False)))
+						if self.last:
+							self.all_atoms[width]= self.all_atoms[width].union(set(map(lambda x: x+('+-1',), self.letter2atoms(letter, width-1, False))))
+							#self.all_atoms[i]= self.all_atoms[i].union(set(map(lambda x: x+('--1',), self.letter2atoms(letter, i-1, True))))
 
-								self.ind_table[(word, pos, atom)]=list(set1)
+				for trace in self.sample.negative:
+					for letter in trace.vector:	
+						
+						self.all_atoms[width]= self.all_atoms[width].union(set(self.letter2atoms(letter, width, True)))
+						if self.last:
+							#self.all_atoms[i]= self.all_atoms[i].union(set(map(lambda x: x+('+-1',), self.letter2atoms(letter, i-1, False))))
+							self.all_atoms[width]= self.all_atoms[width].union(set(map(lambda x: x+('--1',), self.letter2atoms(letter, width-1, True))))
+
+			for word_vec in self.sample.positive + self.sample.negative:
+				
+				word=word_vec.vector_str	
+			
+				for atom in self.all_atoms[width]:
+					self.ind_table[(word, inf_pos, atom)]=[]
+					self.ind_table[(word, len(word_vec), atom)]=[]
+					for pos in range(len(word_vec)):
+						set1=set(self.ind_table[(word,pos,(atom[0],))])
+						for j in atom[1:]:
+							set1=set1.intersection(set(self.ind_table[(word,pos,(j,))]))
+
+						self.ind_table[(word, pos, atom)]=list(set1)
 
 
 	def add2isubtrace(self, isubtrace1:tuple, isubtrace2:tuple, inv: bool, upper_bound: int):
