@@ -88,9 +88,9 @@ def generateBenchmarks(formula_file, trace_type, sample_sizes, trace_lengths, op
 						if sample.isFormulaConsistent(formula):
 							print("Formula is consistent with sample")
 
-						#if syslite:
-						#	syslite_file = syslite_folder +'f:'+str(formula_num)+'-'+ 'nw:'+str((size[0]+size[1])//2)+'-'+'ml:'+str(length_mean)+'.trace'
-						#	genSysliteTraces(trace_file, syslite_file)
+						if syslite:
+							syslite_file = syslite_folder +'f:'+str(formula_num)+'-'+ 'nw:'+str((size[0]+size[1])//2)+'-'+'ml:'+str(length_mean)+'.trace'
+							genSysliteTraces(trace_file, syslite_file)
 
 #Data type for parser
 def tupleList(s):
@@ -107,8 +107,8 @@ def main():
 	parser.add_argument('--formula_file', dest='formula_file', default = 'formulas.txt')
 	parser.add_argument('--trace_type', dest='trace_type', default = 'trace')
 	parser.add_argument('--operators', dest='operators', default = ['F', 'G', 'X', '!', '&', '|'], type=list)
-	parser.add_argument('--size', dest='sample_sizes', default=[(100,100)], nargs='+', type=tupleList)
-	parser.add_argument('--lengths', dest='trace_lengths', default=[(10,12)], nargs='+', type=tupleList)
+	parser.add_argument('--size', dest='sample_sizes', default=[(10,10),(50,50),(100,100),(200,200),(500,500)], nargs='+', type=tupleList)
+	parser.add_argument('--lengths', dest='trace_lengths', default=[(6,8),(8,10),(10,12)], nargs='+', type=tupleList)
 	parser.add_argument('--output_folder', dest='output_folder', default = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
 	parser.add_argument('--syslite', dest='syslite', action='store_true', default=True)
 	parser.add_argument('--generation_method', dest='gen_method', default='dfa_method')

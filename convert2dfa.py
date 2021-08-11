@@ -131,8 +131,6 @@ class DFA:
 				self.number_of_words.update({(state, i):0 for state in self.states})
 				for state in self.states:
 					for letter in self.alphabet:
-						#print(letter, state)
-						#print(self.transitions[state][letter])
 						next_state = self.transitions[state][letter]
 						self.number_of_words[(state, i)] += self.number_of_words[(next_state, i-1)]
 
@@ -174,8 +172,8 @@ class DFA:
 
 		epsilon = 0.01
 		
-		if self.calculated_till < length_range[1]:
-			self.generate_num_accepting_words(length_range[1])
+		#if self.calculated_till < length_range[1]:
+		#	self.generate_num_accepting_words(length_range[1])
 
 		word_list = []
 		last_path = [] 
@@ -185,9 +183,9 @@ class DFA:
 		for l in length_list:
 			if self.number_of_words[(self.init_state,l)] != 0:
 				valid_length.append(l)
-		
+
 		if valid_length == []:
-			raise Exception('Not traces with the given lengths') 
+			raise Exception('No traces with the given lengths') 
 
 		transition_count = {}
 
@@ -290,6 +288,73 @@ def atom2letters(atom_string, letter2pos):
 	return list(all_letter_list)
 
 
+def atom2letters_new(atom_string, letter2pos):
+
+	
+	alphabet = list(letter2pos.keys())
+	
+	all_letters = set([tuple()])
+	for atom in alphabet:
+		new_all_letters = {letter+(0,) for letter in all_letters}			
+		new_all_letters = new_all_letters.union({letter+(1,) for letter in all_letters})
+		all_letters = new_all_letters
+
+	if atom_string == 'true':
+		
+		return all_letters
+
+	if atom_string == 'false':
+
+		no_letters = []
+		return no_letters
+
+	parser = LTLfParser()
+	atom_formula = parser(atom_string)
+	t = (atomformula2letters(atom_formula, letter2pos, all_letters))
+	return t
+
+
+def atomformula2letters(atom_formula, letter2pos, all_letters):
+
+	try:
+		op = atom_formula.operator_symbol
+		if op == '&':
+			letter_set = all_letters
+			for child_atom in atom_formula.formulas:
+				l = atomformula2letters(child_atom, letter2pos, all_letters)
+				letter_set = letter_set.intersection(l)
+			
+
+		elif op == '|':
+			letter_set = set()
+			for child_atom in atom_formula.formulas:
+				l = atomformula2letters(child_atom, letter2pos, all_letters)
+				letter_set = letter_set.union(l)
+
+		
+		elif op == '!':
+			child_atom = atom_formula.f
+			l = atomformula2letters(child_atom, letter2pos, all_letters)
+			letter_set = all_letters.difference(l)
+			
+
+	except:
+		alphabet = list(letter2pos.keys())
+		atom_list = atom_formula.find_labels()
+		assert(len(atom_list)==1)
+		letter_set = set([tuple()])
+		for atom in alphabet:
+			new_letter_set = set()
+			if atom in atom_list:
+				new_letter_set = new_letter_set.union({letter+(1,) for letter in letter_set})
+			else:
+				new_letter_set = new_letter_set.union({letter+(0,) for letter in letter_set})			
+				new_letter_set = new_letter_set.union({letter+(1,) for letter in letter_set})
+			letter_set = new_letter_set
+
+	return letter_set
+
+
 
 def ltl2dfa(formula, letter2pos):
 	# convert formula into formulastring
@@ -303,7 +368,6 @@ def ltl2dfa(formula, letter2pos):
 
 	#d = atom2letters(alphabet = alphabet)
 	original_dfa = formula.to_dfa() # using atoms
-
 	return dot2DFA(original_dfa, letter2pos)
 	
 	# create a map from propostitions to the corresponding digits
@@ -336,9 +400,12 @@ def dot2DFA(dot_string, letter2pos):
 
 			edge = edge.replace(' ', '')
 			first_state, second_state = edge.split('->')
-			
+
 			label = label_info.split('\"')[1]
-			letters = atom2letters(label, letter2pos)
+			letters = atom2letters_new(label, letter2pos)
+			if first_state == '3':
+				#print(label, letters)
+				pass
 			for letter in letters:
 				try:
 					transitions[first_state][letter] = second_state
@@ -347,12 +414,10 @@ def dot2DFA(dot_string, letter2pos):
 
 
 	formula_dfa = DFA(init_state, final_states, transitions)
-	#formula_dfa.show()
-	#print(formula_dfa)
 	return formula_dfa
 
-#letter2pos = {'p':0, 'q':1, 'r':2}
-#print(atom2letters('true', letter2pos))
+#letter2pos = {'p':0, 'q':1, 'r':2, 's':3}
+#print(atom2letters_new('~p & ~r', letter2pos))
 
 # dfa = (ltl2dfa('dummy', letter2pos))
 # dfa_c = dfa.complement()

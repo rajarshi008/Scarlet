@@ -243,6 +243,8 @@ class TreeToFormula(Transformer):
         def unary_operator(self, args):
             return str(args[0])
 
+
+
 def merge(operator, formula1, formula2):
 	"""
 	merges common operators from 2 formulas

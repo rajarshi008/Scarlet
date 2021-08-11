@@ -528,9 +528,8 @@ class Sample:
 		letter2pos = {alphabet[i]:i for i in range(len(alphabet))}
 
 		# Generating positive words
-
+		print("Generating positive words")
 		ltldfa = ltl2dfa(formula, letter2pos)
-		ltldfa.show()
 		ltldfa_list = []
 
 		### Some super optimization
@@ -577,9 +576,8 @@ class Sample:
 				assert(ltldfa.is_word_in(word)==True)
 
 		# Generating negative words
-
+		print("Generating negative words")
 		ltldfa_c = ltldfa.complement()
-		ltldfa_c.show()
 		ltldfa_list = []
 
 		### Some super optimization
