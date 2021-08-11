@@ -88,6 +88,8 @@ def iteration_seq(max_len, max_width):
 				seq.append((curr_sum-j,j))
 		curr_sum=curr_sum+1
 	return seq
+# (0, atom, 1, atom, 1, atom), length-1+length-1+(width+width-1)*length  
+
 
 #csvname is only temporary:
 def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='SC', last=False):
@@ -157,8 +159,8 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 		if width>upper_bound:
 			break
 
-		if 3*length + width -3 >= upper_bound:
-			continue
+		if 3*length + 2*width -4 >= upper_bound: # (0, atom, 1, atom, 1, atom), length-1+length-1+(width+width-1)*length
+			continue							# length -2 + 2*width*length			
 
 		# phi = 
 		# boolean combinations of
