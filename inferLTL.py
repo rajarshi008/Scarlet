@@ -149,9 +149,6 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 	covering_formula = None
 	setcover_time = 0
 	
-	f1= Formula.convertTextToFormula('F(&(p,q))')
-	f2= Formula.convertTextToFormula('F(&(r,s))')
-	
 	for (length, width) in seq:
 		logging.info("-------------Finding from length %d and width %d isubtraces-------------"%(length,width))
 		time1 = time.time()
@@ -205,11 +202,6 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 				boolcomb.score[formula] = (len(pos_friend_set) - len(neg_friend_set) + len(negative_set))
 				#print(isubtrace, formula, len(pos_friend_set),len(neg_friend_set),len(negative_set), setcover.score[formula] )
 				boolcomb.cover_size[formula]  = len(pos_friend_set) - len(neg_friend_set) + len(negative_set)
-
-				if formula == f1:
-					print(f1.prettyPrint(), boolcomb.cover_size[formula])
-				if formula == f2:
-					print(f2.prettyPrint(), boolcomb.cover_size[formula])
 
 				hq.heappush(boolcomb.heap, (-boolcomb.score[formula], formula))
 			
