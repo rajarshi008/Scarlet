@@ -301,10 +301,8 @@ class iSubTrace:
 	def preComputeInd_next(self, width: int):
 		try:
 			self.all_atoms[width]
-			print('Try',width)
 			return
 		except:
-			print('Except', width)
 			self.all_atoms[width] = set()
 			if self.neg:
 				for trace in self.sample.positive+self.sample.negative:

@@ -249,7 +249,7 @@ class DFA:
 
 
 
-def atom2letters(atom_string, letter2pos):
+def atom2letters(atom_string, letter2pos, is_word):
 	# preprocessing of atom strings
 	atom_string = atom_string.replace(' ' ,'')
 
@@ -285,10 +285,11 @@ def atom2letters(atom_string, letter2pos):
 
 		letter_list = set([tuple(l) for l in letter_list])
 		all_letter_list= all_letter_list.union(letter_list)
+	
 	return list(all_letter_list)
 
 
-def atom2letters_new(atom_string, letter2pos):
+def atom2letters_new(atom_string, letter2pos, is_word):
 
 	
 	alphabet = list(letter2pos.keys())
@@ -298,6 +299,9 @@ def atom2letters_new(atom_string, letter2pos):
 		new_all_letters = {letter+(0,) for letter in all_letters}			
 		new_all_letters = new_all_letters.union({letter+(1,) for letter in all_letters})
 		all_letters = new_all_letters
+
+	if is_word:
+		all_letters = {i for i in all_letters if sum(i)==1}
 
 	if atom_string == 'true':
 		
@@ -310,31 +314,31 @@ def atom2letters_new(atom_string, letter2pos):
 
 	parser = LTLfParser()
 	atom_formula = parser(atom_string)
-	t = (atomformula2letters(atom_formula, letter2pos, all_letters))
+	t = (atomformula2letters(atom_formula, letter2pos, all_letters, is_word))
 	return t
 
 
-def atomformula2letters(atom_formula, letter2pos, all_letters):
+def atomformula2letters(atom_formula, letter2pos, all_letters, is_word):
 
 	try:
 		op = atom_formula.operator_symbol
 		if op == '&':
 			letter_set = all_letters
 			for child_atom in atom_formula.formulas:
-				l = atomformula2letters(child_atom, letter2pos, all_letters)
+				l = atomformula2letters(child_atom, letter2pos, all_letters, is_word)
 				letter_set = letter_set.intersection(l)
 			
 
 		elif op == '|':
 			letter_set = set()
 			for child_atom in atom_formula.formulas:
-				l = atomformula2letters(child_atom, letter2pos, all_letters)
+				l = atomformula2letters(child_atom, letter2pos, all_letters, is_word)
 				letter_set = letter_set.union(l)
 
 		
 		elif op == '!':
 			child_atom = atom_formula.f
-			l = atomformula2letters(child_atom, letter2pos, all_letters)
+			l = atomformula2letters(child_atom, letter2pos, all_letters, is_word)
 			letter_set = all_letters.difference(l)
 			
 
@@ -351,12 +355,13 @@ def atomformula2letters(atom_formula, letter2pos, all_letters):
 				new_letter_set = new_letter_set.union({letter+(0,) for letter in letter_set})			
 				new_letter_set = new_letter_set.union({letter+(1,) for letter in letter_set})
 			letter_set = new_letter_set
-
+		if is_word:
+			letter_set = {i for i in letter_set if sum(i)==1}
 	return letter_set
 
 
 
-def ltl2dfa(formula, letter2pos):
+def ltl2dfa(formula, letter2pos, is_word):
 	# convert formula into formulastring
 	# possiblilties to use the infix or the prefix form
 
@@ -367,14 +372,14 @@ def ltl2dfa(formula, letter2pos):
 	formula = parser(formula_str) # returns an LTLfFormula
 
 	#d = atom2letters(alphabet = alphabet)
-	original_dfa = formula.to_dfa() # using atoms
-	return dot2DFA(original_dfa, letter2pos)
+	original_dfa = formula.to_dfa() #using atoms
+	return dot2DFA(original_dfa, letter2pos, is_word)
 	
 	# create a map from propostitions to the corresponding digits
 
 
 
-def dot2DFA(dot_string, letter2pos):
+def dot2DFA(dot_string, letter2pos, is_word):
 
 	dfa_info = dot_string.split('\n')
 	mode = ''
@@ -402,7 +407,7 @@ def dot2DFA(dot_string, letter2pos):
 			first_state, second_state = edge.split('->')
 
 			label = label_info.split('\"')[1]
-			letters = atom2letters_new(label, letter2pos)
+			letters = atom2letters_new(label, letter2pos, is_word)
 			if first_state == '3':
 				#print(label, letters)
 				pass
@@ -414,6 +419,7 @@ def dot2DFA(dot_string, letter2pos):
 
 
 	formula_dfa = DFA(init_state, final_states, transitions)
+
 	return formula_dfa
 
 #letter2pos = {'p':0, 'q':1, 'r':2, 's':3}

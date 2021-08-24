@@ -199,7 +199,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 
 				boolcomb.formula_dict[formula] = (pos_friend_set, neg_friend_set)
 				#score can be weighted by formula size
-				boolcomb.score[formula] = (len(pos_friend_set) - len(neg_friend_set) + len(negative_set))
+				boolcomb.score[formula] = ((len(pos_friend_set) - len(neg_friend_set) + len(negative_set))/((formula.treeSize())**(0.5)+1))
 				#print(isubtrace, formula, len(pos_friend_set),len(neg_friend_set),len(negative_set), setcover.score[formula] )
 				boolcomb.cover_size[formula]  = len(pos_friend_set) - len(neg_friend_set) + len(negative_set)
 

@@ -2,7 +2,6 @@ from formulaTree import Formula
 import random
 import sys
 from convert2dfa import DFA, ltl2dfa
-	
 
 
 def lineToTrace(line):
@@ -529,7 +528,7 @@ class Sample:
 
 		# Generating positive words
 		print("Generating positive words")
-		ltldfa = ltl2dfa(formula, letter2pos)
+		ltldfa = ltl2dfa(formula, letter2pos, is_words)
 		ltldfa_list = []
 
 		### Some super optimization

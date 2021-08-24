@@ -125,8 +125,8 @@ class BooleanSetCover:
 					if we reach upto a formula that we cannot improve with the existing formulas, 
 					we push them to the heap as interesting formulas if it is already not in the heap
 					'''
-					if current_formula not in self.score:	
-						self.score[current_formula] = self.cover_size[current_formula]
+					if current_formula not in self.score:
+						self.score[current_formula] = self.cover_size[current_formula]/((current_formula.treeSize())**(0.5)+1)
 						hq.heappush(self.heap, (-self.score[current_formula], current_formula))
 					
 					success = False

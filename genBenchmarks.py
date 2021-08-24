@@ -35,9 +35,9 @@ def generateBenchmarks(formula_file, trace_type, sample_sizes, trace_lengths, op
 	traces_folder = output_folder+'/TracesFiles/' 
 	os.makedirs(traces_folder)
 
-	if trace_type == 'words':
-		words_folder = output_folder+'/WordsFiles/'
-		os.makedirs(words_folder)
+	#if trace_type == 'words':
+	#	words_folder = output_folder+'/TracesFiles/'
+	#	os.makedirs(words_folder)
 
 	if syslite:
 		syslite_folder = output_folder+'/SysliteFiles/'
@@ -59,27 +59,25 @@ def generateBenchmarks(formula_file, trace_type, sample_sizes, trace_lengths, op
 						length_mean = (length_range[0]+length_range[1])//2
 						sample=Sample(positive=[], negative=[])
 						trace_file = traces_folder+'f:'+str(formula_num)+'-'+'nw:'+str((size[0]+size[1])//2)+'-'+'ml:'+str(length_mean)+'.trace'
-						
-						if trace_type == 'words':
-							word_file = words_folder+'f:'+ str(formula_num)+'-'+ 'nw:'+str(size)+'-'+ 'ml:'+str(length_mean)+'.words'
-							if gen_method=='dfa_method':
-								sample.generator_dfa_in_batch_advanced(formula=formula, length_range=length_range, num_traces=size, alphabet=alphabet, filename=word_file, is_words=(trace_type=='words'), operators=operators)
-							# sample.generator(formula=formula, length_range=length_range, num_traces=size, filename=word_file, is_word=(trace_type=='words'))
-							elif gen_method=='random':
-								sample.generator(formula=formula, length_range=length_range, num_traces=size, alphabet=alphabet, filename=word_file, is_words=(trace_type=='words'), operators=operators)
-							elif gen_method=='random_walk':
-								sample.generator_random_walk(formula=formula, length_range=length_range, num_traces=size, alphabet=alphabet, filename=word_file, is_words=(trace_type=='words'), operators=operators)
+
+						if gen_method=='dfa_method':
+							sample.generator_dfa_in_batch_advanced(formula=formula, length_range=length_range, num_traces=size, alphabet=alphabet, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
+						# sample.generator(formula=formula, length_range=length_range, num_traces=size, filename=word_file, is_word=(trace_type=='words'))
+						elif gen_method=='random':
+							sample.generator(formula=formula, length_range=length_range, num_traces=size, alphabet=alphabet, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
+						elif gen_method=='random_walk':
+							sample.generator_random_walk(formula=formula, length_range=length_range, num_traces=size, alphabet=alphabet, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
 
 
-							convertFileType(wordfile=word_file, tracefile=trace_file, operators=operators)
-						else:
+							#convertFileType(wordfile=word_file, tracefile=trace_file, operators=operators)
+						# else:
 
-							if gen_method=='dfa_method':
-								sample.generator_dfa_in_batch_advanced(formula=formula, length_range=length_range, num_traces=size, alphabet=alphabet, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
-							elif gen_method=='random':
-								sample.generator(formula=formula, length_range=length_range, num_traces=size, alphabet=alphabet, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
-							elif gen_method=='random_walk':
-								sample.generator_random_walk(formula=formula, length_range=length_range, num_traces=size, alphabet=alphabet, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
+						# 	if gen_method=='dfa_method':
+						# 		sample.generator_dfa_in_batch_advanced(formula=formula, length_range=length_range, num_traces=size, alphabet=alphabet, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
+						# 	elif gen_method=='random':
+						# 		sample.generator(formula=formula, length_range=length_range, num_traces=size, alphabet=alphabet, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
+						# 	elif gen_method=='random_walk':
+						# 		sample.generator_random_walk(formula=formula, length_range=length_range, num_traces=size, alphabet=alphabet, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
 							
 
 							# sample.generator(formula=formula, length_range=length_range, num_traces=size, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
@@ -99,16 +97,15 @@ def tupleList(s):
 	except:
 		print("Wrong format; provide comma separated values")
 
-    
+
 def main():
 
 	parser = argparse.ArgumentParser()
-
-	parser.add_argument('--formula_file', dest='formula_file', default = 'formulas.txt')
-	parser.add_argument('--trace_type', dest='trace_type', default = 'trace')
+	parser.add_argument('--formula_file', dest='formula_file', default = 'formulas_1.txt')
+	parser.add_argument('--trace_type', dest='trace_type', default = 'words')
 	parser.add_argument('--operators', dest='operators', default = ['F', 'G', 'X', '!', '&', '|'], type=list)
-	parser.add_argument('--size', dest='sample_sizes', default=[(10,10),(50,50),(100,100),(200,200),(500,500)], nargs='+', type=tupleList)
-	parser.add_argument('--lengths', dest='trace_lengths', default=[(6,8),(8,10),(10,12)], nargs='+', type=tupleList)
+	parser.add_argument('--size', dest='sample_sizes', default=[(5,5),(10,10),(20,20)], nargs='+', type=tupleList)
+	parser.add_argument('--lengths', dest='trace_lengths', default=[(4,6),(6,8),(8,10)], nargs='+', type=tupleList)
 	parser.add_argument('--output_folder', dest='output_folder', default = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
 	parser.add_argument('--syslite', dest='syslite', action='store_true', default=True)
 	parser.add_argument('--generation_method', dest='gen_method', default='dfa_method')
