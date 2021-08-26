@@ -82,7 +82,7 @@ def iteration_seq(max_len, max_width):
 	seq=[]
 	min_val = max_len+max_width
 	curr_sum=2
-	while curr_sum<min_val:
+	while curr_sum<=min_val:
 		for j in range(1,curr_sum):
 			if curr_sum-j<= max_len and j<=max_width:
 				seq.append((curr_sum-j,j))
@@ -92,7 +92,7 @@ def iteration_seq(max_len, max_width):
 
 
 #csvname is only temporary:
-def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='SC', last=False):
+def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='SC', is_word=False, last=False):
 	time_counter = time.time()
 	print('InferLTL', csvname)
 	# while():
@@ -118,13 +118,16 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 
 	reasonable_upper_bound = 50 # What should be this value?
 
+
+
+
 	upper_bound = min(absolute_upper_bound, reasonable_upper_bound)
 
 	print("Absolute upper bound", absolute_upper_bound)
 	print("Reasonable upper bound", reasonable_upper_bound)
 	# set of methods for Boolean set cover
 	max_len = s.max_positive_length
-	if sample.is_words:
+	if sample.is_words or is_word:
 		if last:
 			# not quite because we don't want p and q
 			max_width = 2
@@ -135,19 +138,21 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 			max_width = len(sample.positive[0].vector[0])+1
 		else:
 			max_width = len(sample.positive[0].vector[0])
+
 	# sequence of pairs (l,w) representing lengths and widths
 	seq = iteration_seq(max_len, max_width)
 	positive_set = {i for i in range(len(sample.positive))}
 	negative_set = {len(positive_set)+i for i in range(len(sample.negative))}
 	full_set = (positive_set, negative_set)
-	
+	full_cover = len(positive_set)+len(negative_set)
+
 	if method == "DT":
 		boolcomb = DTlearner(sample, operators)
 	if method == "SC":
 		boolcomb = BooleanSetCover(sample, operators)
 	
 	covering_formula = None
-	setcover_time = 0
+	combination_time = 0
 	
 	for (length, width) in seq:
 		logging.info("-------------Finding from length %d and width %d isubtraces-------------"%(length,width))
@@ -178,7 +183,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 		cover_set = s.coverSet(length, width, upper_bound)
 		if cover_set=={}:
 			continue
-
+		already_found = 0
 		for isubtrace in cover_set.keys():
 
 			pos_friend_set = cover_set[isubtrace][0]
@@ -202,19 +207,23 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 				boolcomb.score[formula] = ((len(pos_friend_set) - len(neg_friend_set) + len(negative_set))/((formula.treeSize())**(0.5)+1))
 				#print(isubtrace, formula, len(pos_friend_set),len(neg_friend_set),len(negative_set), setcover.score[formula] )
 				boolcomb.cover_size[formula]  = len(pos_friend_set) - len(neg_friend_set) + len(negative_set)
-
-				hq.heappush(boolcomb.heap, (-boolcomb.score[formula], formula))
-			
-			if method =="DT":
 				
-				boolcomb.formula_dict[formula] = (pos_friend_set, neg_friend_set)
+				if boolcomb.cover_size[formula]==full_cover:
+					current_covering_formula, upper_bound = formula, formula.treeSize()
+					already_found = 1
+					break   
+				else:
+					hq.heappush(boolcomb.heap, (-boolcomb.score[formula], formula))
+					
 
-			
-		t0=time.time()
-		current_covering_formula, upper_bound = boolcomb.find(upper_bound)
-		t1=time.time()
-		setcover_time+=t1-t0
 
+			if method =="DT":
+				boolcomb.formula_dict[formula] = (pos_friend_set, neg_friend_set)			
+		if not already_found:
+			t0=time.time()
+			current_covering_formula, upper_bound = boolcomb.find(upper_bound)
+			t1=time.time()
+			combination_time+=t1-t0
 
 		if current_covering_formula != None and covering_formula != current_covering_formula:
 			#upper_bound = covering_formula.treeSize()
@@ -230,7 +239,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 			
 		logging.debug('########Time taken for iteration %.3f########'%(time.time()-time1))
 
-	logging.debug("Setcover Time %.3f"%setcover_time)
+	logging.debug("Boolean Combination Time %.3f"%combination_time)
 		
 	if covering_formula == None:
 		logging.warning("No formula found")

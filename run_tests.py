@@ -18,15 +18,15 @@ def run_test(input_file='./dummy.trace', timeout=900, outputcsv='./result.csv', 
 	parser.add_argument('--outputcsv', '-o', dest='csvname', default= outputcsv)
 	parser.add_argument('--verbose', '-v', dest='verbose', default=False, action='count')
 	parser.add_argument('--method', '-m', dest='method', default = method) 
+	parser.add_argument('--words', '-w', dest= 'words', default = False, action='store_true')
 	args,unknown = parser.parse_known_args()
 
 	input_file = args.input_file
-	is_word = True if '.words' in input_file else False
+	is_word = True if ('.words' in input_file) or args.words  else False
 	timeout = float(args.timeout)
 	verbosity = 2
 	method = args.method
 	csvname = args.csvname
-
 
 	logging.basicConfig(format='%(message)s', level=logging_levels[verbosity])
 	sample = Sample(positive=[],negative=[])
@@ -39,7 +39,7 @@ def run_test(input_file='./dummy.trace', timeout=900, outputcsv='./result.csv', 
 	else:
 		logging.info('Operators used: %s'%','.join(operators))
 					
-	inferLTL(sample, csvname, operators, method)
+	inferLTL(sample, csvname, operators, method, is_word)
 	#Starting timeout
 	'''
 	p = multiprocessing.Process(target=inferLTL, args=(sample, csvname, operators, method))
