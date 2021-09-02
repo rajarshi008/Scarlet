@@ -25,7 +25,6 @@ checking to several formulas of high length and width, can reduce that
 '''
 
 
-
 #creates the dual atom
 def neg_props(atom: tuple)-> list:
 	neg_props = [] 
@@ -340,7 +339,7 @@ class iSubTrace:
 						for j in atom[1:]:
 							set1=set1.intersection(set(self.ind_table[(word,pos,(j,))]))
 
-						self.ind_table[(word, pos, atom)]=list(set1)
+						self.ind_table[(word, pos, atom)]=sorted(list(set1))
 
 
 	def add2isubtrace(self, isubtrace1:tuple, isubtrace2:tuple, inv: bool, upper_bound: int):
@@ -520,7 +519,7 @@ class iSubTrace:
 								last_digit = int(nextisubtrace[-2].strip('>'))
 
 								#Manually eliminating formulas with last in case of formulas with G
-								
+
 								if inv:
 																
 									req_atoms = neg_props(nextisubtrace[-3])
@@ -546,10 +545,17 @@ class iSubTrace:
 									if nve_endpos_list[k]!=[]:
 										if nextisubtrace[-2][0]=='>':
 											next_pos = nve_endpos_list[k][0]+last_digit
+
 											if next_pos <= len(current_superword):
 												new_list= self.ind_table[(current_superword.vector_str, next_pos, last_atom)] 
 											else:
 												new_list= []
+
+											if nextisubtrace==('>0', ('+1', '+2'), '>0', ('-0',)):
+												if k==9:
+													print(nve_endpos_list[k])
+													print(next_pos, new_list)
+
 										else:
 											new_list=[m+last_digit for m in nve_endpos_list[k]\
 													 if m+last_digit < len(current_superword) and is_sat(current_superword.vector[m+last_digit],last_atom, (m+last_digit)==len(current_superword)-1)]
@@ -603,10 +609,10 @@ class iSubTrace:
 							if old_pos_list1==[-1] or old_pos_list2==[-1]:
 								new_pos_list.append([-1]) 
 							else:
-								new_list= list(set(old_pos_list1[i]).intersection(set(old_pos_list2[i])))
+								new_list= sorted(list(set(old_pos_list1[i]).intersection(set(old_pos_list2[i]))))
 								new_pos_list.append(new_list)
 						else:
-							new_list= list(set(old_pos_list1[i]).intersection(set(old_pos_list2[i])))
+							new_list= sorted(list(set(old_pos_list1[i]).intersection(set(old_pos_list2[i]))))
 							new_pos_list.append(new_list)
 						# if new_list== []:
 						# 	break_value=1
@@ -620,10 +626,10 @@ class iSubTrace:
 							if old_neg_list1==[-1] or old_neg_list2==[-1]:
 								new_neg_list.append([-1]) 
 							else:
-								new_list= list(set(old_neg_list1[i]).intersection(set(old_neg_list2[i])))
+								new_list= sorted(list(set(old_neg_list1[i]).intersection(set(old_neg_list2[i]))))
 								new_neg_list.append(new_list)
 						else:
-							new_list= list(set(old_neg_list1[i]).intersection(set(old_neg_list2[i])))
+							new_list= sorted(list(set(old_neg_list1[i]).intersection(set(old_neg_list2[i]))))
 							new_neg_list.append(new_list)
 
 					base_table[(pt_length,width)][nextisubtrace]=(new_pos_list,new_neg_list)
@@ -772,6 +778,9 @@ class iSubTrace:
 			cover_set[isubtrace] = (pos_friend_set, neg_friend_set)
 			
 		for isubtrace in isubtrace_dict_inv.keys():
+			
+			if isubtrace==('>0', ('+1', '+2'), '>0', ('-0',)):
+				print(isubtrace_dict_inv[isubtrace])
 
 			pos_friend_set = {i for i in range(self.num_positives) if isubtrace_dict_inv[isubtrace][0][i]==[]}
 			neg_friend_set = {self.num_positives+i for i in range(self.num_negatives) if isubtrace_dict_inv[isubtrace][1][i]==[]}

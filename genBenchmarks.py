@@ -157,10 +157,10 @@ def main():
 
 	os.makedirs(output_folder)
 	shutil.copyfile(formula_file, output_folder+'/'+formula_file)
+	sample_sizes.sort()
 	max_size = sample_sizes[-1]
 	generated_files = generateBenchmarks(formula_file, trace_type, [max_size], trace_lengths, operators, total_num, output_folder, syslite, gen_method)
 	#generating small benchmarks from large ones
-	print(generated_files)
 	generateSmallBenchmarks(generated_files, max_size, sample_sizes[:-1])
  
 if __name__=='__main__':

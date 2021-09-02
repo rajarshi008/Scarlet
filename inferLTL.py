@@ -92,7 +92,7 @@ def iteration_seq(max_len, max_width):
 
 
 #csvname is only temporary:
-def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='SC', is_word=False, last=True):
+def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='SC', is_word=False, last=False):
 	time_counter = time.time()
 	print('InferLTL', csvname)
 	# while():
@@ -120,6 +120,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 
 
 
+	Gformula=Formula.convertTextToFormula('G(|(|(!(q),!(r)), G(p)))')
 
 	upper_bound = min(absolute_upper_bound, reasonable_upper_bound)
 
@@ -208,7 +209,13 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 				#print(isubtrace, formula, len(pos_friend_set),len(neg_friend_set),len(negative_set), setcover.score[formula] )
 				boolcomb.cover_size[formula]  = len(pos_friend_set) - len(neg_friend_set) + len(negative_set)
 				
-				if boolcomb.cover_size[formula]==full_cover:
+
+				if formula==Gformula:
+					print(isubtrace)
+					print(pos_friend_set, neg_friend_set)
+					print(boolcomb.cover_size[formula])
+
+				if boolcomb.cover_size[formula]==full_cover and formula.treeSize()<upper_bound:
 					current_covering_formula, upper_bound = formula, formula.treeSize()
 					already_found = 1
 					break   
