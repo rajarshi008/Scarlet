@@ -94,7 +94,6 @@ def iteration_seq(max_len, max_width):
 #csvname is only temporary:
 def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='SC', is_word=False, last=False):
 	time_counter = time.time()
-	print('InferLTL', csvname)
 	# while():
 	# 	alphabet += best5formulas from the heap
 	# alphabet = [a,b,c]
@@ -119,13 +118,8 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 	reasonable_upper_bound = 50 # What should be this value?
 
 
-
-	Gformula=Formula.convertTextToFormula('G(|(|(!(q),!(r)), G(p)))')
-
 	upper_bound = min(absolute_upper_bound, reasonable_upper_bound)
 
-	print("Absolute upper bound", absolute_upper_bound)
-	print("Reasonable upper bound", reasonable_upper_bound)
 	# set of methods for Boolean set cover
 	max_len = s.max_positive_length
 	if sample.is_words or is_word:
@@ -210,11 +204,6 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 				boolcomb.cover_size[formula]  = len(pos_friend_set) - len(neg_friend_set) + len(negative_set)
 				
 
-				if formula==Gformula:
-					print(isubtrace)
-					print(pos_friend_set, neg_friend_set)
-					print(boolcomb.cover_size[formula])
-
 				if boolcomb.cover_size[formula]==full_cover and formula.treeSize()<upper_bound:
 					current_covering_formula, upper_bound = formula, formula.treeSize()
 					already_found = 1
@@ -223,9 +212,10 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 					hq.heappush(boolcomb.heap, (-boolcomb.score[formula], formula))
 					
 
-
 			if method =="DT":
-				boolcomb.formula_dict[formula] = (pos_friend_set, neg_friend_set)			
+				boolcomb.formula_dict[formula] = (pos_friend_set, neg_friend_set)
+
+
 		if not already_found:
 			t0=time.time()
 			current_covering_formula, upper_bound = boolcomb.find(upper_bound)

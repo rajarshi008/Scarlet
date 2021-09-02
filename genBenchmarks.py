@@ -65,7 +65,7 @@ def generateBenchmarks(formula_file, trace_type, sample_sizes, trace_lengths, op
 						length_mean = (length_range[0]+length_range[1])//2
 						sample=Sample(positive=[], negative=[])
 
-						trace_file = traces_folder+'f:'+str(formula_num).zfill(2)+'-'+'nw:'+str((size[0]+size[1])//2).zfill(3)+'-'+'ml:'+str(length_mean)+'-'+str(num)+'.trace'
+						trace_file = traces_folder+'f:'+str(formula_num).zfill(2)+'-'+'nw:'+str((size[0]+size[1])//2).zfill(3)+'-'+'ml:'+str(length_mean).zfill(2)+'-'+str(num)+'.trace'
 						generated_files.append(trace_file)
 
 						if gen_method=='dfa_method':
@@ -88,15 +88,16 @@ def generateBenchmarks(formula_file, trace_type, sample_sizes, trace_lengths, op
 						# 		sample.generator_random_walk(formula=formula, length_range=length_range, num_traces=size, alphabet=alphabet, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
 							
 
-							# sample.generator(formula=formula, length_range=length_range, num_traces=size, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
+						# sample.generator(formula=formula, length_range=length_range, num_traces=size, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
 
 
 						if sample.isFormulaConsistent(formula):
 							print("Formula is consistent with sample")
 
 						if syslite:
-							syslite_file = syslite_folder +'f:'+str(formula_num).zfill(2)+'-'+ 'nw:'+str((size[0]+size[1])//2).zfill(3)+'-'+'ml:'+str(length_mean)+'-'+str(num)+'.trace'
+							syslite_file = syslite_folder +'f:'+str(formula_num).zfill(2)+'-'+ 'nw:'+str((size[0]+size[1])//2).zfill(3)+'-'+'ml:'+str(length_mean).zfill(2)+'-'+str(num)+'.trace'
 							genSysliteTraces(trace_file, syslite_file)
+
 	return generated_files
 
 
@@ -125,15 +126,13 @@ def generateSmallBenchmarks(generated_files, max_size, sizes):
 			genSysliteTraces(new_filename, new_sysfilename)
 
 
-
-
 def main():
 
 	parser = argparse.ArgumentParser()
-	parser.add_argument('--formula_file', dest='formula_file', default = 'formulas1.txt')
+	parser.add_argument('--formula_file', dest='formula_file', default = 'formulas.txt')
 	parser.add_argument('--trace_type', dest='trace_type', default = 'trace')
 	parser.add_argument('--operators', dest='operators', default = ['F', 'G', 'X', '!', '&', '|'], type=list)
-	parser.add_argument('--size', dest='sample_sizes', default=[(50,50),(100,100),(500,500)], nargs='+', type=tupleList)
+	parser.add_argument('--size', dest='sample_sizes', default=[(10,10),(50,50),(100,100),(200,200),(500,500)], nargs='+', type=tupleList)
 	parser.add_argument('--lengths', dest='trace_lengths', default=[(6,6)], nargs='+', type=tupleList)
 	parser.add_argument('--total_num', dest='total_num', default=1, type=int)
 	parser.add_argument('--output_folder', dest='output_folder', default = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
@@ -162,6 +161,6 @@ def main():
 	generated_files = generateBenchmarks(formula_file, trace_type, [max_size], trace_lengths, operators, total_num, output_folder, syslite, gen_method)
 	#generating small benchmarks from large ones
 	generateSmallBenchmarks(generated_files, max_size, sample_sizes[:-1])
- 
+
 if __name__=='__main__':
 	main()
