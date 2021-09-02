@@ -551,11 +551,6 @@ class iSubTrace:
 											else:
 												new_list= []
 
-											if nextisubtrace==('>0', ('+1', '+2'), '>0', ('-0',)):
-												if k==9:
-													print(nve_endpos_list[k])
-													print(next_pos, new_list)
-
 										else:
 											new_list=[m+last_digit for m in nve_endpos_list[k]\
 													 if m+last_digit < len(current_superword) and is_sat(current_superword.vector[m+last_digit],last_atom, (m+last_digit)==len(current_superword)-1)]
@@ -778,9 +773,6 @@ class iSubTrace:
 			cover_set[isubtrace] = (pos_friend_set, neg_friend_set)
 			
 		for isubtrace in isubtrace_dict_inv.keys():
-			
-			if isubtrace==('>0', ('+1', '+2'), '>0', ('-0',)):
-				print(isubtrace_dict_inv[isubtrace])
 
 			pos_friend_set = {i for i in range(self.num_positives) if isubtrace_dict_inv[isubtrace][0][i]==[]}
 			neg_friend_set = {self.num_positives+i for i in range(self.num_negatives) if isubtrace_dict_inv[isubtrace][1][i]==[]}
