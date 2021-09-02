@@ -92,7 +92,7 @@ def iteration_seq(max_len, max_width):
 
 
 #csvname is only temporary:
-def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='SC', is_word=False, last=False):
+def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='SC', is_word=False, last=True):
 	time_counter = time.time()
 	print('InferLTL', csvname)
 	# while():
@@ -250,7 +250,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 			time_elapsed = round(time.time() - time_counter,3)
 			with open(csvname, 'a+') as csvfile:
 				writer = csv.writer(csvfile)
-				writer.writerow([time_elapsed, covering_formula.size, covering_formula.prettyPrint(), 1])
+				writer.writerow([time_elapsed, covering_formula.size, covering_formula.getNumberOfSubformulas(), covering_formula.prettyPrint(), 1])
 		logging.warning("Final formula found %s"%covering_formula.prettyPrint())
 		logging.warning("Time taken is: "+ str(round(time_elapsed,3))+ " secs") 
 		#return covering_formula

@@ -191,7 +191,7 @@ class Sample:
 	'''
 	contains the sample of postive and negative examples
 	'''
-	def __init__(self, positive=[], negative=[], alphabet=[], is_words=True):
+	def __init__(self, positive=[], negative=[], alphabet=[], is_words=True, operators=['G', 'F', '!', 'U', '&','|', 'X']):
 
 		self.positive = positive
 		self.negative = negative
@@ -199,7 +199,7 @@ class Sample:
 		self.is_words = is_words
 		self.num_positives = len(self.positive)
 		self.num_negatives = len(self.negative)
-		self.operators=[]
+		self.operators=operators
 
 	
 	def extract_alphabet(self, is_word):

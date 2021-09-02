@@ -171,7 +171,7 @@ class Formula(SimpleTree):
 			rightValue = self.right.getSetOfSubformulas()
 		return list(set([repr(self)] + leftValue + rightValue))
 
-
+	
 	def treeSize(self):
 		if self.size == None:
 			if self.left == None and self.right == None:
