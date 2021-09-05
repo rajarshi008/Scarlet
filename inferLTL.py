@@ -57,7 +57,7 @@ def isubTrace2Formula(isubtrace: tuple):
 			else:
 				form_atom = Formula(['|', form_atom, Formula(['!', Formula(alphabet[int(i[1:])])])])
 		
-		if len(isubtrace)>3:
+		if len(isubtrace)>3:	
 			next_formula = Formula(['|', form_atom, isubTrace2Formula(('!',)+isubtrace[3:])])
 		else:
 			next_formula = form_atom
@@ -109,16 +109,11 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 
 	if last:
 		alphabet.append('L')
-	
-	if sample.is_words:
-		absolute_upper_bound = (2*s.max_positive_length + s.max_positive_length - 1)*s.num_positives - 1
-	else:
-		absolute_upper_bound = (2*s.max_positive_length*len(alphabet) + s.max_positive_length - 1)*s.num_positives - 1
 
-	reasonable_upper_bound = 50 # What should be this value?
+	reasonable_upper_bound = 50
 
 
-	upper_bound = min(absolute_upper_bound, reasonable_upper_bound)
+	s.upper_bound = reasonable_upper_bound
 
 	# set of methods for Boolean set cover
 	max_len = s.max_positive_length
@@ -153,10 +148,10 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 		logging.info("-------------Finding from length %d and width %d isubtraces-------------"%(length,width))
 		time1 = time.time()
 		
-		if width>upper_bound:
+		if width>s.upper_bound:
 			break
 
-		if 3*length + 2*width -4 >= upper_bound: # (0, atom, 1, atom, 1, atom), length-1+length-1+(width+width-1)*length
+		if 3*length + 2*width -4 >= s.upper_bound: # (0, atom, 1, atom, 1, atom), length-1+length-1+(width+width-1)*length
 			continue							# length -2 + 2*width*length			
 
 		# phi = 
@@ -174,59 +169,58 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 		# letter2 = X^10 (a and F b) OR sub3
 
 		s.preComputeInd_next(width)
+		s.coverSet(length, width)
 
-		cover_set = s.coverSet(length, width, upper_bound)
-		if cover_set=={}:
+		if s.cover_set[(length,width)]=={}:
 			continue
-		already_found = 0
-		for isubtrace in cover_set.keys():
+		
+		if s.subtrace_found:
+			print(s.cover_set[(length,width)])
+			current_covering_formula = isubTrace2Formula(list(s.cover_set[(length,width)].keys())[0])
+		else:
 
-			pos_friend_set = cover_set[isubtrace][0]
-			neg_friend_set = cover_set[isubtrace][1]
+			for isubtrace in s.cover_set[(length,width)].keys():
 
-			if neg_friend_set == negative_set:
-				continue
+				pos_friend_set = s.cover_set[(length,width)][isubtrace][0]
+				neg_friend_set = s.cover_set[(length,width)][isubtrace][1]
 
-			formula = isubTrace2Formula(isubtrace)
-			#Is the formula equivalent to some existing formula? if yes, ignore it.
+				if neg_friend_set == negative_set:
+					continue
 
-			if isubtrace[0]!='!':
-				formula.size = s.len_isubtrace[(isubtrace,False)]
-			else:
-				formula.size = s.len_isubtrace[(isubtrace[1:], True)]
-			
-			if method == "SC":
+				formula = isubTrace2Formula(isubtrace)
+				#Is the formula equivalent to some existing formula? if yes, ignore it.
 
-				boolcomb.formula_dict[formula] = (pos_friend_set, neg_friend_set)
-				#score can be weighted by formula size
-				boolcomb.score[formula] = ((len(pos_friend_set) - len(neg_friend_set) + len(negative_set))/((formula.treeSize())**(0.5)+1))
-				#print(isubtrace, formula, len(pos_friend_set),len(neg_friend_set),len(negative_set), setcover.score[formula] )
-				boolcomb.cover_size[formula]  = len(pos_friend_set) - len(neg_friend_set) + len(negative_set)
-				
-
-				if boolcomb.cover_size[formula]==full_cover and formula.treeSize()<upper_bound:
-					current_covering_formula, upper_bound = formula, formula.treeSize()
-					already_found = 1
-					break   
+				if isubtrace[0]!='!':
+					formula.size = s.len_isubtrace[(isubtrace,False)]
 				else:
-					hq.heappush(boolcomb.heap, (-boolcomb.score[formula], formula))
+					formula.size = s.len_isubtrace[(isubtrace[1:], True)]
+				
+				if method == "SC":
+
+					boolcomb.formula_dict[formula] = (pos_friend_set, neg_friend_set)
+					#score can be weighted by formula size
+					boolcomb.score[formula] = ((len(pos_friend_set) - len(neg_friend_set) + len(negative_set))/((formula.treeSize())**(0.5)+1))
+					#print(isubtrace, formula, len(pos_friend_set),len(neg_friend_set),len(negative_set), setcover.score[formula] )
+					boolcomb.cover_size[formula]  = len(pos_friend_set) - len(neg_friend_set) + len(negative_set)
 					
+					hq.heappush(boolcomb.heap, (-boolcomb.score[formula], formula))
+						
 
-			if method =="DT":
-				boolcomb.formula_dict[formula] = (pos_friend_set, neg_friend_set)
+				if method =="DT":
+					boolcomb.formula_dict[formula] = (pos_friend_set, neg_friend_set)
 
 
-		if not already_found:
+		
 			t0=time.time()
-			current_covering_formula, upper_bound = boolcomb.find(upper_bound)
+			current_covering_formula, s.upper_bound = boolcomb.find(s.upper_bound)
 			t1=time.time()
 			combination_time+=t1-t0
 
 		if current_covering_formula != None and covering_formula != current_covering_formula:
-			#upper_bound = covering_formula.treeSize()
+			#s.upper_bound = covering_formula.treeSize()
 			covering_formula = current_covering_formula
 			logging.info("Already found: %s"%covering_formula)
-			logging.debug("Current formula upper bound %d"%upper_bound)
+			logging.debug("Current formula upper bound %d"%s.upper_bound)
 			
 			if csvname != None:
 				time_elapsed = round(time.time() - time_counter,3)

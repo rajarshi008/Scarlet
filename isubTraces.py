@@ -67,6 +67,10 @@ class iSubTrace:
 		self.num_positives = len(self.sample.positive)
 		self.num_negatives = len(self.sample.negative)
 
+		self.positive_set = {i for i in range(len(self.sample.positive))}
+		self.negative_set = {i for i in range(len(self.sample.negative))}
+		self.full_cover = len(self.positive_set) + len(self.negative_set)
+
 		#Value determining if "!" is allowed in the operators
 		self.neg = '!' in self.operators
 		
@@ -88,6 +92,7 @@ class iSubTrace:
 		self.ind_table = {}
 		self.R_table = {}
 		self.R_table_inv = {}
+		self.cover_set = {} 
 
 		self.len_isubtrace = {}
 		self.letter2atom_table= {}
@@ -172,9 +177,9 @@ class iSubTrace:
 
 	'''
 	Given a isubtrace of given width ending at a position and a diff and a letter appearing at position + diff, it outputs all possible 
-	isubtraces of one more length and same width given the length of the formula derived is less than the upper_bound.
+	isubtraces of one more length and same width given the length of the formula derived is less than the self.upper_bound.
 	'''
-	def possiblePTraces(self, isubtrace:tuple, diff: int, letter: str, width: int, upper_bound: int, inv: bool, is_end: bool):
+	def possiblePTraces(self, isubtrace:tuple, diff: int, letter: str, width: int, inv: bool, is_end: bool):
 		
 		#list of all new isubtraces
 		isubtraces_list = []
@@ -208,7 +213,7 @@ class iSubTrace:
 
 					new_isubtrace = isubtrace+('>'+str(i),atom)
 					base_len=self.len_isubtrace[(isubtrace, inv)] + 1 + (i+1) + self.len_atom(atom, inv)
-					if base_len >= upper_bound:
+					if base_len >= self.upper_bound:
 						break
 					self.len_isubtrace[(new_isubtrace,inv)] = base_len
 					
@@ -220,7 +225,7 @@ class iSubTrace:
 				if isubtrace != epsilon or not inv:
 					new_isubtrace = isubtrace+(str(diff),atom)
 					base_len = self.len_isubtrace[(isubtrace, inv)] + 1 + (diff) + self.len_atom(atom, inv)
-					if base_len < upper_bound:
+					if base_len < self.upper_bound:
 						self.len_isubtrace[(new_isubtrace, inv)] = base_len
 						isubtraces_list.append(new_isubtrace)
 					
@@ -235,7 +240,7 @@ class iSubTrace:
 				new_isubtrace = isubtrace+('>'+str(diff),atom)
 				base_len=self.len_isubtrace[(isubtrace,inv)] + 1 + (diff+1) + self.len_atom(atom, inv)
 				
-				if base_len < upper_bound:
+				if base_len < self.upper_bound:
 					self.len_isubtrace[(new_isubtrace,inv)] = base_len
 					isubtraces_list.append(new_isubtrace)		
 		return isubtraces_list
@@ -342,7 +347,7 @@ class iSubTrace:
 						self.ind_table[(word, pos, atom)]=sorted(list(set1))
 
 
-	def add2isubtrace(self, isubtrace1:tuple, isubtrace2:tuple, inv: bool, upper_bound: int):
+	def add2isubtrace(self, isubtrace1:tuple, isubtrace2:tuple, inv: bool):
 		'''
 		The function takes two isubtraces of same length one of width w_1 and another of width 1 and returns a isubtrace of same length with width w_1+1
 		'''
@@ -382,7 +387,7 @@ class iSubTrace:
 
 			final_isubtrace = tuple(n_isubtrace)
 
-			if final_isubtrace == isubtrace1 or base_len > upper_bound:
+			if final_isubtrace == isubtrace1 or base_len > self.upper_bound:
 				return None
 
 			self.len_isubtrace[(final_isubtrace,inv)] = base_len
@@ -390,7 +395,7 @@ class iSubTrace:
 			
 			return final_isubtrace
 
-	def lengthPTraces(self, pt_length, width, upper_bound, inv):
+	def lengthPTraces(self, pt_length, width, inv):
 
 
 		deleted_isubtraces = []
@@ -405,7 +410,7 @@ class iSubTrace:
 
 
 		for isubtrace in base_table[(pt_length-1,width)].keys():
-			if self.len_isubtrace[(isubtrace,inv)] >= upper_bound:
+			if self.len_isubtrace[(isubtrace,inv)] >= self.upper_bound:
 				deleted_isubtraces.append(isubtrace)
 		
 		for isubtrace in deleted_isubtraces:
@@ -413,7 +418,7 @@ class iSubTrace:
 
 		isubtrace_dict= base_table[(pt_length-1,width)]
 		new_isubtrace_dict={}
-		count = 0
+		
 		for isubtrace in isubtrace_dict.keys():
 			
 			pve_endpos_list = isubtrace_dict[isubtrace][0]
@@ -434,7 +439,7 @@ class iSubTrace:
 							is_end = True
 						else:
 							is_end = False
-						nextisubtraces = self.possiblePTraces(isubtrace, i, letter, width, upper_bound, inv, is_end)
+						nextisubtraces = self.possiblePTraces(isubtrace, i, letter, width, inv, is_end)
 						for nextisubtrace in nextisubtraces:
 							
 							if nextisubtrace in new_isubtrace_dict.keys():
@@ -452,7 +457,6 @@ class iSubTrace:
 							 	existing_table = self.R_table[(pt_length, width)][nextisubtrace]
 							except:
 							 	existing_table = None
-
 
 							for k in range(len(self.sample.positive)):
 								
@@ -480,7 +484,7 @@ class iSubTrace:
 
 								new_list = []
 								if existing_table:
-								  	count += 1
+								  	#count += 1
 								  	new_list = existing_table[0][k]
 								  	new_pos_list.append(new_list)
 								  	continue
@@ -536,7 +540,7 @@ class iSubTrace:
 
 								new_list=[]
 								if existing_table:
-									count += 1
+									#count += 1
 									new_list = existing_table[1][k]
 									new_neg_list.append(new_list)
 									continue
@@ -557,15 +561,19 @@ class iSubTrace:
 												
 									new_neg_list.append(new_list)
 
-								
+
+
 							new_isubtrace_dict[nextisubtrace]=(new_pos_list,new_neg_list)
+							self.iSubTraceCoverSet(nextisubtrace, new_pos_list, new_neg_list, pt_length, width, inv)
+
+
 		base_table[(pt_length,width)]=new_isubtrace_dict
 
 		return new_isubtrace_dict
 
 
 
-	def widthPTraces(self, pt_length, width, upper_bound, inv):
+	def widthPTraces(self, pt_length, width, inv):
 
 		if inv:
 			base_table = self.R_table_inv
@@ -576,7 +584,7 @@ class iSubTrace:
 		
 		deleted_isubtraces= []
 		for isubtrace in base_table[(pt_length, width-1)].keys():
-			if self.len_isubtrace[(isubtrace,inv)]>= upper_bound:
+			if self.len_isubtrace[(isubtrace,inv)]>= self.upper_bound:
 				deleted_isubtraces.append(isubtrace)
 
 		for isubtrace in deleted_isubtraces:
@@ -587,7 +595,7 @@ class iSubTrace:
 			#self.R_table[(pt_length,width)][isubtrace]= self.R_table[(pt_length,width-1)][isubtrace]
 
 			for w1_isubtrace in base_table[(pt_length,1)]:
-				nextisubtrace = self.add2isubtrace(isubtrace, w1_isubtrace, inv, upper_bound)
+				nextisubtrace = self.add2isubtrace(isubtrace, w1_isubtrace, inv)
 				if nextisubtrace==None or nextisubtrace in base_table[(pt_length, width)]:
 					continue
 
@@ -628,11 +636,12 @@ class iSubTrace:
 							new_neg_list.append(new_list)
 
 					base_table[(pt_length,width)][nextisubtrace]=(new_pos_list,new_neg_list)
+					self.iSubTraceCoverSet(nextisubtrace, new_pos_list, new_neg_list, pt_length, width, inv)
 
 		return base_table[(pt_length,width)]
 
 	
-	def R(self, pt_length, width, upper_bound, inv):
+	def R(self, pt_length, width, inv):
 		
 		if pt_length > self.max_positive_length:
 			raise Exception("Wrong length")
@@ -663,7 +672,7 @@ class iSubTrace:
 					else:
 						is_end = False
 
-					nextisubtraces = self.possiblePTraces(epsilon, i, letter, width, upper_bound, inv, is_end)
+					nextisubtraces = self.possiblePTraces(epsilon, i, letter, width,  inv, is_end)
 					for nextisubtrace in nextisubtraces:
 						if nextisubtrace in new_isubtrace_dict.keys():
 							continue
@@ -722,10 +731,11 @@ class iSubTrace:
 								new_list=[m+last_digit for m in nve_endpos_list[k] if m+last_digit < len(current_superword) and is_sat(current_superword.vector[m+last_digit],last_atom, m+last_digit==len(current_superword)-1)]
 									
 							new_neg_list.append(new_list)
+	
+						new_isubtrace_dict[nextisubtrace]=(new_pos_list,new_neg_list)
+						self.iSubTraceCoverSet(nextisubtrace, new_pos_list, new_neg_list, pt_length, width, inv)
 
-								
-							new_isubtrace_dict[nextisubtrace]=(new_pos_list,new_neg_list)
-			
+
 			if inv:
 				self.R_table_inv[(1,1)]=new_isubtrace_dict
 				return self.R_table_inv[(1,1)]
@@ -734,55 +744,95 @@ class iSubTrace:
 				return self.R_table[(1,1)]
 		else:
 			try:
-				return self.lengthPTraces(pt_length, width, upper_bound, inv)
+				return self.lengthPTraces(pt_length, width,  inv)
 			except:
-				return self.widthPTraces(pt_length, width, upper_bound, inv)
+				return self.widthPTraces(pt_length, width, inv)
 
 
-	def coverSet(self, pt_length, width, upper_bound):
-		
-		isubtrace_dict = {}
-		isubtrace_dict_inv = {}
+	def iSubTraceCoverSet(self, isubtrace, pos_list, neg_list, pt_length, width, inv):
 
-		if pt_length <= self.max_positive_length: 
+
+		if inv:
+			pos_friend_set = {i for i in range(self.num_positives) if pos_list[i]==[]}
+			neg_friend_set = {self.num_positives+i for i in range(self.num_negatives) if neg_list[i]==[]}
 			
-			if ('&' not in self.operators and pt_length==1 and width==1) or ('&' in self.operators):
-				isubtrace_dict = self.R(pt_length, width, upper_bound, inv=False)
+			self.cover_set[(pt_length,width)][('!',)+isubtrace] = (pos_friend_set, neg_friend_set)
+			cover_size = len(pos_friend_set) - len(neg_friend_set) + len(self.negative_set)
+			if cover_size == self.full_cover:
+				self.cover_set[(pt_length, width)] = {isubtrace:(pos_friend_set, neg_friend_set)}
+				self.upper_bound = self.len_isubtrace[(isubtrace, inv)]
+				self.subtrace_found = 1
 
-		if pt_length <= self.max_negative_length:
+		else:
 
-			if ('|' not in self.operators and pt_length==1 and width==1) or ('|' in self.operators):
-				isubtrace_dict_inv = self.R(pt_length, width, upper_bound, inv=True)
-
-		logging.debug('Found isubtraces %d and reverse isubtraces %d'%(len(isubtrace_dict), len(isubtrace_dict_inv)))
-
-
-		cover_set = {}
-		#victims_full = {}
-		#case=0
-		for isubtrace in isubtrace_dict.keys():
-
-			pos_friend_set = {i for i in range(self.num_positives) if isubtrace_dict[isubtrace][0][i]!=[]}
-			neg_friend_set = {self.num_positives+i for i in range(self.num_negatives) if isubtrace_dict[isubtrace][1][i]!=[]}
+			#print(isubtrace, pos_list, neg_list)
+			pos_friend_set = {i for i in range(self.num_positives) if pos_list[i]!=[]}
+			neg_friend_set = {self.num_positives+i for i in range(self.num_negatives) if neg_list[i]!=[]}
 			#Not sure about this, can put this if necessary
 			# if len(victim_set) == self.num_negatives:
 			# 	case=1
 			# 	victims_full[isubtrace]=(victim_set, len(victim_set))
 
 			# else:
-			cover_set[isubtrace] = (pos_friend_set, neg_friend_set)
+			self.cover_set[(pt_length, width)][isubtrace] = (pos_friend_set, neg_friend_set)
+			cover_size = len(pos_friend_set) - len(neg_friend_set) + len(self.negative_set)
 			
-		for isubtrace in isubtrace_dict_inv.keys():
+			if cover_size == self.full_cover:
+				self.cover_set[(pt_length, width)] = {isubtrace:(pos_friend_set, neg_friend_set)}
+				self.upper_bound = self.len_isubtrace[(isubtrace, inv)]
+				self.subtrace_found = 1
+				
+		if isubtrace==('>0', ('+0',), '>0', ('+1',), '>0', ('+2',)):
+			print(self.cover_set)
+			assert(1==0)
 
-			pos_friend_set = {i for i in range(self.num_positives) if isubtrace_dict_inv[isubtrace][0][i]==[]}
-			neg_friend_set = {self.num_positives+i for i in range(self.num_negatives) if isubtrace_dict_inv[isubtrace][1][i]==[]}
+
+
+	def coverSet(self, pt_length, width):
+		
+		isubtrace_dict = {}
+		isubtrace_dict_inv = {}
+
+		self.subtrace_found = 0
+		self.cover_set[(pt_length,width)] = {}
+
+		if pt_length <= self.max_positive_length: 
 			
-			cover_set[('!',)+isubtrace] = (pos_friend_set, neg_friend_set)
-		#if case==1:
-		#	victims = victims_full
+			if ('&' not in self.operators and pt_length==1 and width==1) or ('&' in self.operators):
+				self.R(pt_length, width, inv=False)
 
-		#print(cover_set)
-		return cover_set
+		if pt_length <= self.max_negative_length:
+
+			if ('|' not in self.operators and pt_length==1 and width==1) or ('|' in self.operators):
+				self.R(pt_length, width, inv=True)
+
+		logging.debug('Found isubtraces %d and reverse isubtraces %d'%(len(self.R_table[(pt_length,width)]), len(self.R_table_inv[(pt_length,width)])))
+
+
+		#victims_full = {}
+		#case=0
+		# for isubtrace in isubtrace_dict.keys():
+
+		# 	pos_friend_set = {i for i in range(self.num_positives) if isubtrace_dict[isubtrace][0][i]!=[]}
+		# 	neg_friend_set = {self.num_positives+i for i in range(self.num_negatives) if isubtrace_dict[isubtrace][1][i]!=[]}
+		# 	#Not sure about this, can put this if necessary
+		# 	# if len(victim_set) == self.num_negatives:
+		# 	# 	case=1
+		# 	# 	victims_full[isubtrace]=(victim_set, len(victim_set))
+
+		# 	# else:
+		# 	cover_set[isubtrace] = (pos_friend_set, neg_friend_set)
+			
+		# for isubtrace in isubtrace_dict_inv.keys():
+
+		# 	pos_friend_set = {i for i in range(self.num_positives) if isubtrace_dict_inv[isubtrace][0][i]==[]}
+		# 	neg_friend_set = {self.num_positives+i for i in range(self.num_negatives) if isubtrace_dict_inv[isubtrace][1][i]==[]}
+			
+		# 	cover_set[('!',)+isubtrace] = (pos_friend_set, neg_friend_set)
+		# #if case==1:
+		# #	victims = victims_full
+
+		# #print(cover_set)
 
 
 	
