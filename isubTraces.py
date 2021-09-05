@@ -199,7 +199,6 @@ class iSubTrace:
 				for i in range(1, width):
 					atoms+=list(map(lambda x: x+('--1',), self.letter2atoms(letter, i, inv)))
 
-
 		#Given difference d, the process of appending >0,>1, ..., >d-1 atoms to the isubtrace
 		if 'X' not in self.operators:
 			diff = 0
@@ -207,7 +206,7 @@ class iSubTrace:
 		if (not inv and 'F' in self.operators) or (inv and 'G' in self.operators):
 			for atom in atoms:
 				#For eliminating p>0p type isubtraces
-				for i in range(diff):	
+				for i in range(diff):
 					if isubtrace != epsilon and atom == isubtrace[-1] and i==0:
 						continue
 
@@ -442,6 +441,9 @@ class iSubTrace:
 						nextisubtraces = self.possiblePTraces(isubtrace, i, letter, width, inv, is_end)
 						for nextisubtrace in nextisubtraces:
 							
+							if self.upper_bound <= self.len_isubtrace[(nextisubtrace, inv)]:
+								continue
+
 							if nextisubtrace in new_isubtrace_dict.keys():
 								continue
 
@@ -593,7 +595,6 @@ class iSubTrace:
 		for isubtrace in base_table[(pt_length,width-1)].keys():
 
 			#self.R_table[(pt_length,width)][isubtrace]= self.R_table[(pt_length,width-1)][isubtrace]
-
 			for w1_isubtrace in base_table[(pt_length,1)]:
 				nextisubtrace = self.add2isubtrace(isubtrace, w1_isubtrace, inv)
 				if nextisubtrace==None or nextisubtrace in base_table[(pt_length, width)]:
@@ -778,13 +779,10 @@ class iSubTrace:
 			cover_size = len(pos_friend_set) - len(neg_friend_set) + len(self.negative_set)
 			
 			if cover_size == self.full_cover:
+
 				self.cover_set[(pt_length, width)] = {isubtrace:(pos_friend_set, neg_friend_set)}
 				self.upper_bound = self.len_isubtrace[(isubtrace, inv)]
 				self.subtrace_found = 1
-				
-		if isubtrace==('>0', ('+0',), '>0', ('+1',), '>0', ('+2',)):
-			print(self.cover_set)
-			assert(1==0)
 
 
 

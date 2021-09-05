@@ -175,7 +175,6 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 			continue
 		
 		if s.subtrace_found:
-			print(s.cover_set[(length,width)])
 			current_covering_formula = isubTrace2Formula(list(s.cover_set[(length,width)].keys())[0])
 		else:
 
