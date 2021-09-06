@@ -2,7 +2,6 @@ from sample import Sample, Trace
 from formulaTree import Formula
 import heapq as hq
 import time
-from inferLTL import iSubseq2Formula
 from booleanSetCover import BooleanSetCover
 import logging
 

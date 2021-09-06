@@ -37,8 +37,10 @@ class BooleanSetCover:
 		self.score = {}
 		self.cover_size = {}
 		self.heap = []
+		self.new_heap = []
 		self.formula_dict = {}
 		self.operators = operators
+		self.bool_dict={} # saves the best boolean comb for each formula 
 
 	
 	#calculates the local score of a formula with respect to the best formula 
@@ -61,6 +63,8 @@ class BooleanSetCover:
 		logging.debug("List of best formulas: %s"%str([(i,self.score[i]) for i in best_formula_list]))	
 		
 		final_formula=None
+
+
 		
 
 		for best_formula in best_formula_list:
@@ -80,7 +84,17 @@ class BooleanSetCover:
 				
 				# we take "&" and "|" of all existing formulas in the heap with the best formula and check if it is better
 				value={}
-				for (_,formula) in self.heap:
+				#print('bulbul', self.bool_dict)
+				try:
+					(previous_best,score_best)= self.bool_dict[current_formula]
+					#print(current_formula)
+					mod_heap = self.new_heap
+					#print('amiii sera')
+
+				except:
+					mod_heap=self.heap
+
+				for (_,formula) in mod_heap:
 					if '&' in self.operators:
 						# could check whether it has a shared prefix of X and G
 						# to make the conjunction smaller
@@ -112,12 +126,24 @@ class BooleanSetCover:
 					
 				current_value = 0
 				success = True
+				old_formula= current_formula
 				for formula in value.keys():
 					#if the resulting formula is better than the best formula then we continue with the resulting formula
 					
 					if value[formula] > current_value:
 						current_formula = formula
-						current_value = value[formula]	
+						current_value = value[formula]#eta value na, score hbe?	
+
+				
+				try: 
+					prev_formula,prev_value= self.bool_dict[old_formula]
+					if current_value > prev_value:
+						self.bool_dict[old_formula]= (current_formula, current_value)
+					else:
+						current_formula,current_value= prev_formula, prev_value
+
+				except:
+					self.bool_dict[old_formula]= (current_formula, current_value)
 
 
 				if current_value == 0:

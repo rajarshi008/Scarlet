@@ -150,6 +150,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 	for (length, width) in seq:
 		logging.info("-------------Finding from length %d and width %d iSubseqs-------------"%(length,width))
 		time1 = time.time()
+
 		
 		if width>s.upper_bound:
 			break
@@ -174,6 +175,8 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 		s.preComputeInd_next(width)
 		s.coverSet(length, width)
 
+		boolcomb.new_heap=[]
+		
 		if s.cover_set[(length,width)]=={}:
 			continue
 		
@@ -204,6 +207,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 					boolcomb.cover_size[formula]  = len(pos_friend_set) - len(neg_friend_set) + len(negative_set)
 					
 					hq.heappush(boolcomb.heap, (-boolcomb.score[formula], formula))
+					hq.heappush(boolcomb.new_heap, (-boolcomb.score[formula], formula))
 						
 
 				if method =="DT":
