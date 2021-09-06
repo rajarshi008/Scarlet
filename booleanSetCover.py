@@ -25,7 +25,7 @@ Take postraces as argument instead of formulas
 
 #Calculate the Boolean set cover from the covering set 
 
-class BooleanSetCover: 
+class BooleanSetCover:
 
 	def __init__(self, sample, operators):
 

@@ -1,5 +1,5 @@
 from booleanSetCover import BooleanSetCover
-from isubTraces import iSubTrace
+
 from formulaTree import Formula
 from sample import Sample
 import time
@@ -15,14 +15,41 @@ Possible clean-ups:
 '''
 
 #BY DEFAULT p,q,r... alphabet
-def isubTrace2Formula(isubtrace: tuple):
+def iSubseq2Formula(iSubseq_tuple: tuple, inv: bool):
 
 	# add formula calculation in isubTrace2FaXttern
-	#print(isubtrace)
+	#print(iSubseq)
+	if inv:
+		
+		first_atom = iSubseq_tuple[1]#('>0',('+0','-1'), ...)
+		if first_atom[0][0] == '-':
+			form_atom = Formula(alphabet[int(first_atom[0][1:])])
+		else:
+			form_atom = Formula(['!', Formula(alphabet[int(first_atom[0][1:])])])
 
-	if isubtrace[0]!='!':
-		first_digit = int(isubtrace[0].strip('>'))
-		first_atom = isubtrace[1]#('>0',('+0','-1'), ...)
+		for i in first_atom[1:]:
+			if i[0] == '-':
+				form_atom = Formula(['|', form_atom, Formula(alphabet[int(i[1:])])])
+			else:
+				form_atom = Formula(['|', form_atom, Formula(['!', Formula(alphabet[int(i[1:])])])])
+		
+		if len(iSubseq_tuple)>2:	
+			next_formula = Formula(['|', form_atom, iSubseq2Formula(iSubseq_tuple[2:], inv)])
+		else:
+			next_formula = form_atom
+		
+		first_digit = int(iSubseq_tuple[0].strip('>'))
+		if iSubseq_tuple[0][0]=='>':
+			next_formula = Formula(['G', next_formula])
+
+		for i in range(first_digit):
+			#next_formula = Formula(['|', Formula(['X', next_formula]), Formula('L')])
+			next_formula = Formula(['X', next_formula])
+
+	else:
+
+		first_digit = int(iSubseq_tuple[0].strip('>'))
+		first_atom = iSubseq_tuple[1]#('>0',('+0','-1'), ...)
 		if first_atom[0][0] == '+': 
 			form_atom = Formula(alphabet[int(first_atom[0][1:])])
 		else:
@@ -34,42 +61,18 @@ def isubTrace2Formula(isubtrace: tuple):
 			else:
 				form_atom = Formula(['&', form_atom, Formula(['!', Formula(alphabet[int(i[1:])])])])
 		
-		if len(isubtrace)>2:
-			next_formula = Formula(['&', form_atom, isubTrace2Formula(isubtrace[2:])])
+		if len(iSubseq_tuple)>2:
+			next_formula = Formula(['&', form_atom, iSubseq2Formula(iSubseq_tuple[2:], inv)])
 		else:
 			next_formula = form_atom
 		for i in range(first_digit):
 			next_formula = Formula(['X', next_formula])
-		if isubtrace[0][0]=='>':
+		if iSubseq_tuple[0][0]=='>':
 			next_formula = Formula(['F', next_formula])
-	
-	else:
-		first_digit = int(isubtrace[1].strip('>'))
-		first_atom = isubtrace[2]#('>0',('+0','-1'), ...)
-		if first_atom[0][0] == '-': 
-			form_atom = Formula(alphabet[int(first_atom[0][1:])])
-		else:
-			form_atom = Formula(['!', Formula(alphabet[int(first_atom[0][1:])])])
-
-		for i in first_atom[1:]:
-			if i[0] == '-':
-				form_atom = Formula(['|', form_atom, Formula(alphabet[int(i[1:])])])
-			else:
-				form_atom = Formula(['|', form_atom, Formula(['!', Formula(alphabet[int(i[1:])])])])
-		
-		if len(isubtrace)>3:	
-			next_formula = Formula(['|', form_atom, isubTrace2Formula(('!',)+isubtrace[3:])])
-		else:
-			next_formula = form_atom
-		
-		if isubtrace[1][0]=='>':
-			next_formula = Formula(['G', next_formula])
-
-		for i in range(first_digit):
-			#next_formula = Formula(['|', Formula(['X', next_formula]), Formula('L')])
-			next_formula = Formula(['X', next_formula])
 
 	return next_formula
+
+from isubsequences import iSubsequence, findiSubsequence
 
 def iteration_seq(max_len, max_width):
 	'''
@@ -102,7 +105,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 	f=open(csvname,'w')
 	f.close()
 	# set of methods for indexed subsequences
-	s = iSubTrace(sample, operators,last)
+	s = findiSubsequence(sample, operators, last)
 	
 	global alphabet
 	alphabet=sample.alphabet
@@ -110,7 +113,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 	if last:
 		alphabet.append('L')
 
-	reasonable_upper_bound = 50
+	reasonable_upper_bound = 30
 
 
 	s.upper_bound = reasonable_upper_bound
@@ -145,7 +148,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 	combination_time = 0
 	
 	for (length, width) in seq:
-		logging.info("-------------Finding from length %d and width %d isubtraces-------------"%(length,width))
+		logging.info("-------------Finding from length %d and width %d iSubseqs-------------"%(length,width))
 		time1 = time.time()
 		
 		if width>s.upper_bound:
@@ -174,32 +177,30 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 		if s.cover_set[(length,width)]=={}:
 			continue
 		
-		if s.subtrace_found:
-			current_covering_formula = isubTrace2Formula(list(s.cover_set[(length,width)].keys())[0])
+		if s.Subseq_found:
+			covering_iSubseq = list(s.cover_set[(length,width)].keys())[0]
+			current_covering_formula = iSubseq2Formula(covering_iSubseq.vector, covering_iSubseq.inv)
 		else:
 
-			for isubtrace in s.cover_set[(length,width)].keys():
+			for iSubseq in s.cover_set[(length,width)].keys():
 
-				pos_friend_set = s.cover_set[(length,width)][isubtrace][0]
-				neg_friend_set = s.cover_set[(length,width)][isubtrace][1]
+				pos_friend_set = s.cover_set[(length,width)][iSubseq][0]
+				neg_friend_set = s.cover_set[(length,width)][iSubseq][1]
 
 				if neg_friend_set == negative_set:
 					continue
 
-				formula = isubTrace2Formula(isubtrace)
+				formula = iSubseq2Formula(iSubseq.vector, iSubseq.inv)
 				#Is the formula equivalent to some existing formula? if yes, ignore it.
-
-				if isubtrace[0]!='!':
-					formula.size = s.len_isubtrace[(isubtrace,False)]
-				else:
-					formula.size = s.len_isubtrace[(isubtrace[1:], True)]
+				
+				formula.size = iSubseq.size
 				
 				if method == "SC":
 
 					boolcomb.formula_dict[formula] = (pos_friend_set, neg_friend_set)
 					#score can be weighted by formula size
 					boolcomb.score[formula] = ((len(pos_friend_set) - len(neg_friend_set) + len(negative_set))/((formula.treeSize())**(0.5)+1))
-					#print(isubtrace, formula, len(pos_friend_set),len(neg_friend_set),len(negative_set), setcover.score[formula] )
+					#print(iSubseq, formula, len(pos_friend_set),len(neg_friend_set),len(negative_set), setcover.score[formula] )
 					boolcomb.cover_size[formula]  = len(pos_friend_set) - len(neg_friend_set) + len(negative_set)
 					
 					hq.heappush(boolcomb.heap, (-boolcomb.score[formula], formula))
