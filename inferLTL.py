@@ -1,5 +1,5 @@
 from booleanSetCover import BooleanSetCover
-
+from isubsequences import iSubsequence, findiSubsequence
 from formulaTree import Formula
 from sample import Sample
 import time
@@ -72,7 +72,7 @@ def iSubseq2Formula(iSubseq_tuple: tuple, inv: bool):
 
 	return next_formula
 
-from isubsequences import iSubsequence, findiSubsequence
+
 
 def iteration_seq(max_len, max_width):
 	'''
