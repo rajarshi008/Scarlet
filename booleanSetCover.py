@@ -51,6 +51,7 @@ class BooleanSetCover:
 	#we find best formulas from the current cover set
 	def find(self, upper_bound):
 
+		init_upper_bound = upper_bound
 		best_formula_list=[]
 		#get the best 5 formulas currently from the heap with the highest score
 		smallest_list = hq.nsmallest(5,self.heap)
@@ -87,14 +88,17 @@ class BooleanSetCover:
 				#print('bulbul', self.bool_dict)
 				try:
 					(previous_best,score_best)= self.bool_dict[current_formula]
-					#print(current_formula)
 					mod_heap = self.new_heap
-					#print('amiii sera')
-
+					#mod_heap = self.heap
 				except:
 					mod_heap=self.heap
 
 				for (_,formula) in mod_heap:
+					
+					if formula.treeSize() > upper_bound:
+						continue
+
+
 					if '&' in self.operators:
 						# could check whether it has a shared prefix of X and G
 						# to make the conjunction smaller
@@ -107,7 +111,6 @@ class BooleanSetCover:
 								self.formula_dict[new_formula] = (self.formula_dict[formula][0].intersection(self.formula_dict[current_formula][0]), self.formula_dict[formula][1].intersection(self.formula_dict[current_formula][1]))
 								self.cover_size[new_formula] = len(self.formula_dict[new_formula][0]) - len(self.formula_dict[new_formula][1])+ len(self.negative_set)
 							value[new_formula] = self.score_local(new_formula, current_formula)
-
 
 
 					if '|' in self.operators:
@@ -164,6 +167,17 @@ class BooleanSetCover:
 			if success:
 				upper_bound = current_formula.treeSize() 
 				final_formula = current_formula
-		
-		return final_formula,upper_bound
+
+		if init_upper_bound != upper_bound:
+			small_heap = []
+			hq.heapify(small_heap)
+			for (score,formula) in self.heap:
+				if formula.treeSize() < upper_bound: 
+					hq.heappush(small_heap, (score,formula))
+				#else:
+				#	print(formula, formula.treeSize())
+
+			self.heap = small_heap
+
+		return final_formula, upper_bound
 

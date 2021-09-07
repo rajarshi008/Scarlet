@@ -24,7 +24,7 @@ def run_test(input_file='./dummy.trace', timeout=900, outputcsv='./result.csv', 
 	input_file = args.input_file
 	is_word = True if ('.words' in input_file) or args.words  else False
 	timeout = float(args.timeout)
-	verbosity = 2
+	verbosity = 1
 	method = args.method
 	csvname = args.csvname
 

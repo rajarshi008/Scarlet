@@ -408,7 +408,7 @@ class findiSubsequence:
 
 			final_iSubseq = n_iSubseq
 
-			if final_iSubseq.vector == iSubseq1.vector or base_len > self.upper_bound:
+			if final_iSubseq.vector == iSubseq1.vector or base_len >= self.upper_bound:
 				return None
 
 			final_iSubseq.size = base_len
@@ -623,7 +623,7 @@ class findiSubsequence:
 
 		for length in iSubseq_lengths:
 
-			if length > self.upper_bound:
+			if length >= self.upper_bound:
 
 				for iSubseq in self.len_iSubseq[(pt_length-1,width)][length]:
 					del self.R_table[(pt_length-1,width)][iSubseq]
@@ -647,7 +647,7 @@ class findiSubsequence:
 
 		for length in iSubseq_lengths:
 
-			if length > self.upper_bound:
+			if length >= self.upper_bound:
 
 				for iSubseq in self.len_iSubseq[(pt_length,1)][length]:
 					del self.R_table[(pt_length,1)][iSubseq] 
@@ -658,7 +658,7 @@ class findiSubsequence:
 
 		for length in iSubseq_lengths:
 
-			if length > self.upper_bound:
+			if length >= self.upper_bound:
 
 				for iSubseq in self.len_iSubseq[(pt_length,1)][length]:
 					del self.R_table[(pt_length,width-1)][iSubseq] 
@@ -882,6 +882,7 @@ class findiSubsequence:
 				self.cover_set[(pt_length, width)] = {iSubseq:(pos_friend_set, neg_friend_set)}
 				self.upper_bound = iSubseq.size
 				self.Subseq_found = 1
+				logging.info("Already Found from iSubsequence of size %d"%(self.upper_bound))
 
 		else:
 
@@ -896,27 +897,17 @@ class findiSubsequence:
 				self.cover_set[(pt_length, width)] = {iSubseq:(pos_friend_set, neg_friend_set)}
 				self.upper_bound = iSubseq.size
 				self.Subseq_found = 1
-				print("Already found", self.upper_bound)
+				logging.info("Already Found from iSubsequence of size %d"%(self.upper_bound))
 
 
 
-	def coverSet(self, pt_length, width):
-		
+	def enumerate(self, pt_length, width):
 
 		self.Subseq_found = 0
 		self.cover_set[(pt_length,width)] = {}
 		self.R(pt_length, width)
 
-
-		# if pt_length <= self.max_positive_length: 
-			
-		# 	if ('&' not in self.operators and pt_length==1 and width==1) or ('&' in self.operators):
-				
-		# if pt_length <= self.max_negative_length:
-
-		# 	if ('|' not in self.operators and pt_length==1 and width==1) or ('|' in self.operators):
-		# 		self.R(pt_length, width)
-
+		'''
 		count, count_inv = 0, 0
 		for iSubseq in self.R_table[(pt_length, width)]:
 			if iSubseq.inv:
@@ -925,34 +916,4 @@ class findiSubsequence:
 				count+=1
 
 		logging.debug('Found iSubseqs %d and reverse iSubseqs %d'%(count, count_inv))
-
-
-		#victims_full = {}
-		#case=0
-		# for iSubseq in iSubseq_dict.keys():
-
-		# 	pos_friend_set = {i for i in range(self.num_positives) if iSubseq_dict[iSubseq][0][i]!=[]}
-		# 	neg_friend_set = {self.num_positives+i for i in range(self.num_negatives) if iSubseq_dict[iSubseq][1][i]!=[]}
-		# 	#Not sure about this, can put this if necessary
-		# 	# if len(victim_set) == self.num_negatives:
-		# 	# 	case=1
-		# 	# 	victims_full[iSubseq]=(victim_set, len(victim_set))
-
-		# 	# else:
-		# 	cover_set[iSubseq] = (pos_friend_set, neg_friend_set)
-			
-		# for iSubseq in iSubseq_dict_inv.keys():
-
-		# 	pos_friend_set = {i for i in range(self.num_positives) if iSubseq_dict_inv[iSubseq][0][i]==[]}
-		# 	neg_friend_set = {self.num_positives+i for i in range(self.num_negatives) if iSubseq_dict_inv[iSubseq][1][i]==[]}
-			
-		# 	cover_set[('!',)+iSubseq] = (pos_friend_set, neg_friend_set)
-		# #if case==1:
-		# #	victims = victims_full
-
-		# #print(cover_set)
-
-
-	
-	#Finding the shortest iSubseq	
-
+		'''

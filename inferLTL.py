@@ -171,9 +171,9 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 
 		# letter = (X^10 (a and F b) AND sub2)
 		# letter2 = X^10 (a and F b) OR sub3
-
+		count_raj = 0
 		s.preComputeInd_next(width)
-		s.coverSet(length, width)
+		s.enumerate(length, width)
 
 		boolcomb.new_heap=[]
 		
@@ -191,13 +191,14 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 				neg_friend_set = s.cover_set[(length,width)][iSubseq][1]
 
 				if neg_friend_set == negative_set:
+					count_raj+=1
 					continue
 
 				formula = iSubseq2Formula(iSubseq.vector, iSubseq.inv)
 				#Is the formula equivalent to some existing formula? if yes, ignore it.
 				
 				formula.size = iSubseq.size
-				
+
 				if method == "SC":
 
 					boolcomb.formula_dict[formula] = (pos_friend_set, neg_friend_set)
@@ -206,13 +207,13 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 					#print(iSubseq, formula, len(pos_friend_set),len(neg_friend_set),len(negative_set), setcover.score[formula] )
 					boolcomb.cover_size[formula]  = len(pos_friend_set) - len(neg_friend_set) + len(negative_set)
 					
+
 					hq.heappush(boolcomb.heap, (-boolcomb.score[formula], formula))
 					hq.heappush(boolcomb.new_heap, (-boolcomb.score[formula], formula))
 						
 
 				if method =="DT":
 					boolcomb.formula_dict[formula] = (pos_friend_set, neg_friend_set)
-
 
 		
 			t0=time.time()
