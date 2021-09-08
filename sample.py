@@ -528,6 +528,9 @@ class Sample:
 		ver = True
 		letter2pos = {alphabet[i]:i for i in range(len(alphabet))}
 
+
+		pos_words_dist = []
+		neg_words_dist = []
 		# Generating positive words
 		print("Generating positive words")
 		ltldfa = ltl2dfa(formula, letter2pos, is_words)
@@ -562,6 +565,7 @@ class Sample:
 			num_remaining_words = num_words_per_length[i] - len(non_empty_dfas)
 			for dfa in non_empty_dfas[:-1]:
 				num_words_per_dfa[dfa] = 1 + int((dfa.number_of_words[(dfa.init_state,i)]/num_accepted_words_length[i])*num_remaining_words)
+				pos_words_dist.append(num_words_per_dfa[dfa])
 				new_words = dfa.generate_random_words_in_batch((i,i), num_words_per_dfa[dfa])
 				for word in new_words:
 					trace = Trace([list(letter) for letter in word], is_word=False)
@@ -570,6 +574,7 @@ class Sample:
 			
 			dfa = ltldfa_list[-1]
 			num_words_per_dfa[dfa] = num_words_per_length[i] - sum(num_words_per_dfa.values())
+			pos_words_dist.append(num_words_per_dfa[dfa])
 			new_words = dfa.generate_random_words_in_batch((i,i), num_words_per_dfa[dfa])
 			for word in new_words:
 				trace = Trace([list(letter) for letter in word], is_word=False)
@@ -580,7 +585,6 @@ class Sample:
 		print("Generating negative words")
 		ltldfa_c = ltldfa.complement()
 		ltldfa_list = []
-
 		### Some super optimization
 		
 		for state in ltldfa_c.final_states:
@@ -610,6 +614,7 @@ class Sample:
 			num_remaining_words = num_words_per_length[i] - len(non_empty_dfas)
 			for dfa in non_empty_dfas[:-1]:
 				num_words_per_dfa[dfa] = 1 + int((dfa.number_of_words[(dfa.init_state,i)]/num_accepted_words_length[i])*num_remaining_words)
+				neg_words_dist.append(num_words_per_dfa[dfa])
 				new_words = dfa.generate_random_words_in_batch((i,i), num_words_per_dfa[dfa])
 				for word in new_words:
 					trace = Trace([list(letter) for letter in word], is_word=False)
@@ -618,6 +623,7 @@ class Sample:
 			
 			dfa = ltldfa_list[-1]
 			num_words_per_dfa[dfa] = num_words_per_length[i] - sum(num_words_per_dfa.values())
+			neg_words_dist.append(num_words_per_dfa[dfa])
 			new_words = dfa.generate_random_words_in_batch((i,i), num_words_per_dfa[dfa])
 			for word in new_words:
 				trace = Trace([list(letter) for letter in word], is_word=False)
@@ -628,7 +634,10 @@ class Sample:
 		self.alphabet = alphabet
 		self.letter2pos = {alphabet[i]:i for i in range(len(alphabet))}
 		self.operators = operators
+		
 		self.writeToFile(filename)
+		return(pos_words_dist, neg_words_dist)
+
 
 	def writeToFile(self, filename):
 

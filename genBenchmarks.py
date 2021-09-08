@@ -43,7 +43,7 @@ def generateBenchmarks(formula_file, trace_type, sample_sizes, trace_lengths, op
 		syslite_folder = output_folder+'/SysliteFiles/'
 		os.makedirs(syslite_folder)
 
-	generated_files = []
+	generation_info = []
 	with open(formula_file, 'r') as file:
 		formula_num=0
 		for line in file:
@@ -66,16 +66,16 @@ def generateBenchmarks(formula_file, trace_type, sample_sizes, trace_lengths, op
 						sample=Sample(positive=[], negative=[])
 
 						trace_file = traces_folder+'f:'+str(formula_num).zfill(2)+'-'+'nw:'+str((size[0]+size[1])//2).zfill(3)+'-'+'ml:'+str(length_mean).zfill(2)+'-'+str(num)+'.trace'
-						generated_files.append(trace_file)
-
+						
 						if gen_method=='dfa_method':
-							sample.generator_dfa_in_batch_advanced(formula=formula, length_range=length_range, num_traces=size, alphabet=alphabet, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
-						# sample.generator(formula=formula, length_range=length_range, num_traces=size, filename=word_file, is_word=(trace_type=='words'))
+							(pos_word_dist, neg_word_dist) = sample.generator_dfa_in_batch_advanced(formula=formula, length_range=length_range, num_traces=size, alphabet=alphabet, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
+							# sample.generator(formula=formula, length_range=length_range, num_traces=size, filename=word_file, is_word=(trace_type=='words'))
 						elif gen_method=='random':
 							sample.generator(formula=formula, length_range=length_range, num_traces=size, alphabet=alphabet, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
 						elif gen_method=='random_walk':
 							sample.generator_random_walk(formula=formula, length_range=length_range, num_traces=size, alphabet=alphabet, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
 
+						generation_info.append((trace_file, pos_word_dist, neg_word_dist))
 
 							#convertFileType(wordfile=word_file, tracefile=trace_file, operators=operators)
 						# else:
@@ -90,7 +90,6 @@ def generateBenchmarks(formula_file, trace_type, sample_sizes, trace_lengths, op
 
 						# sample.generator(formula=formula, length_range=length_range, num_traces=size, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
 
-
 						if sample.isFormulaConsistent(formula):
 							print("Formula is consistent with sample")
 
@@ -98,7 +97,7 @@ def generateBenchmarks(formula_file, trace_type, sample_sizes, trace_lengths, op
 							syslite_file = syslite_folder +'f:'+str(formula_num).zfill(2)+'-'+ 'nw:'+str((size[0]+size[1])//2).zfill(3)+'-'+'ml:'+str(length_mean).zfill(2)+'-'+str(num)+'.trace'
 							genSysliteTraces(trace_file, syslite_file)
 
-	return generated_files
+	return generation_info
 
 
 #Data type for parser
@@ -108,18 +107,35 @@ def tupleList(s):
 	except:
 		print("Wrong format; provide comma separated values")
 
-def generateSmallBenchmarks(generated_files, max_size, sizes):
+def generateSmallBenchmarks(generation_info, max_size, sizes):
 	
-	for filename in generated_files:
+	for info in generation_info:
 		
+		filename = info[0]
+		pos_word_dist, neg_word_dist = info[1], info[2]
 		s = Sample(positive=[],negative=[])
 		s.readFromFile(filename)
-		
+
 		for (i,j) in sizes:
 			
+			this_pos_word = [1+int((k-1)/(sum(pos_word_dist)-len(pos_word_dist))*i) for k in pos_word_dist[:-1]]
+			this_pos_word.append(i-sum(this_pos_word))
+
+			this_neg_word = [1+int((k-1)/(sum(neg_word_dist)-len(neg_word_dist))*j) for k in neg_word_dist[:-1]]
+			this_neg_word.append(j-sum(this_neg_word))
+
+			new_positive = []
+			new_negative = []
+
+			for k in range(len(pos_word_dist)):
+				start = sum(pos_word_dist[:k])
+				new_positive += s.positive[start:(start+this_pos_word[k])]
+
+			for k in range(len(neg_word_dist)):
+				start = sum(neg_word_dist[:k])
+				new_negative += s.negative[start:(start+this_neg_word[k])]
+
 			new_filename = filename.replace("nw:"+str((max_size[0]+max_size[1])//2).zfill(3), "nw:"+str(i).zfill(3))
-			new_positive = s.positive[:i]
-			new_negative = s.negative[:j]
 			new_s = Sample(positive=new_positive, negative=new_negative, alphabet=s.alphabet)
 			new_s.writeToFile(new_filename)
 			new_sysfilename = new_filename.replace('TracesFiles', 'SysliteFiles')
@@ -129,11 +145,11 @@ def generateSmallBenchmarks(generated_files, max_size, sizes):
 def main():
 
 	parser = argparse.ArgumentParser()
-	parser.add_argument('--formula_file', dest='formula_file', default = 'formulas.txt')
-	parser.add_argument('--trace_type', dest='trace_type', default = 'trace')
+	parser.add_argument('--formula_file', dest='formula_file', default = 'formulas1.txt')
+	parser.add_argument('--trace_type', dest='trace_type', default = 'words')
 	parser.add_argument('--operators', dest='operators', default = ['F', 'G', 'X', '!', '&', '|'], type=list)
-	parser.add_argument('--size', dest='sample_sizes', default=[(10,10),(50,50),(100,100),(200,200),(500,500)], nargs='+', type=tupleList)
-	parser.add_argument('--lengths', dest='trace_lengths', default=[(6,6)], nargs='+', type=tupleList)
+	parser.add_argument('--size', dest='sample_sizes', default=[(100,100),(1250,1250)], nargs='+', type=tupleList)
+	parser.add_argument('--lengths', dest='trace_lengths', default=[(5,5)], nargs='+', type=tupleList)
 	parser.add_argument('--total_num', dest='total_num', default=1, type=int)
 	parser.add_argument('--output_folder', dest='output_folder', default = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
 	parser.add_argument('--syslite', dest='syslite', action='store_true', default=True)
@@ -158,9 +174,9 @@ def main():
 	shutil.copyfile(formula_file, output_folder+'/'+formula_file)
 	sample_sizes.sort()
 	max_size = sample_sizes[-1]
-	generated_files = generateBenchmarks(formula_file, trace_type, [max_size], trace_lengths, operators, total_num, output_folder, syslite, gen_method)
+	generation_info = generateBenchmarks(formula_file, trace_type, [max_size], trace_lengths, operators, total_num, output_folder, syslite, gen_method)
 	#generating small benchmarks from large ones
-	generateSmallBenchmarks(generated_files, max_size, sample_sizes[:-1])
+	generateSmallBenchmarks(generation_info, max_size, sample_sizes[:-1])
 
 if __name__=='__main__':
 	main()
