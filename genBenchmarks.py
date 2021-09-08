@@ -49,6 +49,7 @@ def generateBenchmarks(formula_file, trace_type, sample_sizes, trace_lengths, op
 		for line in file:
 			#Has a makeshift addition of trace lengths
 			formula_text, alphabet, lengths = line.split(';')
+
 			alphabet = alphabet.split(',')
 			alphabet[-1] = alphabet[-1].rstrip('\n')
 			trace_lengths = lengths.split(',')
@@ -148,8 +149,13 @@ def main():
 	parser.add_argument('--formula_file', dest='formula_file', default = 'formulas1.txt')
 	parser.add_argument('--trace_type', dest='trace_type', default = 'words')
 	parser.add_argument('--operators', dest='operators', default = ['F', 'G', 'X', '!', '&', '|'], type=list)
+<<<<<<< HEAD
 	parser.add_argument('--size', dest='sample_sizes', default=[(100,100),(1250,1250)], nargs='+', type=tupleList)
 	parser.add_argument('--lengths', dest='trace_lengths', default=[(5,5)], nargs='+', type=tupleList)
+=======
+	parser.add_argument('--size', dest='sample_sizes', default=[(25,25),(50,50),(75,75),(100,100),(250,250),(500,500),(750,750),(1000,1000)], nargs='+', type=tupleList)
+	parser.add_argument('--lengths', dest='trace_lengths', default=[(6,6)], nargs='+', type=tupleList)
+>>>>>>> 1b16eb1ad25c7411a7b93295024057a2dc68003b
 	parser.add_argument('--total_num', dest='total_num', default=1, type=int)
 	parser.add_argument('--output_folder', dest='output_folder', default = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
 	parser.add_argument('--syslite', dest='syslite', action='store_true', default=True)

@@ -57,7 +57,7 @@ class BooleanSetCover:
 		smallest_list = hq.nsmallest(5,self.heap)
 		for i in smallest_list:
 			best_formula_list.append((i[1],self.cover_size[i[1]]))
-		
+			print((i[1],self.cover_size[i[1]]))
 		#sort the best formulas with their cover size
 		best_formula_list = list(map(lambda x:x[0], sorted(best_formula_list, key=lambda x: x[1], reverse=True)))
 
@@ -139,8 +139,8 @@ class BooleanSetCover:
 
 				
 				try: 
-					prev_formula,prev_value= self.bool_dict[old_formula]
-					if current_value > prev_value:
+					prev_formula,prev_value = self.bool_dict[old_formula]
+					if current_value > prev_value or prev_formula.treeSize() >= upper_bound:
 						self.bool_dict[old_formula]= (current_formula, current_value)
 					else:
 						current_formula,current_value= prev_formula, prev_value

@@ -184,7 +184,6 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 			covering_iSubseq = list(s.cover_set[(length,width)].keys())[0]
 			current_covering_formula = iSubseq2Formula(covering_iSubseq.vector, covering_iSubseq.inv)
 		else:
-
 			for iSubseq in s.cover_set[(length,width)].keys():
 
 				pos_friend_set = s.cover_set[(length,width)][iSubseq][0]
