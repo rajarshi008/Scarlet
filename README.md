@@ -1,27 +1,28 @@
-## Collab (Tentative)
-
-We solve the problem of learning LTL formulas from a sample consisting of traces partitioned into positive and negative. Most previous approaches that use enumeration over all LTL formulas to search for concise ones consistent with the sample checking consistency with the sample. Unlike other methods we essentially enumerate subsequences from the traces in the sample from which LTL formulas can be generated in a straightforward manner.
-
+## SCARLET 
 ---
 
-## Setup
-- setup a python3 virtual environment using `virtualenv -p python3 venv`.
-- activate the virtual environment created above using `source venv/bin/activate`.
-- run `pip install -r requirements.txt` to install all necessary python dependencies.
+We solve the problem of learning LTL formulas from a sample consisting of traces partitioned into positive and negative.
+---
+
+## Installation
+
+To install the tool, run the following script: `source ./installation.sh`
 
 
 ## How to run:
 
-For running Collab, run `python run_tests`. By default, this will run Collab on `dummy.trace`. You can run Collab with a variety of arguments that are listed below:
+For running *Scarlet*, run `python run_tests.py`. By default, this will run *Scarlet* on `example.trace`. For easy testing, one can replace `example.trace` with the trace file of choice. Further, there are a variety of arguments that one can use to run *Scarlet*, as listed below:
 
 |Argument        |Meaning
 |----------------|------------------------------
-|-i \<file_name>| For specifying the path of the input file.
-|-v | For output a detailed log of Collab's executiongenerator
-|-vv | For output a even more detailed log of Collab's execution
-|-t <timeout>| For specifying the time duration for which Collab is allowed to run (it will return the best formula it has found till then)
-|-o <result_file_name>| For specifying the name of the output csv file
+|-i \<file_name>| For specifying the path of the input file, default is *example.trace*.
+|-v | For output a detailed log of *Scarlet*'s execution.
+|-vv | For output a even more detailed log of *Scarlet*'s execution.
+|-t <timeout>| For specifying the timeout, default is 900 secs (the best formula found till timeout can be found in result.csv).
+|-o <result_file_name>| For specifying the name of the output csv file, default is *results.csv*
+|-m <bool_comb_method>| For specifying the method (SC for set cover, DT for Decision Tree) for boolean combination, default is *SC*.
 |-h | Outputs the help.
+
 
 
 ### Input format:
@@ -33,32 +34,18 @@ A example of a trace is `1,0,1;0,0,0` which consists of two letters each of whic
 
 ### Generating Traces
 
-For generating traces, one needs to run `python genBenchmarks.py`. By default, this generates traces that are consistent with the formulas provided in `formulas.txt`. You can run `genBenchmarks.py` with the following arguments:
+For generating benchmarks from a given set of LTL formula, we rely on a python package LTLf2DFA that uses [MONA](https://www.brics.dk/mona/) in its backend. 
+As a result, one needs to install MONA first in order to be able to use this procedure (instructions can be found in the MONA website).
+
+After the installation, for generating samples one simply needs to run `python genBenchmarks.py`. By default, this generates samples that are separable using the formulas provided in `formulas.txt`. You can run `genBenchmarks.py` with the following arguments:
 
 |Argument        |Meaning
 |----------------|------------------------------
 |--formula_file <file_name>| For specifying the file containing all of the formulas (in prefix notation).
-|--operators <list_of_operators>| For specifying the operators to be used during the execution of Collab.
 |--size <list_of_tuple>| List of sample_size, i.e., number of positive traces and number of negative traces (separated by comma) in each sample.  
 |--lengths <list_of_tuple>| For specifying the length range for each trace in the samples 
+|--trace_type <type_of_sample> | For specifying whether you want to generate trace type files or word type files.
 |-o <output_folder>| For specifying the name of the folder in which samples are generated.
 |-h | Outputs the help.
 
-The output is provided in a folder that is named with the current date and time. The file names contain the following information: 
-`Formula no.`:(`pos examples`, `neg examples`)ml-`(median length of traces)`
-<!---
-### Large-scale Testing
-
-Use `python queue_maker.py` to run a solver on a whole benchmark on a Redis server.
-You can run `queue_maker` with the following arguments:
-
-
-|Argument        |Meaning
-|----------------|------------------------------
-|-if \<foldername>| For specifying the folder containing the input files
-|-t <timeout>| For specifying the time duration for which Collab is allowed to run
-|-o <resultfilename>| For specifying the name of the output csv file
-|-h | Outputs the help.
-
-
-Then use `python queue_maker.py --compile` to compile all the results.-->
+The formula file should contain a list of formulas (in prefix notation) along with the alphabet (see `formulas.txt`) to be used for generating the sample.

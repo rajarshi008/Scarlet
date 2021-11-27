@@ -1,8 +1,9 @@
-# if you choose DT learner, you cannot switch off any of the following operators: &, |, !
-from formulaTree import *
 import logging
-from graphviz import Source
 import os
+from graphviz import Source
+from formulaTree import *
+
+
 
 class DecisionTree:
 
@@ -16,6 +17,9 @@ class DecisionTree:
 		self.size = None
 
 	def DTSize(self):
+		'''
+			calculates decision tree size
+		''' 
 		
 		leftSize = 0
 		rightSize = 0
@@ -32,7 +36,7 @@ class DecisionTree:
 
 	def generate_dot(self):
 		'''
-		generates dot files for the tree  
+			generates dot files for the tree  
 		'''
 		tree_queue = [(self,1)]
 		tree_id = {1: self}
@@ -81,7 +85,7 @@ class DecisionTree:
 
 	def convert2LTL(self):
 		'''
-		returns the LTL equivalent of the DT
+			returns the LTL equivalent of the DT
 		'''
 		if self.label == formula_true or self.label== formula_false:
 			return self.label
@@ -152,7 +156,6 @@ class DTlearner:
 
 	def learn_dfs(self, sample_set, cover_dict, upper_bound):
 
-		# if sample contains only positive elements
 		all_traces = sample_set[0].union(sample_set[1])
 
 		if all_traces.issubset(self.positive_set):
