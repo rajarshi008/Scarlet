@@ -148,7 +148,7 @@ class DTlearner:
 		DT = self.learn_bfs((self.positive_set,self.negative_set), self.formula_dict, upper_bound)
 
 		if DT != None:
-			DT.show()
+			#DT.show()
 			return DT, DT.DTSize()
 		else:
 			return None, upper_bound

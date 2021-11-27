@@ -200,7 +200,10 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 				time_elapsed = round(time.time() - time_counter,3)
 				with open(csvname, 'a+') as csvfile:
 					writer = csv.writer(csvfile)
-					writer.writerow([time_elapsed, covering_formula.getNumberOfSubformulas(), covering_formula.prettyPrint()])
+					if method== "DT":
+						writer.writerow([time_elapsed, covering_formula.DTSize(), covering_formula.prettyPrint()])
+					else: 
+						writer.writerow([time_elapsed, covering_formula.getNumberOfSubformulas(), covering_formula.prettyPrint()])
 			
 		logging.debug('########Time taken for iteration %.3f########'%(time.time()-time1))
 
@@ -215,7 +218,10 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 			time_elapsed = round(time.time() - time_counter,3)
 			with open(csvname, 'a+') as csvfile:
 				writer = csv.writer(csvfile)
-				writer.writerow([time_elapsed, covering_formula.getNumberOfSubformulas(), covering_formula.prettyPrint(), 1])
+				if method== "DT":
+					writer.writerow([time_elapsed, covering_formula.DTSize(), covering_formula.prettyPrint(), 1])
+				else:
+					writer.writerow([time_elapsed, covering_formula.getNumberOfSubformulas(), covering_formula.prettyPrint(), 1])
 		logging.warning("Final formula found %s"%covering_formula.prettyPrint())
 		logging.warning("Time taken is: "+ str(round(time_elapsed,3))+ " secs") 
 		#return covering_formula
