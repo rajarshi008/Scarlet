@@ -2,7 +2,7 @@
 ---
 
 We solve the problem of learning LTL formulas from a sample consisting of traces partitioned into positive and negative.
----
+
 
 ## Installation
 
