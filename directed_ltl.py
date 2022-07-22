@@ -1,3 +1,7 @@
+'''
+Generating LTL patterns from sample, named directed ltl
+'''
+
 import heapq as hq
 import time
 import logging
@@ -13,10 +17,13 @@ len_atom_table = {}
 
 
 '''
+Fixing some notations with examples:
+
 - We read words from samples as 1,0,0;1,0,1;0,1,1. 
 - We say each part of the word as letter, e.g. 1,0,0 
 - 0->p, 1->q, 2->r,... are the propositions
-- Examples of atoms are (0,), (1,2). (1,2) is an atom of width 2 which means q&R.
+- Examples of atoms are (0,), (1,2). (1,2) is an atom of width 2 which means (q & r).
+- 'inv' denotes if the sample has been inversed or not, i.e. positives as negatives and vice-versa.
 '''
 
 
@@ -381,7 +388,7 @@ class findDltl:
 
 	def add2dltl(self, dltl1: dltl, dltl2: dltl):
 		'''
-		Generates a dltl of width w+1 from dltls of width 1 and w
+		Generates a dltl of width w+1 from dltls of width 1 and width w
 		'''
 		
 		dltl_no1 = dltl1.vector[0::2]
@@ -441,7 +448,7 @@ class findDltl:
 
 	def incrLength(self, sl_length, width):
 		''' 
-		Creates the cover set for increasing length of dltls with width fixed
+		Length increasing algortihm for finding dltls
 
 		''' 
 
@@ -641,7 +648,7 @@ class findDltl:
 
 	def incrWidth(self, sl_length, width):
 		''' 
-		Creates the cover set for increasing width of dltls with length fixed
+		Width increasing algortihm for finding dltls
 		''' 
 		
 		self.R_table[(sl_length,width)]={} 
@@ -672,7 +679,6 @@ class findDltl:
 		for length in dltl_lengths:
 		
 			for dltl in self.len_dltl[(sl_length, width-1)][length]:
-			#self.R_table[(sl_length,width)][dltl]= self.R_table[(sl_length,width-1)][dltl]
 				min_w1_length = length - sum([len_atom(atom,dltl.inv) for atom in dltl.vector[1::2]]) + sl_length
 				max_w1_length = min_w1_length + sl_length
 
@@ -735,7 +741,7 @@ class findDltl:
 	
 	def R(self, sl_length, width):
 		'''
-		Stores the friend sets of dltl in R-table of certain sl_length and width
+		Stores the set of satisfying traces for dltls of fixed length and width
 		'''
 		
 		if sl_length > self.max_positive_length:
@@ -873,7 +879,7 @@ class findDltl:
 
 	def dltlCoverSet(self, dltl, pos_list, neg_list, sl_length, width):
 		'''
-		Calculates friend sets from the R-table
+		Calculates friend sets from the R-table i.e. the set of satisfying traces from the positive and the negative ones
 		'''
 
 		if dltl.inv:
@@ -897,7 +903,7 @@ class findDltl:
 			self.cover_set[(sl_length, width)][dltl] = (pos_friend_set, neg_friend_set)
 			cover_size = len(pos_friend_set) - len(neg_friend_set) + len(self.negative_set)
 			
-			if cover_size >= self.full_cover*(1-self.thres):
+			if cover_size >= self.full_cover*(1-self.thres): #checks if it covers the sample w.r.t. the threshold of noise
 
 				self.cover_set[(sl_length, width)] = {dltl:(pos_friend_set, neg_friend_set)}
 				self.upper_bound = dltl.size
@@ -912,13 +918,4 @@ class findDltl:
 		self.cover_set[(sl_length,width)] = {}
 		self.R(sl_length, width)
 
-		'''
-		count, count_inv = 0, 0
-		for dltl in self.R_table[(sl_length, width)]:
-			if dltl.inv:
-				count_inv+=1
-			else:
-				count+=1
-
-		logging.debug('Found dltls %d and reverse dltls %d'%(count, count_inv))
-		'''
+		
