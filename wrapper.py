@@ -1,3 +1,7 @@
+'''
+runs the code in multiple threads in parallel
+'''
+
 import os, csv
 import argparse
 from run_tests import run_test

@@ -1,3 +1,7 @@
+'''
+Defines the sample class
+'''
+
 from formulaTree import Formula
 import random
 import sys

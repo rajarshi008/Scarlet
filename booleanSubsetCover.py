@@ -21,7 +21,7 @@ class BooleanSetCover:
 		self.new_heap = []
 		self.formula_dict = {}
 		self.operators = operators
-		self.bool_dict={} # saves the best boolean comb for each formula 
+		self.bool_dict={} # saves the best boolean combination for each of the best formulas 
 
 	
 	def score_local(self, best_formula, current_formula):
@@ -35,7 +35,7 @@ class BooleanSetCover:
 
 	def find(self, upper_bound):
 		'''
-			Find set of best formulas of size less than upper-bound from the current cover set
+			Finds set of best formulas of size less than upper-bound from the current cover set
 		'''
 		init_upper_bound = upper_bound
 		best_formula_list=[]
@@ -109,7 +109,7 @@ class BooleanSetCover:
 
 				try: 
 					prev_formula,prev_value = self.bool_dict[old_formula]
-					if current_value > prev_value or prev_formula.treeSize() >= upper_bound: #if the best boolean combination already found before for a formula, use that
+					if current_value > prev_value or prev_formula.treeSize() >= upper_bound: 
 						self.bool_dict[old_formula]= (current_formula, current_value)
 					else:
 						current_formula,current_value= prev_formula, prev_value
@@ -119,8 +119,8 @@ class BooleanSetCover:
 
 				if current_value == 0:
 					'''
-					if we reach upto a formula that we cannot improve with the existing formulas, 
-					we push them to the heap as interesting formulas if it is already not in the heap
+					if we reach upto a formula that we cannot improve anymore by boolean combinations, 
+					we push them to the heap as an interesting formula
 					'''
 					if current_formula not in self.score:
 						self.score[current_formula] = self.cover_size[current_formula]/((current_formula.treeSize())**(0.5)+1)
@@ -136,7 +136,8 @@ class BooleanSetCover:
 				upper_bound = current_formula.treeSize() 
 				final_formula = current_formula
 
-		if init_upper_bound != upper_bound:  #if the upperbound has changed in Boolean setcover process, we remove all larger size formulas from the heap
+        #if the upperbound has changed in Boolean setcover process, we modify the heap by removing all larger size formulas
+		if init_upper_bound != upper_bound:  
 			small_heap = []
 			hq.heapify(small_heap)
 			for (score,formula) in self.heap:

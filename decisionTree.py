@@ -4,7 +4,7 @@ from graphviz import Source
 from formulaTree import *
 
 
-
+#The decision tree algorithm for combinations of dLTLS
 class DecisionTree:
 
 	def __init__(self, label, thres, leftChild=None, rightChild=None):

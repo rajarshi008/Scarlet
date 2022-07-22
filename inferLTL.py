@@ -11,7 +11,7 @@ from sample import Sample
 
 def dltl2Formula(dltl_tuple: tuple, inv: bool):
 	'''
-		it converts dirtected ltl sequences to a formula
+		it converts dirtected dltl data-structures to an LTL formula
 	'''
 
 	if inv:
@@ -70,10 +70,7 @@ def dltl2Formula(dltl_tuple: tuple, inv: bool):
 
 def iteration_seq(max_len, max_width):
 	'''
-		returns a list of pairs (l,w) specifying the order in which we try
-		patterns of length l and width w
-
-		Example: (1,1) (2,1) (1,2) (3,1) ...
+		determines the order of exploration for (length, width)
 	'''
 	seq=[]
 	min_val = max_len+max_width
@@ -88,6 +85,9 @@ def iteration_seq(max_len, max_width):
 
 
 def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='SC', is_word=False, last=False, thres=0):
+	'''
+		main function inferring separating LTL formula
+	'''
 
 	time_counter = time.time()
 
@@ -130,7 +130,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 
 	if method == "DT": #decision tree method
 		boolcomb = DTlearner(sample, operators, thres)
-	if method == "SC": #greedy method
+	if method == "SC": #subset cover method
 		boolcomb = BooleanSetCover(sample, operators, thres)
 	
 	covering_formula = None
@@ -144,8 +144,8 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 		if width>s.upper_bound:
 			break
 
-		if 3*length + 2*width -4 >= s.upper_bound: # calculated size of smallest formula from simple ltl of length l and width w
-			continue							   # if that is already greater than the current upperbound, we skip that element from the sequence		
+		if 3*length + 2*width -4 >= s.upper_bound: # if size of smallest dltl for (l,w)> upper_bound, we ignore it.
+			continue							   		
 
 		s.preComputeInd_next(width)
 		s.enumerate(length, width)
@@ -224,17 +224,18 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 					writer.writerow([time_elapsed, covering_formula.getNumberOfSubformulas(), covering_formula.prettyPrint(), 1])
 		logging.warning("Final formula found %s"%covering_formula.prettyPrint())
 		logging.warning("Time taken is: "+ str(round(time_elapsed,3))+ " secs") 
-		#return covering_formula
 
-	if isinstance(covering_formula, DecisionTree): #verifies if the formula is consistent with the sample
+
+	if isinstance(covering_formula, DecisionTree): #verifies if the returned formula is consistent with the sample in case of perfect classification
 		ver = sample.isFormulaConsistent(covering_formula.convert2LTL())
 	else:
 		ver = sample.isFormulaConsistent(covering_formula)
 
-	if thres==0 and not ver:
-		logging.error("Inferred formula is inconsistent, please report to the authors")
-		return
-	else:
-		logging.debug("Inferred formula is correct")
+	if thres==0:
+		if not ver:
+			logging.error("Inferred formula is inconsistent, please report to the authors")
+			return
+		else:
+			logging.debug("Inferred formula is correct")
 
 	return covering_formula

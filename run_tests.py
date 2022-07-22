@@ -1,3 +1,7 @@
+'''
+Takes user inputs, parse them and call the main inferltl function
+'''
+
 from inferLTL import inferLTL
 from sample import Sample
 import argparse
@@ -10,7 +14,6 @@ logging_levels = {0:logging.WARNING, 1:logging.INFO, 2:logging.DEBUG}
 
 def main():
 
-	#print(input_file, timeout, outputcsv)
 	input_file='./example.trace'
 	timeout=900
 	outputcsv='./result.csv'
@@ -49,8 +52,6 @@ def main():
 	else:
 		logging.info('Operators used: %s'%','.join(operators))
 					
-	#inferLTL(sample, csvname, operators, method, is_word)
-	#Starting timeout
 	
 	p = multiprocessing.Process(target=inferLTL, args=(sample, csvname, operators, method, is_word, last, thres))
 	p.start()
@@ -62,8 +63,6 @@ def main():
 
 
 
-#def main():
-#	run_test(input_file='example.trace', method='SC')
 
 
 if __name__ == "__main__":

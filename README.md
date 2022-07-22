@@ -21,6 +21,7 @@ For running *Scarlet*, run `python run_tests.py`. By default, this will run *Sca
 |-t <timeout>| For specifying the timeout, default is 900 secs (the best formula found till timeout can be found in result.csv).
 |-o <result_file_name>| For specifying the name of the output csv file, default is *results.csv*
 |-m <bool_comb_method>| For specifying the method (SC for set cover, DT for Decision Tree) for boolean combination, default is *SC*.
+|-l <noise_threshold>| For specifying the bound on loss function for noisy data, default is *0* for perfect classification.	
 |-h | Outputs the help.
 
 
