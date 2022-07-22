@@ -66,7 +66,9 @@ def is_sat(letter:tuple, atom:tuple, is_end: bool) -> bool:
 
 
 class dltl:
-
+	'''
+	Data structure for Directed Formulas (dltl)
+	'''
 	def __init__(self, vector, inv):
 		self.vector = vector
 		self.inv = inv
@@ -87,8 +89,7 @@ class dltl:
 
 	def extenddltl(self, diff: int, atoms: tuple, upper_bound: int, operators=['F','G','X','&','|','!']):
 		'''
-		Given a simple ltl of given width ending at a position and a diff and a letter appearing at position + diff, it outputs all possible 
-		simple ltl of one more length and same width given the length of the formula derived is less than the  current upper bound.
+		Extends dltl with diff and atom to increase its length 
 		'''
 		dltl_list = []
 		
@@ -144,7 +145,9 @@ class dltl:
 
 
 class findDltl:
-
+	'''
+	Search algorithm for dltl
+	'''
 	def __init__(self, sample, operators, last, thres):
 		
 		self.sample = sample 
@@ -191,9 +194,11 @@ class findDltl:
 	#Calculates length of an atom both with inv true and false
 
 
-	#Calculates all possible atoms of given width satisfiable in a given letter
+	
 	def letter2atoms(self, letter:tuple, width:int, inv: bool):
-		
+		'''
+		Calculates all possible atoms of given width from a given letter
+		'''	
 		try:
 			#checks if it is already calculated and stored
 			if self.neg:
@@ -251,7 +256,9 @@ class findDltl:
 				return self.letter2atom_table[(letter,width)]
 
 	def genPossibleAtoms(self, letter, width, inv, is_end):
-		
+		'''
+		Adding atoms for last position
+		'''
 		atoms = []
 		for i in range(1,width+1):
 			atoms+=self.letter2atoms(letter, i, inv)
@@ -267,9 +274,10 @@ class findDltl:
 		return atoms
 
 
-	#precomputing the ind_table
 	def preComputeInd_init(self):
-
+		'''
+		Computing the ind_table for atoms of width 1
+		'''
 		self.all_atoms = {1: set()}
 		#print(width)
 		if self.neg:
@@ -324,6 +332,9 @@ class findDltl:
 				
 	
 	def preComputeInd_next(self, width: int):
+		'''
+		Computing the ind_table for atoms of higher width
+		'''
 		try:
 			self.all_atoms[width]
 			return
@@ -370,7 +381,7 @@ class findDltl:
 
 	def add2dltl(self, dltl1: dltl, dltl2: dltl):
 		'''
-			takes two dltls of same length, one of width w and another of width 1 and returns a dltl of same length with width w+1
+		Generates a dltl of width w+1 from dltls of width 1 and w
 		'''
 		
 		dltl_no1 = dltl1.vector[0::2]
@@ -407,7 +418,7 @@ class findDltl:
 
 	def genSequence(self, dltl_lengths):
 		'''
-			generates the enumeration order	of generating new simple ltl formulas by increasing lengths
+		Generates the enumeration order	of generating new dltl by increasing lengths
 		'''
 		seq=[]
 		curr_sum = dltl_lengths[0]+1
@@ -430,7 +441,7 @@ class findDltl:
 
 	def incrLength(self, sl_length, width):
 		''' 
-			creates the cover set for increasing length with width fixed
+		Creates the cover set for increasing length of dltls with width fixed
 
 		''' 
 
@@ -630,8 +641,7 @@ class findDltl:
 
 	def incrWidth(self, sl_length, width):
 		''' 
-			creates the cover set for increasing width with length fixed
-
+		Creates the cover set for increasing width of dltls with length fixed
 		''' 
 		
 		self.R_table[(sl_length,width)]={} 
@@ -725,7 +735,7 @@ class findDltl:
 	
 	def R(self, sl_length, width):
 		'''
-			generates the coverset from (sl_length,width)
+		Stores the friend sets of dltl in R-table of certain sl_length and width
 		'''
 		
 		if sl_length > self.max_positive_length:
@@ -862,7 +872,9 @@ class findDltl:
 
 
 	def dltlCoverSet(self, dltl, pos_list, neg_list, sl_length, width):
-
+		'''
+		Calculates friend sets from the R-table
+		'''
 
 		if dltl.inv:
 			pos_friend_set = {i for i in range(self.num_positives) if pos_list[i]==[]}

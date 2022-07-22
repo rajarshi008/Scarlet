@@ -5,7 +5,6 @@ from formulaTree import Formula, merge
 
 
 # The greedy algorithm for the Boolean subset cover problem
-
 class BooleanSetCover:
 	
 	def __init__(self, sample, operators, thres):
@@ -29,7 +28,6 @@ class BooleanSetCover:
 		'''
 			Calculates the score of a formula with respect to the best formula till now
 		'''
-
 		return (self.cover_size[best_formula]-self.cover_size[current_formula])/((best_formula.treeSize())**(0.5)+1)
 	
 	
@@ -138,7 +136,7 @@ class BooleanSetCover:
 				upper_bound = current_formula.treeSize() 
 				final_formula = current_formula
 
-		if init_upper_bound != upper_bound:  #if the upperbobd has changed in Boolean setcover process, we remove all larger size formulas from the heap
+		if init_upper_bound != upper_bound:  #if the upperbound has changed in Boolean setcover process, we remove all larger size formulas from the heap
 			small_heap = []
 			hq.heapify(small_heap)
 			for (score,formula) in self.heap:
