@@ -143,15 +143,14 @@ class dltl:
 
 
 
-
-#Defining the class dltl
 class findDltl:
 
-	def __init__(self, sample, operators,last):
+	def __init__(self, sample, operators, last, thres):
 		
 		self.sample = sample 
 		self.operators = operators
 		self.last=last
+		self.thres = thres
 		
 		self.num_positives = len(self.sample.positive)
 		self.num_negatives = len(self.sample.negative)
@@ -885,7 +884,8 @@ class findDltl:
 			# else:
 			self.cover_set[(sl_length, width)][dltl] = (pos_friend_set, neg_friend_set)
 			cover_size = len(pos_friend_set) - len(neg_friend_set) + len(self.negative_set)
-			if cover_size == self.full_cover:
+			
+			if cover_size >= self.full_cover*(1-self.thres):
 
 				self.cover_set[(sl_length, width)] = {dltl:(pos_friend_set, neg_friend_set)}
 				self.upper_bound = dltl.size

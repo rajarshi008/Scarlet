@@ -87,7 +87,7 @@ def iteration_seq(max_len, max_width):
 
 
 
-def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='SC', is_word=False, last=False):
+def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='SC', is_word=False, last=False, thres=0):
 
 	time_counter = time.time()
 
@@ -96,7 +96,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 	writer = csv.writer(f)
 	writer.writerow(["Time Elapsed", "Formula Size", "Formula", "is Terminated?"])
 	f.close()
-	s = findDltl(sample, operators, last)
+	s = findDltl(sample, operators, last, thres)
 	
 	global alphabet
 	alphabet=sample.alphabet
@@ -129,9 +129,9 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 	full_cover = len(positive_set)+len(negative_set)
 
 	if method == "DT": #decision tree method
-		boolcomb = DTlearner(sample, operators)
+		boolcomb = DTlearner(sample, operators, thres)
 	if method == "SC": #greedy method
-		boolcomb = BooleanSetCover(sample, operators)
+		boolcomb = BooleanSetCover(sample, operators, thres)
 	
 	covering_formula = None
 	combination_time = 0
@@ -231,7 +231,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 	else:
 		ver = sample.isFormulaConsistent(covering_formula)
 
-	if not ver:
+	if thres==0 and not ver:
 		logging.error("Inferred formula is inconsistent, please report to the authors")
 		return
 	else:

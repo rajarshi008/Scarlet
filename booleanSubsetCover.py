@@ -8,13 +8,14 @@ from formulaTree import Formula, merge
 
 class BooleanSetCover:
 	
-	def __init__(self, sample, operators):
+	def __init__(self, sample, operators, thres):
 
 		self.sample = sample
 		self.positive_set = {i for i in range(len(self.sample.positive))}           
 		self.negative_set = {i for i in range(len(self.sample.negative))}           
 		self.full_set = (self.positive_set, self.negative_set)			            
 		self.max_cover_size = len(self.positive_set) + len(self.negative_set)       
+		self.thres = thres
 		self.score = {}
 		self.cover_size = {}
 		self.heap = []
@@ -62,7 +63,7 @@ class BooleanSetCover:
 			if current_formula.treeSize() >= upper_bound:
 				continue
  
-			while self.cover_size[current_formula] < self.max_cover_size: #Continue until we find a formula that covers the whole set
+			while self.cover_size[current_formula] < self.max_cover_size*(1-self.thres): #Continue until we find a formula that covers the whole set
 				
 				value={}
 				
@@ -90,6 +91,7 @@ class BooleanSetCover:
 
 
 					if '|' in self.operators:
+
 						new_formula = merge('|', current_formula, formula)
 						new_formula.size = new_formula.treeSize()
 						if new_formula.size <= upper_bound:

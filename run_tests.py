@@ -8,17 +8,23 @@ import multiprocessing
 
 logging_levels = {0:logging.WARNING, 1:logging.INFO, 2:logging.DEBUG}
 
-def run_test(input_file='./example.trace', timeout=900, outputcsv='./result.csv', method='SC'):
+def main():
 
 	#print(input_file, timeout, outputcsv)
+	input_file='./example.trace'
+	timeout=900
+	outputcsv='./result.csv'
+	method='SC'
+
 	parser = argparse.ArgumentParser()
 
 	parser.add_argument('--input_file', '-i', dest='input_file', default = input_file)
 	parser.add_argument('--timeout', '-t', dest='timeout', default=str(timeout), type=int)
 	parser.add_argument('--outputcsv', '-o', dest='csvname', default= outputcsv)
 	parser.add_argument('--verbose', '-v', dest='verbose', default=3, action='count')
-	parser.add_argument('--method', '-m', dest='method', default = method) 
+	parser.add_argument('--method', '-m', dest='method', default = method)
 	parser.add_argument('--words', '-w', dest= 'words', default = False, action='store_true')
+	parser.add_argument('-thres', '-l', dest='thres', default=0)
 	args,unknown = parser.parse_known_args()
 
 	input_file = args.input_file
@@ -27,6 +33,9 @@ def run_test(input_file='./example.trace', timeout=900, outputcsv='./result.csv'
 	verbosity = int(args.verbose)-1
 	method = args.method
 	csvname = args.csvname
+	thres = float(args.thres)
+	last = False
+
 
 	logging.basicConfig(format='%(message)s', level=logging_levels[verbosity])
 	sample = Sample(positive=[],negative=[])
@@ -43,7 +52,7 @@ def run_test(input_file='./example.trace', timeout=900, outputcsv='./result.csv'
 	#inferLTL(sample, csvname, operators, method, is_word)
 	#Starting timeout
 	
-	p = multiprocessing.Process(target=inferLTL, args=(sample, csvname, operators, method))
+	p = multiprocessing.Process(target=inferLTL, args=(sample, csvname, operators, method, is_word, last, thres))
 	p.start()
 	p.join(timeout)
 	if p.is_alive():
@@ -53,8 +62,8 @@ def run_test(input_file='./example.trace', timeout=900, outputcsv='./result.csv'
 
 
 
-def main():
-	run_test(input_file='example.trace', method='SC')
+#def main():
+#	run_test(input_file='example.trace', method='SC')
 
 
 if __name__ == "__main__":

@@ -7,13 +7,14 @@ from formulaTree import *
 
 class DecisionTree:
 
-	def __init__(self, label, leftChild=None, rightChild=None):
+	def __init__(self, label, thres, leftChild=None, rightChild=None):
 
 		assert(label != None)
 		assert(type(label)==Formula)
 		self.label = label
 		self.left = leftChild
 		self.right = rightChild
+		self.thres = thres
 		self.size = None
 
 	def DTSize(self):
