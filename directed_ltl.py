@@ -5,10 +5,9 @@ Generating LTL patterns from sample, named directed ltl
 import heapq as hq
 import time
 import logging
-from booleanSubsetCover import BooleanSetCover
-from sample import Sample, Trace
-from formulaTree import Formula
-
+from Scarlet.booleanSubsetCover import BooleanSetCover
+from Scarlet.sample import Sample, Trace
+from Scarlet.formulaTree import Formula
 
 
 epsilon=tuple()

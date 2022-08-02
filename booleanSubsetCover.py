@@ -1,7 +1,7 @@
 import time
 import logging
 import heapq as hq
-from formulaTree import Formula, merge
+from Scarlet.formulaTree import Formula, merge
 
 
 # The greedy algorithm for the Boolean subset cover problem

@@ -2,11 +2,11 @@ import time
 import heapq as hq
 import logging
 import csv
-from decisionTree import DTlearner, DecisionTree
-from booleanSubsetCover import BooleanSetCover
-from directed_ltl import dltl, findDltl
-from formulaTree import Formula
-from sample import Sample
+from Scarlet.decisionTree import DTlearner, DecisionTree
+from Scarlet.booleanSubsetCover import BooleanSetCover
+from Scarlet.directed_ltl import dltl, findDltl
+from Scarlet.formulaTree import Formula
+from Scarlet.sample import Sample
 
 
 def dltl2Formula(dltl_tuple: tuple, inv: bool):
@@ -84,7 +84,7 @@ def iteration_seq(max_len, max_width):
 
 
 
-def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='SC', is_word=False, last=False, thres=0):
+def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='SC', is_word=False, last=False, thres=0, return_dict={}):
 	'''
 		main function inferring separating LTL formula
 	'''
@@ -237,5 +237,8 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 			return
 		else:
 			logging.debug("Inferred formula is correct")
+
+	return_dict['covering_formula'] = covering_formula
+	return_dict['time'] = time_elapsed
 
 	return covering_formula

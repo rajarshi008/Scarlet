@@ -1,7 +1,7 @@
 import logging
 import os
 from graphviz import Source
-from formulaTree import *
+from Scarlet.formulaTree import *
 
 
 #The decision tree algorithm for combinations of dLTLS

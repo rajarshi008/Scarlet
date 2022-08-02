@@ -11,7 +11,23 @@ To install the tool, run the following script: `source ./installation.sh`
 
 ## How to run:
 
-For running *Scarlet*, run `python run_tests.py`. By default, this will run *Scarlet* on `example.trace`. For easy testing, one can replace `example.trace` with the trace file of choice. Further, there are a variety of arguments that one can use to run *Scarlet*, as listed below:
+# Using pip
+
+Run the following:
+
+from Scarlet.run_tests import LTLlearner
+
+```
+from Scarlet.run_tests import LTLlearner
+learner = learner = LTLlearner()
+learner.learn()
+```
+By default, this will run *Scarlet* on `example.trace`.
+
+
+# Using Shell
+
+Run using `python -m Scarlet.run_tests`. By default, this will run *Scarlet* on `example.trace`. For easy testing, one can replace `example.trace` with the trace file of choice. Further, there are a variety of arguments that one can use to run *Scarlet*, as listed below:
 
 |Argument        |Meaning
 |----------------|------------------------------
@@ -23,7 +39,6 @@ For running *Scarlet*, run `python run_tests.py`. By default, this will run *Sca
 |-m <bool_comb_method>| For specifying the method (SC for set cover, DT for Decision Tree) for boolean combination, default is *SC*.
 |-l <noise_threshold>| For specifying the bound on loss function for noisy data, default is *0* for perfect classification.	
 |-h | Outputs the help.
-
 
 
 ### Input format:

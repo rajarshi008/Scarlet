@@ -1,3 +1,4 @@
+
 ---
 title: 'Scarlet: Scalable Anytime Algorithms for Learning Fragments of Linear Temporal Logic'
 tags:
@@ -51,6 +52,7 @@ The fundamental problem solved by `Scarlet` is to build an explainable model in 
 A paper presenting the algorithms behind `Scarlet` was published in TACAS'2022: International Conference on Tools and Algorithms for the Construction and Analysis of Systems [@RahaRFN22]. 
 
 We believe that the path to scalability for LTL learning is to leverage normal forms for LTL formulas and derive efficient enumeration algorithms from them. Scarlet combines two insights:
+
 * An efficient enumeration algorithm for directed LTL formulas, which are formulas that can be evaluated only moving forward in words
 * An algorithm solving the Boolean set cover problem, which constructs Boolean combination of already constructed formulas in order to separate positive and negative examples.
 

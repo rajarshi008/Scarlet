@@ -1,7 +1,8 @@
-from ltlf2dfa.parser.ltlf import LTLfParser
+
 from graphviz import Source
-from formulaTree import Formula
 import random
+from ltlf2dfa.parser.ltlf import LTLfParser
+from Scarlet.formulaTree import Formula
 
 class DFA:
 	def __init__(self, init_state, final_states, transitions):

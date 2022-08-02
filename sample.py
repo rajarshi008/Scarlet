@@ -2,10 +2,11 @@
 Defines the sample class
 '''
 
-from formulaTree import Formula
+
 import random
 import sys
-from convert2dfa import DFA, ltl2dfa
+from Scarlet.convert2dfa import DFA, ltl2dfa
+from Scarlet.formulaTree import Formula
 
 
 def lineToTrace(line):
