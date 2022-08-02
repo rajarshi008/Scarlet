@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "Scarlet_example"
+version = "0.0.1"
+authors = [
+  { name="Ritam Raha", email="ritam.raha18@gmail.com" },
+  { name="Rajarshi Roy", email="rajarshi008@gmail.com" },
+  { name="Nathanael Fijalkow", email="dummy@gmail.com" },
+  { name="Daniel Neider", email="example@gmail.com" },
+]
+description = "A tool for learning LTL formulas from a set of positive and negative examples"
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+      "lark",
+      "graphviz",
+      "ltlf2dfa",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/rajarshi008/Scarlet"
+"Bug Tracker" = "https://github.com/rajarshi008/Scarlet/issues"
+"Paper" = "https://link.springer.com/chapter/10.1007/978-3-030-99524-9_14"
