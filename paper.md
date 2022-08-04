@@ -20,7 +20,7 @@ authors:
     affiliation: 3
   - name: Nathanaël Fijalkow
     orcid: 0000-0002-6576-4680
-    affiliation: 3
+    affiliation: 2
   - name: Daniel Neider
     orcid: 0000-0001-9276-6342
     affiliation: 4
