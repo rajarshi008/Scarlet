@@ -46,6 +46,7 @@ Linear Temporal Logic (LTL) is a prominent logic for specifying temporal propert
 The fundamental problem solved by `Scarlet` is to build an explainable model in the form of an LTL formula from a set of positive and negative traces.
 
 `Scarlet` is a Python package offering an API for tasks related to LTL learning: 
+
 * constructing an LTL formula from example traces
 * generating traces from an LTL formula using automata-based techniques (LTLf2DFA and MONA) and random sampling
 
@@ -71,6 +72,7 @@ An equivalent point of view on LTL learning is as a specification mining questio
 The ARSENAL [@GhoshELLSS16] and FRET [@GiannakopoulouP20a] projects construct LTL specifications from natural language, we refer to [@Li13d] for an overview.
 
 The two state-of-the-art tools for learning logic formulas from examples are:
+
 * FLIE [@NeiderGavran18] infers minimal LTL formulas using a learning algorithm that is based on constraint solving (SAT solving).
 * SYSLITE [@ArifLERCT20] infers minimal past-time LTL formulas using an enumerative algorithm implemented in a tool called CVC4SY [@ReynoldsBNBT19].
 
