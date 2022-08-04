@@ -27,7 +27,7 @@ authors:
 affiliations:
  - name: University of Antwerp, Antwerp, Belgium
    index: 1
- - name: CNRS, LaBRI and Universit´e de Bordeaux, France
+ - name: CNRS, LaBRI and Université de Bordeaux, France
    index: 2
  - name: Max Planck Institute for Software Systems, Kaiserslautern, Germany
    index: 3
@@ -75,3 +75,5 @@ The two state-of-the-art tools for learning logic formulas from examples are:
 * SYSLITE [@ArifLERCT20] infers minimal past-time LTL formulas using an enumerative algorithm implemented in a tool called CVC4SY [@ReynoldsBNBT19].
 
 Existing methods do not scale beyond formulas of small size, making them hard to deploy for industrial cases. A second serious limitation is that they often exhaust computational resources without returning any result. Indeed theoretical studies [@FijalkowLagarde21] have shown that constructing the minimal LTL formula is NP-hard already for very small fragments of LTL, explaining the difficulties found in practice.
+
+# References
