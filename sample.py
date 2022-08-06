@@ -28,7 +28,7 @@ def lineToWord(line):
 	except:
 		wordData = line
 	wordVector = list(line.split()[0])
-	return (wordVector, lasso_start)  
+	return (wordVector, lasso_start)
 
 
 def convertFileType(operators, wordfile, tracefile=None):
@@ -272,7 +272,7 @@ class Sample:
 						self.negative.append(word)
 					else:
 						trace_vector, lasso_start = lineToTrace(line)
-						trace = Trace(vector=trace_vector, lasso_start=lasso_start, is_word=False)	 	
+						trace = Trace(vector=trace_vector, lasso_start=lasso_start, is_word=False) 	
 						self.negative.append(trace)
 
 				if mode==2:
@@ -281,7 +281,7 @@ class Sample:
 					self.alphabet = list(line.split(','))
 
 
-		if mode != 3:		
+		if mode != 3:
 				self.extract_alphabet(self.is_words)
 		
 		self.letter2pos={}
@@ -427,14 +427,14 @@ class Sample:
 		self.writeToFile(filename)
 
 	
-	def generator_dfa(self, 
-		formula=None, 
-		filename='generated.words', 
-		num_traces=(5,5), 
-		length_traces=None, 
-		alphabet = ['p','q','r'], 
-		length_range=(5,15), 
-		is_words=True, 
+	def generator_dfa(self,
+		formula=None,
+		filename='generated.words',
+		num_traces=(5,5),
+		length_traces=None,
+		alphabet = ['p','q','r'],
+		length_range=(5,15),
+		is_words=True,
 		operators=['G', 'F', '!', 'U', '&','|', 'X']):
 
 		num_positives = 0

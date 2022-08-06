@@ -56,7 +56,7 @@ The fundamental problem solved by `Scarlet` is to build an explainable model in 
 
 A paper presenting the algorithms behind `Scarlet` was published in TACAS'2022: International Conference on Tools and Algorithms for the Construction and Analysis of Systems [@RahaRFN22]. 
 
-We believe that the path to scalability for LTL learning is to leverage normal forms for LTL formulas and derive efficient enumeration algorithms from them. Scarlet combines two insights:
+We believe that the path to scalability for LTL learning is to leverage normal forms for LTL formulas and derive efficient enumeration algorithms from them. `Scarlet` combines two insights:
 
 * An efficient enumeration algorithm for directed LTL formulas, which are formulas that can be evaluated only moving forward in words
 * An algorithm solving the Boolean set cover problem, which constructs Boolean combination of already constructed formulas in order to separate positive and negative examples.
@@ -77,5 +77,10 @@ The two state-of-the-art tools for learning logic formulas from examples are:
 * SYSLITE [@ArifLERCT20] infers minimal past-time LTL formulas using an enumerative algorithm implemented in a tool called CVC4SY [@ReynoldsBNBT19].
 
 Existing methods do not scale beyond formulas of small size, making them hard to deploy for industrial cases. A second serious limitation is that they often exhaust computational resources without returning any result. Indeed theoretical studies [@FijalkowLagarde21] have shown that constructing the minimal LTL formula is NP-hard already for very small fragments of LTL, explaining the difficulties found in practice.
+
+# Acknowledgments
+
+This project was funded by the FWO G030020N project `SAILor` and Deutsche Forschungsgemeinschaft (DFG) grant no. 434592664.
+
 
 # References

@@ -17,32 +17,34 @@ class LTLlearner:
 	'''
 	learner class for running as a module
 	'''
+
 	def __init__(self,
-				input_file = 'Scarlet/example.trace', 
 				is_word = False, 
 				timeout = 900, 
 				verbosity = 1,
 				method = 'SC',
-				csvname = 'Scarlet/result.csv',
 				thres = 0,
 				last = False):
-
-		self.input_file = input_file 
+		
 		self.is_word = is_word
 		self.timeout = timeout
 		self.verbosity = verbosity
 		self.method = method
-		self.csvname = csvname
 		self.thres = thres
 		self.last = last
 
 		logging.basicConfig(format='%(message)s', level=logging_levels[verbosity])
-		print(input_file)
+
+
+	def learn(self, tracefile, outputfile='results.csv'):
+	
+		self.input_file = tracefile
+		self.csvname = outputfile
 
 		self.sample = Sample(positive=[],negative=[])
-		logging.info("Running on file %s"%input_file)
+		logging.info("Running on file %s"%self.input_file)
 
-		self.sample.readFromFile(input_file)
+		self.sample.readFromFile(self.input_file)
 		self.operators = self.sample.operators
 
 		if self.operators==[]:
@@ -50,10 +52,7 @@ class LTLlearner:
 			logging.info('Default operators used: %s'%','.join(self.operators))	
 		else:
 			logging.info('Operators used: %s'%','.join(self.operators))
-		
 
-	def learn(self):
-					
 		manager = multiprocessing.Manager()
 		return_dict = manager.dict()
 		jobs = []
@@ -76,16 +75,13 @@ class LTLlearner:
 		return (return_dict.values())
 
 
-
-
-
 def main():
 
 	parser = argparse.ArgumentParser()
 
-	parser.add_argument('--input_file', '-i', dest='input_file', default = 'Scarlet/example.trace')
+	parser.add_argument('--input_file', '-i', dest='input_file', default = './example.trace')
 	parser.add_argument('--timeout', '-t', dest='timeout', default=900, type=int)
-	parser.add_argument('--outputcsv', '-o', dest='csvname', default= 'Scarlet/result.csv')
+	parser.add_argument('--outputcsv', '-o', dest='csvname', default= './result.csv')
 	parser.add_argument('--verbose', '-v', dest='verbose', default=3, action='count')
 	parser.add_argument('--method', '-m', dest='method', default = 'SC')
 	parser.add_argument('--words', '-w', dest= 'words', default = False, action='store_true')
@@ -102,10 +98,10 @@ def main():
 	last = False
 
 
-	learner = LTLlearner(input_file=input_file, is_word=is_word, timeout=timeout, verbosity=verbosity,
-												method=method, csvname=csvname, thres=thres,last=last)
+	learner = LTLlearner(is_word=is_word, timeout=timeout, verbosity=verbosity,
+												method=method, thres=thres,last=last)
+	learner.learn(tracefile=input_file, outputfile=csvname)
 
-	learner.learn()
 
 if __name__ == "__main__":
     main()
