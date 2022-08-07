@@ -8,14 +8,11 @@ A [paper](https://link.springer.com/chapter/10.1007/978-3-030-99524-9_14) presen
 
 ## Installation
 
+You can install the tool, as python package using pip command as follows:
 
-To build from source, use the following set of commands:
 ```
-git clone https://github.com/rajarshi008/Scarlet.git
-cd Scarlet
-source ./installation.sh
+pip install
 ```
-You can also install as python package using pip command. To do so, follow *this*.
 
 ### Input File format:
 
@@ -34,26 +31,28 @@ An example of a trace is `1,0,1;0,0,0` which consists of two letters each of whi
 
 ## How to run:
 
-### For running the LTL learner
+### Run Scarlet on a particular input file
 
-Run using `python -m Scarlet.run_tests`. By default, this will run *Scarlet* on `example.trace`. For easy testing, one can replace `example.trace` with the trace file of choice. Further, there are a variety of arguments that one can use to run *Scarlet*, as listed below:
+* Create the input file
 
-|Argument        |Meaning
-|----------------|------------------------------
-|-i <file_name>| For specifying the path of the input file, default is *example.trace*.
-|-v | For output a detailed log of *Scarlet*'s execution.
-|-vv | For output a even more detailed log of *Scarlet*'s execution.
-|-t <timeout>| For specifying the timeout, default is 900 secs (the best formula found till timeout can be found in result.csv).
-|-o <result_file_name>| For specifying the name of the output csv file, default is *results.csv*
-|-m <bool_comb_method>| For specifying the method (SC for set cover, DT for Decision Tree) for boolean combination, default is *SC*.
-|-l <noise_threshold>| For specifying the bound on loss function for noisy data, default is *0* for perfect classification.	
-|-h | Outputs the help.
+Create an input file with `.trace` extension. The file format should follow the proper format from the above sub-section.
 
+* Run the LTL learner
+```
+from Scarlet.run_tests import LTLlearner
+learner = LTLlearner()
+learner.learn()
+```
+This will run Scarlet on the input trace file.
 
 ### For generating samples from LTL formulas
 
 For generating benchmarks from a given set of LTL formula, we rely on a python package LTLf2DFA that uses [MONA](https://www.brics.dk/mona/) in its backend. 
 As a result, one needs to install MONA first in order to be able to use this procedure (instructions can be found in the MONA website).
+
+* Input the LTL formulas
+
+
 
 After the installation, for generating samples one simply needs to run `python genBenchmarks.py`. By default, this generates samples that are separable using the formulas provided in `formulas.txt`. You can run `genBenchmarks.py` with the following arguments:
 
