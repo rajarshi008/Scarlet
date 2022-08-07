@@ -20,14 +20,14 @@ authors:
     affiliation: 3
   - name: Nathanaël Fijalkow
     orcid: 0000-0002-6576-4680
-    affiliation: 3
+    affiliation: 2
   - name: Daniel Neider
     orcid: 0000-0001-9276-6342
     affiliation: 4
 affiliations:
  - name: University of Antwerp, Antwerp, Belgium
    index: 1
- - name: CNRS, LaBRI and Universit´e de Bordeaux, France
+ - name: CNRS, LaBRI and Université de Bordeaux, France
    index: 2
  - name: Max Planck Institute for Software Systems, Kaiserslautern, Germany
    index: 3
@@ -46,6 +46,7 @@ Linear Temporal Logic (LTL) is a prominent logic for specifying temporal propert
 The fundamental problem solved by `Scarlet` is to build an explainable model in the form of an LTL formula from a set of positive and negative traces.
 
 `Scarlet` is a Python package offering an API for tasks related to LTL learning: 
+
 * constructing an LTL formula from example traces
 * generating traces from an LTL formula using automata-based techniques (LTLf2DFA and MONA) and random sampling
 
@@ -55,7 +56,7 @@ The fundamental problem solved by `Scarlet` is to build an explainable model in 
 
 A paper presenting the algorithms behind `Scarlet` was published in TACAS'2022: International Conference on Tools and Algorithms for the Construction and Analysis of Systems [@RahaRFN22]. 
 
-We believe that the path to scalability for LTL learning is to leverage normal forms for LTL formulas and derive efficient enumeration algorithms from them. Scarlet combines two insights:
+We believe that the path to scalability for LTL learning is to leverage normal forms for LTL formulas and derive efficient enumeration algorithms from them. `Scarlet` combines two insights:
 
 * An efficient enumeration algorithm for directed LTL formulas, which are formulas that can be evaluated only moving forward in words
 * An algorithm solving the Boolean set cover problem, which constructs Boolean combination of already constructed formulas in order to separate positive and negative examples.
@@ -71,7 +72,15 @@ An equivalent point of view on LTL learning is as a specification mining questio
 The ARSENAL [@GhoshELLSS16] and FRET [@GiannakopoulouP20a] projects construct LTL specifications from natural language, we refer to [@Li13d] for an overview.
 
 The two state-of-the-art tools for learning logic formulas from examples are:
+
 * FLIE [@NeiderGavran18] infers minimal LTL formulas using a learning algorithm that is based on constraint solving (SAT solving).
 * SYSLITE [@ArifLERCT20] infers minimal past-time LTL formulas using an enumerative algorithm implemented in a tool called CVC4SY [@ReynoldsBNBT19].
 
 Existing methods do not scale beyond formulas of small size, making them hard to deploy for industrial cases. A second serious limitation is that they often exhaust computational resources without returning any result. Indeed theoretical studies [@FijalkowLagarde21] have shown that constructing the minimal LTL formula is NP-hard already for very small fragments of LTL, explaining the difficulties found in practice.
+
+# Acknowledgments
+
+This project was funded by the FWO G030020N project `SAILor` and Deutsche Forschungsgemeinschaft (DFG) grant no. 434592664.
+
+
+# References

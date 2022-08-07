@@ -1,37 +1,46 @@
 ## SCARLET 
 ---
 
-We solve the problem of learning LTL formulas from a sample consisting of traces partitioned into positive and negative.
+![](scarlet-logo.png)
 
+We solve the problem of learning LTL formulas from a sample consisting of traces partitioned into positive and negative.
+A [paper](https://link.springer.com/chapter/10.1007/978-3-030-99524-9_14) presenting the algorithms behind `Scarlet` was published in TACAS'2022.
 
 ## Installation
 
-To install the tool, run the following script: `source ./installation.sh`
 
+To build from source, use the following set of commands:
+```
+git clone https://github.com/rajarshi008/Scarlet.git
+cd Scarlet
+source ./installation.sh
+```
+You can also install as python package using pip command. To do so, follow *this*.
+
+### Input File format:
+
+The input files consist of traces separated as positives and negatives, separated by `---`.
+Each trace is a sequence of letter separated by `;`. Each letter represents the truth value of atomic propositions.
+An example of a trace is `1,0,1;0,0,0` which consists of two letters each of which define the values of three propositions (which by default consider to be `p,q,r`). An example sample looks like the following:
+```
+0,0,0;0,1,1;1,0,0;0,0,1;0,1,0
+1,1,0;1,0,1;1,0,0;1,1,1;1,0,1
+1,1,0;0,1,1;1,1,1;1,0,0;1,0,1
+---
+1,0,0;1,0,0;0,1,0;1,1,0;1,1,1
+1,0,0;1,0,0;0,1,0;1,1,0;1,0,0
+0,0,1;1,0,0;1,1,0;1,1,1;1,0,0
+```
 
 ## How to run:
 
-# Using pip
-
-Run the following:
-
-from Scarlet.run_tests import LTLlearner
-
-```
-from Scarlet.run_tests import LTLlearner
-learner = learner = LTLlearner()
-learner.learn()
-```
-By default, this will run *Scarlet* on `example.trace`.
-
-
-# Using Shell
+### For running the LTL learner
 
 Run using `python -m Scarlet.run_tests`. By default, this will run *Scarlet* on `example.trace`. For easy testing, one can replace `example.trace` with the trace file of choice. Further, there are a variety of arguments that one can use to run *Scarlet*, as listed below:
 
 |Argument        |Meaning
 |----------------|------------------------------
-|-i \<file_name>| For specifying the path of the input file, default is *example.trace*.
+|-i <file_name>| For specifying the path of the input file, default is *example.trace*.
 |-v | For output a detailed log of *Scarlet*'s execution.
 |-vv | For output a even more detailed log of *Scarlet*'s execution.
 |-t <timeout>| For specifying the timeout, default is 900 secs (the best formula found till timeout can be found in result.csv).
@@ -41,14 +50,7 @@ Run using `python -m Scarlet.run_tests`. By default, this will run *Scarlet* on 
 |-h | Outputs the help.
 
 
-### Input format:
-
-The input files consist of traces separated as positives and negatives, separated by `---`.
-Each trace is a sequence of letter separated by `;`. Each letter represents the truth value of atomic propositions.
-A example of a trace is `1,0,1;0,0,0` which consists of two letters each of which define the values of three propositions (by deafult consider to be `p,q,r`). 
-
-
-### Generating Traces
+### For generating samples from LTL formulas
 
 For generating benchmarks from a given set of LTL formula, we rely on a python package LTLf2DFA that uses [MONA](https://www.brics.dk/mona/) in its backend. 
 As a result, one needs to install MONA first in order to be able to use this procedure (instructions can be found in the MONA website).
