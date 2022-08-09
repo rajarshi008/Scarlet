@@ -8,20 +8,13 @@ We solve the problem of learning LTL formulas from a sample consisting of traces
 A [paper](https://link.springer.com/chapter/10.1007/978-3-030-99524-9_14) presenting the algorithms behind `Scarlet` was published in TACAS'2022.
 
 ## Installation
-To build from source, please follow the set of commands explained below. You can also install `Scarlet`  as a python package using pip command. To do so, follow *this*.
-
-
-### Clone from the repository
+To build from source, follow the set of commands: 
 ```
 git clone https://github.com/rajarshi008/Scarlet.git
 cd Scarlet
 source ./installation.sh
 ```
-### Install dependencies
-
-It is recommended to install `Scarlet` within a virtual environment. This way the dependencies for running the tool will not automatically be installed in your machine.
-
-In  
+You can also install `Scarlet`  as a python package using pip command. To do so, follow *this*.
 
 ## Input File format:
 
@@ -47,8 +40,8 @@ Run using `python -m Scarlet.ltllearner`. By default, this will run *Scarlet* on
 |Argument        |Meaning
 |----------------|------------------------------
 |-i <file_name>| For specifying the name of the input file (to be located inside the `Scarlet` folder), default is *example.trace*.
-|-v | For output a detailed log of *Scarlet*'s execution.
-|-vv | For output a even more detailed log of *Scarlet*'s execution.
+|-v | For outputting a detailed log of *Scarlet*'s execution.
+|-vv | For outputting a even more detailed log of *Scarlet*'s execution.
 |-t <timeout>| For specifying the timeout, default is 900 secs (the best formula found till timeout can be found in result.csv, located in the `Scarlet` folder).
 |-o <result_file_name>| For specifying the name of the output csv file, default is *results.csv*
 |-l <noise_threshold>| For specifying the bound on loss function for noisy data, default is *0* for perfect classification.	
@@ -60,7 +53,7 @@ Run using `python -m Scarlet.ltllearner`. By default, this will run *Scarlet* on
 For generating benchmarks from a given set of LTL formula, we rely on a python package LTLf2DFA that uses [MONA](https://www.brics.dk/mona/) in its backend. 
 As a result, one needs to install MONA first in order to be able to use this procedure (instructions can be found in the MONA website).
 
-After the installation, for generating samples one simply needs to run `python genBenchmarks.py`. By default, this generates samples that are separable using the formulas provided in `formulas.txt`. You can run `genBenchmarks.py` with the following arguments:
+After the installation, for generating samples one simply needs to run `python -m Scarlet.genBenchmarks`. By default, this generates samples that are separable using the formulas provided in `formulas.txt`. You can run the command with the following arguments:
 
 |Argument        |Meaning
 |----------------|------------------------------
@@ -71,4 +64,4 @@ After the installation, for generating samples one simply needs to run `python g
 |-o <output_folder>| For specifying the name of the folder in which samples are generated.
 |-h | Outputs the help.
 
-The formula file should contain a list of formulas (in prefix notation) along with the alphabet (see `formulas.txt`) to be used for generating the sample.
+The formula file should contain a list of formulas (in prefix notation) along with the alphabet (see `formulas.txt`) and should be located inside the `Scarlet` folder to be used for generating the sample.
