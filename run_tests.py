@@ -2,7 +2,6 @@
 Takes user inputs, parse them and call the main inferltl function
 '''
 
-
 import argparse
 import logging
 import time
@@ -36,7 +35,7 @@ class LTLlearner:
 		self.thres = thres
 		self.last = last
 
-		logging.basicConfig(format='%(message)s', level=logging_levels[verbosity])
+		logging.basicConfig(format='%(message)s', level=logging_levels[verbosity - 1])
 		print(input_file)
 
 		self.sample = Sample(positive=[],negative=[])
@@ -66,7 +65,7 @@ class LTLlearner:
 
 		p.join(self.timeout)
 		if p.is_alive():
-			print("Timeout reached, check your output in results folder")
+			print("Timeout reached, check your output in result file")
 			p.terminate()
 			p.join()
 
@@ -83,29 +82,29 @@ def main():
 
 	parser = argparse.ArgumentParser()
 
-	parser.add_argument('--input_file', '-i', dest='input_file', default = 'Scarlet/example.trace')
+	parser.add_argument('--input_file', '-i', dest='input_file', default = 'example.trace')
 	parser.add_argument('--timeout', '-t', dest='timeout', default=900, type=int)
-	parser.add_argument('--outputcsv', '-o', dest='csvname', default= 'Scarlet/result.csv')
+	parser.add_argument('--outputcsv', '-o', dest='csvname', default= 'result.csv')
 	parser.add_argument('--verbose', '-v', dest='verbose', default=3, action='count')
 	parser.add_argument('--method', '-m', dest='method', default = 'SC')
 	parser.add_argument('--words', '-w', dest= 'words', default = False, action='store_true')
 	parser.add_argument('-thres', '-l', dest='thres', default=0)
 	args,unknown = parser.parse_known_args()
 
-	input_file = args.input_file
+	input_file = 'Scarlet/'+ args.input_file
 	is_word = True if ('.words' in input_file) or args.words  else False
 	timeout = float(args.timeout)
 	verbosity = int(args.verbose)-1
 	method = args.method
-	csvname = args.csvname
+	csvname = 'Scarlet/' + args.csvname
 	thres = float(args.thres)
 	last = False
 
 
 	learner = LTLlearner(input_file=input_file, is_word=is_word, timeout=timeout, verbosity=verbosity,
 												method=method, csvname=csvname, thres=thres,last=last)
-
 	learner.learn()
+
 
 if __name__ == "__main__":
     main()
