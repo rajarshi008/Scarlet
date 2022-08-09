@@ -4,24 +4,30 @@
 ![](scarlet-logo.png)
 
 We solve the problem of learning LTL formulas from a sample consisting of traces partitioned into positive and negative.
+
 A [paper](https://link.springer.com/chapter/10.1007/978-3-030-99524-9_14) presenting the algorithms behind `Scarlet` was published in TACAS'2022.
 
 ## Installation
+To build from source, please follow the set of commands explained below. You can also install `Scarlet`  as a python package using pip command. To do so, follow *this*.
 
 
-To build from source, use the following set of commands:
+### Clone from the repository
 ```
 git clone https://github.com/rajarshi008/Scarlet.git
 cd Scarlet
 source ./installation.sh
 ```
-You can also install as python package using pip command. To do so, follow *this*.
+### Install dependencies
 
-### Input File format:
+It is recommended to install `Scarlet` within a virtual environment. This way the dependencies for running the tool will not automatically be installed in your machine.
+
+In  
+
+## Input File format:
 
 The input files consist of traces separated as positives and negatives, separated by `---`.
 Each trace is a sequence of letter separated by `;`. Each letter represents the truth value of atomic propositions.
-An example of a trace is `1,0,1;0,0,0` which consists of two letters each of which define the values of three propositions (which by default consider to be `p,q,r`). An example sample looks like the following:
+An example of a trace is `1,0,1;0,0,0` which consists of two letters each of which define the values of three propositions (which by default consider to be `p,q,r`). An example input file looks like the following:
 ```
 0,0,0;0,1,1;1,0,0;0,0,1;0,1,0
 1,1,0;1,0,1;1,0,0;1,1,1;1,0,1
@@ -36,16 +42,15 @@ An example of a trace is `1,0,1;0,0,0` which consists of two letters each of whi
 
 ### For running the LTL learner
 
-Run using `python -m Scarlet.run_tests`. By default, this will run *Scarlet* on `example.trace`. For easy testing, one can replace `example.trace` with the trace file of choice. Further, there are a variety of arguments that one can use to run *Scarlet*, as listed below:
+Run using `python -m Scarlet.ltllearner`. By default, this will run *Scarlet* on `example.trace` located inside the Scarlet folder. For easy testing, one can replace `example.trace` with the trace file of choice. Further, there are a variety of arguments that one can use to run *Scarlet*, as listed below:
 
 |Argument        |Meaning
 |----------------|------------------------------
-|-i <file_name>| For specifying the path of the input file, default is *example.trace*.
+|-i <file_name>| For specifying the name of the input file (to be located inside the `Scarlet` folder), default is *example.trace*.
 |-v | For output a detailed log of *Scarlet*'s execution.
 |-vv | For output a even more detailed log of *Scarlet*'s execution.
-|-t <timeout>| For specifying the timeout, default is 900 secs (the best formula found till timeout can be found in result.csv).
+|-t <timeout>| For specifying the timeout, default is 900 secs (the best formula found till timeout can be found in result.csv, located in the `Scarlet` folder).
 |-o <result_file_name>| For specifying the name of the output csv file, default is *results.csv*
-|-m <bool_comb_method>| For specifying the method (SC for set cover, DT for Decision Tree) for boolean combination, default is *SC*.
 |-l <noise_threshold>| For specifying the bound on loss function for noisy data, default is *0* for perfect classification.	
 |-h | Outputs the help.
 

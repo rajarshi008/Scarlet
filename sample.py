@@ -294,7 +294,7 @@ class Sample:
 				word.vector_str= str(word.vector)
 				word.is_word = False
 
-		self.writeToFile('small-example')
+		#self.writeToFile('small-example')
 
 	def isFormulaConsistent(self, formula):
 		'''
