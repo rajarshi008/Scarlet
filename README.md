@@ -60,7 +60,6 @@ After the installation, for generating samples one simply needs to run `python -
 |--formula_file <file_name>| For specifying the file containing all of the formulas (in prefix notation).
 |--size <list_of_tuple>| List of sample_size, i.e., number of positive traces and number of negative traces (separated by comma) in each sample.  
 |--lengths <list_of_tuple>| For specifying the length range for each trace in the samples 
-|--trace_type <type_of_sample> | For specifying whether you want to generate trace type files or word type files.
 |-o <output_folder>| For specifying the name of the folder in which samples are generated.
 |-h | Outputs the help.
 
