@@ -1,7 +1,6 @@
 #!/bin/bash
 
-sudo apt-get install python3-virtualenv
-sudo apt-get install redis-server
+sudo apt install python3-virtualenv
 
 virtualenv -p python3 venv
 

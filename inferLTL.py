@@ -2,11 +2,11 @@ import time
 import heapq as hq
 import logging
 import csv
-from Scarlet.decisionTree import DTlearner, DecisionTree
 from Scarlet.booleanSubsetCover import BooleanSetCover
 from Scarlet.directed_ltl import dltl, findDltl
 from Scarlet.formulaTree import Formula
 from Scarlet.sample import Sample
+logging_levels = {0:logging.WARNING, 1:logging.INFO, 2:logging.DEBUG}
 
 
 def dltl2Formula(dltl_tuple: tuple, inv: bool):
@@ -84,11 +84,11 @@ def iteration_seq(max_len, max_width):
 
 
 
-def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='SC', is_word=False, last=False, thres=0, return_dict={}):
+def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='SC', verbosity = 0, is_word=False, last=False, thres=0, return_dict={}):
 	'''
 		main function inferring separating LTL formula
 	'''
-
+	logging.basicConfig(format='%(message)s', level=logging_levels[verbosity])
 	time_counter = time.time()
 
 	f=open(csvname,'w')
@@ -100,6 +100,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 	
 	global alphabet
 	alphabet=sample.alphabet
+	logging.info("Alphabet: %s"%alphabet)
 
 	if last:
 		alphabet.append('L')
@@ -128,8 +129,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 	full_set = (positive_set, negative_set)
 	full_cover = len(positive_set)+len(negative_set)
 
-	if method == "DT": #decision tree method
-		boolcomb = DTlearner(sample, operators, thres)
+	
 	if method == "SC": #subset cover method
 		boolcomb = BooleanSetCover(sample, operators, thres)
 	
@@ -182,9 +182,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 					hq.heappush(boolcomb.new_heap, (-boolcomb.score[formula], formula))
 						
 
-				if method =="DT":
-					boolcomb.formula_dict[formula] = (pos_friend_set, neg_friend_set)
-
+				
 		
 			t0=time.time()
 			current_covering_formula, s.upper_bound = boolcomb.find(s.upper_bound)
@@ -200,10 +198,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 				time_elapsed = round(time.time() - time_counter,3)
 				with open(csvname, 'a+') as csvfile:
 					writer = csv.writer(csvfile)
-					if method== "DT":
-						writer.writerow([time_elapsed, covering_formula.DTSize(), covering_formula.prettyPrint()])
-					else: 
-						writer.writerow([time_elapsed, covering_formula.getNumberOfSubformulas(), covering_formula.prettyPrint()])
+					writer.writerow([time_elapsed, covering_formula.getNumberOfSubformulas(), covering_formula.prettyPrint()])
 			
 		logging.debug('########Time taken for iteration %.3f########'%(time.time()-time1))
 
@@ -218,19 +213,13 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 			time_elapsed = round(time.time() - time_counter,3)
 			with open(csvname, 'a+') as csvfile:
 				writer = csv.writer(csvfile)
-				if method== "DT":
-					writer.writerow([time_elapsed, covering_formula.DTSize(), covering_formula.prettyPrint(), 1])
-				else:
-					writer.writerow([time_elapsed, covering_formula.getNumberOfSubformulas(), covering_formula.prettyPrint(), 1])
+				writer.writerow([time_elapsed, covering_formula.getNumberOfSubformulas(), covering_formula.prettyPrint(), 1])
 		logging.warning("Final formula found %s"%covering_formula.prettyPrint())
 		logging.warning("Time taken is: "+ str(round(time_elapsed,3))+ " secs") 
 
 
-	if isinstance(covering_formula, DecisionTree): #verifies if the returned formula is consistent with the sample in case of perfect classification
-		ver = sample.isFormulaConsistent(covering_formula.convert2LTL())
-	else:
-		ver = sample.isFormulaConsistent(covering_formula)
-
+	ver = sample.isFormulaConsistent(covering_formula) #verifies if the returned formula is consistent with the sample in case of perfect classification
+	
 	if thres==0:
 		if not ver:
 			logging.error("Inferred formula is inconsistent, please report to the authors")
