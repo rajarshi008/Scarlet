@@ -1,9 +1,9 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
 
 [project]
-name = "Scarlet-learner"
+name = "Scarlet-ltl"
 version = "0.0.1"
 authors = [
   { name="Ritam Raha", email="ritam.raha18@gmail.com" },
