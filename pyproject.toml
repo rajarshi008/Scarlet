@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Scarlet_learner"
+version = "0.0.1"
+authors = [
+  { name="Ritam Raha", email="ritam.raha18@gmail.com" },
+  { name="Rajarshi Roy", email="rajarshi008@gmail.com" },
+  { name="Nathanael Fijalkow", email="nathanael.fijalkow@gmail.com" },
+  { name="Daniel Neider", email="daniel.neider@uni-oldenburg.de" },
+]
+description = "A package for learning LTL formulas from a sample consisting of traces partitioned into positive and negative"
+readme = "README.md"
+license = "MIT-LICENSE"
+requires-python = ">=3.7"
+dependencies = [
+		"lark",
+		"graphviz",
+		"ltl2dfa",
+]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/rajarshi008/Scarlet"
+"Paper" = "https://link.springer.com/chapter/10.1007/978-3-030-99524-9_14"
