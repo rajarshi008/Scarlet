@@ -38,7 +38,7 @@ An example of a trace is `1,0,1;0,0,0` which consists of two letters each of whi
 
 ### For running the LTL learner
 
-Run using `python -m Scarlet.ltllearner`. By default, this will run *Scarlet* on `example.trace` located inside the Scarlet folder. For easy testing, one can replace `example.trace` with the trace file of choice. Further, there are a variety of arguments that one can use to run *Scarlet*, as listed below:
+Run using `python -m Scarlet.ltllearner`. By default, this will run *Scarlet* on `example.trace` located inside the Scarlet folder. For easy testing, one can replace `example.trace` with the trace file of choice (see `All_benchmarks` for more example traces). Further, there are a variety of arguments that one can use to run *Scarlet*, as listed below:
 
 |Argument        |Meaning
 |----------------|------------------------------
