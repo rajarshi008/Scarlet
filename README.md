@@ -1,5 +1,6 @@
 <h1 align="center">
-  <img src="https://rajarshi008.github.io/assets/images/scarlet-logo.png" width: 60%>
+  <img src="https://rajarshi008.github.io/assets/images/scarlet-logo.png" width: 40%;
+  height: auto;>
 </h1>
 
 ---
