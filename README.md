@@ -8,7 +8,7 @@ We solve the problem of learning LTL formulas from a sample consisting of traces
 A [paper](https://link.springer.com/chapter/10.1007/978-3-030-99524-9_14) presenting the algorithms behind `Scarlet` was published in TACAS'2022.
 
 ## Installation
-To build from source, follow the set of commands: 
+To build from source, use the following set of commands: 
 ```
 git clone https://github.com/rajarshi008/Scarlet.git
 cd Scarlet
@@ -45,7 +45,7 @@ Run using `python -m Scarlet.ltllearner`. By default, this will run *Scarlet* on
 |-t <timeout>| For specifying the timeout, default is 900 secs (the best formula found till timeout can be found in result.csv, located in the `Scarlet` folder).
 |-o <result_file_name>| For specifying the name of the output csv file, default is *results.csv*
 |-l <noise_threshold>| For specifying the bound on loss function for noisy data, default is *0* for perfect classification.	
-|-h | Outputs the help.
+|-h | For outputting the help.
 
 
 ### For generating samples from LTL formulas
@@ -57,9 +57,9 @@ After the installation, for generating samples one simply needs to run `python -
 
 |Argument        |Meaning
 |----------------|------------------------------
-|--formula_file <file_name>| For specifying the file containing all of the formulas (in prefix notation).
-|--size <list_of_tuple>| List of sample_size, i.e., number of positive traces and number of negative traces (separated by comma) in each sample.  
-|--lengths <list_of_tuple>| For specifying the length range for each trace in the samples 
+|-f<file_name>| For specifying the file containing all of the formulas (in prefix notation).
+|-s <list_of_tuple>| List of sample_size, i.e., number of positive traces and number of negative traces (separated by comma) in each sample.  
+|-l <list_of_tuple>| For specifying the length range for each trace in the samples 
 |-o <output_folder>| For specifying the name of the folder in which samples are generated.
 |-h | Outputs the help.
 

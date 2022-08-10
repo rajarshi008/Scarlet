@@ -19,7 +19,6 @@ class SampleGenerator:
 				total_num = 1,
 				gen_method = 'dfa_method'):
 
-
 		self.formula_file = formula_file
 		self.trace_type = trace_type
 		self.sample_sizes = sample_sizes
@@ -149,12 +148,12 @@ def tupleList(s):
 def main():
 
 	parser = argparse.ArgumentParser()
-	parser.add_argument('--formula_file', dest='formula_file', default = 'formulas.txt')
-	parser.add_argument('--size', dest='sample_sizes', default=[(10,10),(50,50),(100,100),(200,200),(500,500)], nargs='+', type=tupleList)
-	parser.add_argument('--lengths', dest='trace_lengths', default=[(6,6)], nargs='+', type=tupleList)
-	parser.add_argument('--total_num', dest='total_num', default=1, type=int)
-	parser.add_argument('--output_folder', dest='output_folder', default = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
-	parser.add_argument('--generation_method', dest='gen_method', default='dfa_method')
+	parser.add_argument('--formula_file', '-f', dest='formula_file', default = 'formulas.txt')
+	parser.add_argument('--size', '-s', dest='sample_sizes', default=[(10,10),(50,50),(100,100),(200,200),(500,500)], nargs='+', type=tupleList)
+	parser.add_argument('--lengths', '-l', dest='trace_lengths', default=[(6,6)], nargs='+', type=tupleList)
+	parser.add_argument('--total_num', '-n', dest='total_num', default=1, type=int)
+	parser.add_argument('--output_folder', '-o', dest='output_folder', default = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
+	parser.add_argument('--generation_method', '-g', dest='gen_method', default='dfa_method')
 
 	args,unknown = parser.parse_known_args()
 	formula_file = 'Scarlet/'+ args.formula_file
@@ -165,6 +164,7 @@ def main():
 	total_num = int(args.total_num)
 	gen_method = args.gen_method
 	operators = ['F', 'G', 'X', '!', '&', '|']
+
 
 	generator = SampleGenerator(formula_file=formula_file,
 				trace_type=trace_type,
