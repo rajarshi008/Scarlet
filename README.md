@@ -1,10 +1,10 @@
 <h1 align="center">
-  <img src="https://rajarshi008.github.io/assets/images/scarlet-logo.png" max-width: 80%>
+  <img src="https://rajarshi008.github.io/assets/images/scarlet-logo.png" max-width: 60%>
 </h1>
 
-
-## SCARLET 
 ---
+## SCARLET 
+
 
 We solve the problem of learning LTL formulas from a sample consisting of traces partitioned into positive and negative.
 A [paper](https://link.springer.com/chapter/10.1007/978-3-030-99524-9_14) presenting the algorithms behind `Scarlet` was published in TACAS'2022.
