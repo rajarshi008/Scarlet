@@ -1,7 +1,10 @@
-## SCARLET 
+<h1 align="center">
+  <img src="https://rajarshi008.github.io/assets/images/scarlet-logo.png" width="60%">
+ </h1>
+
 ---
 
-![](scarlet-logo.png)
+## SCARLET 
 
 We solve the problem of learning LTL formulas from a sample consisting of traces partitioned into positive and negative.
 
@@ -14,7 +17,7 @@ git clone https://github.com/rajarshi008/Scarlet.git
 cd Scarlet
 source ./installation.sh
 ```
-You can also install `Scarlet`  as a python package using pip command. To do so, follow *this*.
+You can also install `Scarlet`  as a python package using pip command. To do so, follow [this link] (https://pypi.org/project/Scarlet-ltl/0.0.1/).
 
 ## Input File format:
 
