@@ -1,9 +1,9 @@
 [build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
-name = "Scarlet_learner"
+name = "Scarlet-learner"
 version = "0.0.1"
 authors = [
   { name="Ritam Raha", email="ritam.raha18@gmail.com" },
@@ -18,7 +18,7 @@ requires-python = ">=3.7"
 dependencies = [
 		"lark",
 		"graphviz",
-		"ltl2dfa",
+		"ltlf2dfa",
 ]
 
 classifiers = [
