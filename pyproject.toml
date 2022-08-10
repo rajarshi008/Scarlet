@@ -13,7 +13,7 @@ authors = [
 ]
 description = "A package for learning LTL formulas from a sample consisting of traces partitioned into positive and negative"
 readme = "README.md"
-license = "MIT-LICENSE"
+license = { file="MIT-LICENSE" }
 requires-python = ">=3.7"
 dependencies = [
 		"lark",
