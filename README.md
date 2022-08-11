@@ -17,7 +17,7 @@ git clone https://github.com/rajarshi008/Scarlet.git
 cd Scarlet
 source ./installation.sh
 ```
-You can also install `Scarlet`  as a python package using pip command. To do so, follow [this link] (https://pypi.org/project/Scarlet-ltl/0.0.1/).
+You can also install `Scarlet`  as a python package using pip command. To do so, follow [this link](https://pypi.org/project/Scarlet-ltl/0.0.1/).
 
 ## Input File format:
 
