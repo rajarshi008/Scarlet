@@ -17,12 +17,12 @@ class LTLlearner:
 	learner class for running as a module
 	'''
 	def __init__(self,
-				input_file = 'Scarlet/example.trace', 
+				input_file = './example.trace', 
 				is_word = False, 
 				timeout = 900, 
 				verbosity = 2,
 				method = 'SC',
-				csvname = 'Scarlet/result.csv',
+				csvname = './result.csv',
 				thres = 0,
 				last = False):
 
@@ -102,6 +102,9 @@ def main():
 	
 	learner.learn()
 
+def check():
+	learner = LTLlearner(input_file = "Scarlet/example.trace")
+	learner.learn()
 
 if __name__ == "__main__":
-    main()
+    check()
