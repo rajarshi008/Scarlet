@@ -1,7 +1,6 @@
 '''
 Takes user inputs, parse them and call the main inferltl function
 '''
-
 import argparse
 import logging
 import time
@@ -20,7 +19,7 @@ class LTLlearner:
 				input_file = './example.trace', 
 				is_word = False, 
 				timeout = 900, 
-				verbosity = 2,
+				verbosity = 0,
 				method = 'SC',
 				csvname = './result.csv',
 				thres = 0,
@@ -72,7 +71,6 @@ class LTLlearner:
 
 
 
-
 def main():
 
 	parser = argparse.ArgumentParser()
@@ -102,9 +100,6 @@ def main():
 	
 	learner.learn()
 
-def check():
-	learner = LTLlearner(input_file = "Scarlet/example.trace")
-	learner.learn()
 
 if __name__ == "__main__":
-    check()
+    main()
