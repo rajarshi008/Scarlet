@@ -52,7 +52,6 @@ This will run Scarlet on the input trace file.
 You can call the `LTLlearner` class with additional parameters as follows:
 
 * input_file = the path of the file containing LTL formuas, i.e., `= 'input_file_name.trace'`
-* verbosity = specifying the logging level, i.e., 0 for the basic formula and time, 1 for a bit detailed, 2 for fully detailed execution, `default = 2`
 * timeout = For specifying the timeout, `default = 900`
 * csvname = the name of the output csv file, i.e.,  `= 'output_file_name.csv'`
 * thres = the bound on loss function for noisy data, `default = 0` for perfect classification, has to be a number between zero and one
