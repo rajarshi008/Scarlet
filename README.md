@@ -12,15 +12,6 @@ A [paper](https://link.springer.com/chapter/10.1007/978-3-030-99524-9_14) presen
 
 ## Installation
 
-### Creating Virtual Environments
-
-It is recommended to install `Scarlet` inside a virtual environment as otherwise the dependencies have to be installed in your machine.
-Usually, a virtual environment can be created and activated using the following command:
-
-```
-python3 -m venv venv
-source venv/bin/activate
-```
 ### Installing the tool
 
 Now, you can install the tool, as python package using pip command as follows:
@@ -63,7 +54,6 @@ This will run Scarlet on the input trace file.
 You can call the `LTLlearner` class with additional parameters as follows:
 
 * input_file = the path of the file containing LTL formuas, i.e., `= 'input_file_name.trace'`
-* verbosity = specifying the logging level, i.e., 0 for the basic formula and time, 1 for a bit detailed, 2 for fully detailed execution, `default = 2`
 * timeout = For specifying the timeout, `default = 900`
 * csvname = the name of the output csv file, i.e.,  `= 'output_file_name.csv'`
 * thres = the bound on loss function for noisy data, `default = 0` for perfect classification, has to be a number between zero and one

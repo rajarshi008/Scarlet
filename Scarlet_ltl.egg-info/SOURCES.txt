@@ -1,3 +1,4 @@
+MIT-LICENSE
 README.md
 pyproject.toml
 Scarlet/__init__.py
