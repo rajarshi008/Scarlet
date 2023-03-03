@@ -25,7 +25,7 @@ An example of a trace is `1,0,1;0,0,0` which consists of two letters each of whi
 For `Scarlet` to work, you must save your input files with the extension  `.trace`.
 
 
-There are two ways of using `Scarlet` depending on what one prefers. One can use `Scarlet` using its python API  or using its command-line features. Here, we provide the instructions to use both.
+There are two ways of using `Scarlet`: using its python API or using its command-line features. Here, we provide the instructions to use both.
 ## Python API
 
 ### Installation
