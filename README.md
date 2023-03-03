@@ -6,7 +6,7 @@
 
 We solve the problem of learning LTL formulas from a sample consisting of traces partitioned into positive and negative.
 
-A [paper](https://link.springer.com/chapter/10.1007/978-3-030-99524-9_14) presenting the algorithms behind `Scarlet` was published in TACAS'2022.
+A [paper](https://link.springer.com/chapter/10.1007/978-3-030-99524-9_14) presenting the algorithms behind *Scarlet* was published in TACAS'2022.
 
 ## Input File format:
 
@@ -22,10 +22,10 @@ An example of a trace is `1,0,1;0,0,0` which consists of two letters each of whi
 1,0,0;1,0,0;0,1,0;1,1,0;1,0,0
 0,0,1;1,0,0;1,1,0;1,1,1;1,0,0
 ```
-For `Scarlet` to work, you must save your input files with the extension  `.trace`.
+For *Scarlet* to work, you must save your input files with the extension  `.trace`.
 
 
-There are two ways of using `Scarlet`: using its python API or using its command-line features. Here, we provide the instructions to use both.
+There are two ways of using *Scarlet*: using its python API or using its command-line features. Here, we provide the instructions to use both.
 ## Python API
 
 ### Installation
@@ -37,16 +37,16 @@ python3 -m pip install Scarlet-ltl
 ```
 
 ### Basic API Usage
-We now provide the basic usage of the Scarlet python API.
+We now provide the basic usage of the *Scarlet* python API.
 ```
 from Scarlet.ltllearner import LTLlearner
 learner = LTLlearner(input_file = input_file_name)
 learner.learn()
 ```
 Note that the python API does not provide any example input files.
-Hence, you must create your trace file in a format as described above and provide it to the API.
+Hence, you must create your trace file in a format as described in the previous section and provide it to the API.
 
-### Parameters
+#### Parameters
 You can call the `LTLlearner` class with additional parameters as follows:
 
 * input_file = the path of the file containing LTL formuas, e.g., `= 'example.trace'`
@@ -106,8 +106,10 @@ source ./installation.sh
 
 ### Running
 
+Run using `python -m Scarlet.ltllearner`. By default, this will run *Scarlet* on `example.trace` located inside the `Scarlet` folder. For easy testing, one can replace `example.trace` with the trace file of choice (see `All_benchmarks` for more example traces). 
 
-Run using `python -m Scarlet.ltllearner`. By default, this will run *Scarlet* on `example.trace` located inside the Scarlet folder. For easy testing, one can replace `example.trace` with the trace file of choice (see `All_benchmarks` for more example traces). Further, there are a variety of arguments that one can use to run *Scarlet*, as listed below:
+#### Parameters
+There are a variety of arguments that one can use to run *Scarlet*, as listed below:
 
 |Argument        |Meaning
 |----------------|------------------------------
