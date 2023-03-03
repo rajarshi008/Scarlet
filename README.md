@@ -127,7 +127,10 @@ There are a variety of arguments that one can use to run *Scarlet*, as listed be
 For generating benchmarks from a given set of LTL formula, we rely on a python package LTLf2DFA that uses [MONA](https://www.brics.dk/mona/) in its backend. 
 As a result, one needs to install MONA first in order to be able to use this procedure (instructions can be found in the MONA website).
 
-After the installation, for generating samples one simply needs to run `python -m Scarlet.genBenchmarks`. By default, this generates samples that are separable using the formulas provided in `formulas.txt`. You can run the command with the following arguments:
+After the installation, for generating samples one simply needs to run `python -m Scarlet.genBenchmarks`. By default, this generates samples that are separable using the formulas provided in `formulas.txt`. 
+
+#### Parameters
+You can run the command with the following arguments:
 
 |Argument        |Meaning
 |----------------|------------------------------
