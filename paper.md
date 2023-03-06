@@ -57,8 +57,7 @@ Consider a robot that has been designed to collect wastebin contents in an offic
 For the sake of the example, in this environment, let there be an office $o$ with a wastebin, a hallway $h$, and a container $c$ to accumulate the waste.
 The following could be the possible executions of the robot:
 
-$h,h,h,h,o,h,c,h$ \
-$h,h,h,h,h,c,h,o,h,h$
+$$h,h,h,h,o,h,c,h \\ h,h,h,h,h,c,h,o,h,h$$
 
 Let the first execution be positive since the robot first collects waste from the office and then accumulates in the container.
 Also, let the second execution be negative since the robot tries to accumulate the waste in the container even before it collects from the office.
