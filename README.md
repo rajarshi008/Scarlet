@@ -2,13 +2,9 @@
   <img src="https://rajarshi008.github.io/assets/images/scarlet-logo.png" width="60%">
  </h1>
 
----
-
-## SCARLET 
-
 We solve the problem of learning LTL formulas from a sample consisting of traces partitioned into positive and negative.
 
-A [paper](https://link.springer.com/chapter/10.1007/978-3-030-99524-9_14) presenting the algorithms behind `Scarlet` was published in TACAS'2022.
+A [paper](https://link.springer.com/chapter/10.1007/978-3-030-99524-9_14) presenting the algorithms behind *Scarlet* was published in TACAS'2022.
 
 ## Input File format:
 
@@ -24,10 +20,13 @@ An example of a trace is `1,0,1;0,0,0` which consists of two letters each of whi
 1,0,0;1,0,0;0,1,0;1,1,0;1,0,0
 0,0,1;1,0,0;1,1,0;1,1,1;1,0,0
 ```
+For *Scarlet* to work, you must save your input files with the extension  `.trace`.
 
+
+There are two ways of using *Scarlet*: using its python API or using its command-line features. Here, we provide the instructions to use both.
 ## Python API
 
-### Installing the tool
+### Installation
 
 Now, you can install the tool, as python package using pip command as follows:
 
@@ -35,50 +34,46 @@ Now, you can install the tool, as python package using pip command as follows:
 python3 -m pip install Scarlet-ltl
 ```
 
-### Create input file
-
-To run Scarlet, you have to create an input file with `.trace` extension in the same directory where `venv` folder is located. The input file format is described in the above section.
-
-### Run Scarlet on a particular input file
-
+### Basic API Usage
+We now provide the basic usage of the *Scarlet* python API.
 ```
 from Scarlet.ltllearner import LTLlearner
-learner = LTLlearner(input_file = "input_file_name.trace")
+learner = LTLlearner(input_file = input_file_name)
 learner.learn()
 ```
-This will run Scarlet on the input trace file.
+Note that the python API does not provide any example input files.
+Hence, you must create your trace file in a format as described in the previous section and provide it to the API.
 
-### Parameters
+#### Parameters
 You can call the `LTLlearner` class with additional parameters as follows:
 
-* input_file = the path of the file containing LTL formuas, i.e., `= 'input_file_name.trace'`
-* verbosity = specifying the logging level, i.e., 0 for the basic formula and time, 1 for a bit detailed, 2 for fully detailed execution, `default = 2`
+* input_file = the path of the file containing LTL formuas, e.g., `= 'example.trace'`
 * timeout = For specifying the timeout, `default = 900`
-* csvname = the name of the output csv file, i.e.,  `= 'output_file_name.csv'`
+* csvname = the name of the output csv file, e.g.,  `= 'result.csv'`
 * thres = the bound on loss function for noisy data, `default = 0` for perfect classification, has to be a number between zero and one
 
 
-## How to generate trace files from LTL formulas
+### Generation of (random) Trace Files from LTL formulas
 
 You can also generate trace files from given LTL formulas following the instructions below:
 
-### Install dependencies
+#### Installation of Dependencies
 
 For generating benchmarks from a given set of LTL formula, we rely on a python package LTLf2DFA that uses [MONA](https://www.brics.dk/mona/) in its backend. 
 As a result, one needs to install MONA first in order to be able to use this procedure (instructions can be found in the MONA website).
 
-### Create input formula file
+#### Creating Input Formula File
 
 For generating benchmarks, you have to create an input file named `formulas.txt` in the same directory where `venv` folder is located. The formula file should contain a list of formulas (in prefix notation) along with the alphabet.
 An example of this file is as follows:
 
 ```
 G(!(p));p
-->(F(q), U(!(p),q));p,q
+|(G(!(p)),F(&(p, F(q))));p,q
 G(->(q, G(!(p))));p,q
 ```
 
-### Generate trace files from `formulas.txt`
+#### Generating Trace Files for a given Formula File
 
 ```
 from Scarlet.genBenchmarks import SampleGenerator
@@ -86,13 +81,15 @@ generator = SampleGenerator(formula_file= "formulas.txt")
 generator.generate()
 ```
 
-### Parameters
+#### Parameters
 You can call the `SampleGenerator` class with additional parameters as follows:
 
 * formula_file = the path of the file containing LTL formuas, `example = 'formulas.txt'`
 * sample_sizes = list of sample_size, i.e., number of positive traces and number of negative traces (separated by comma) in each sample, `default = [(10,10),(50,50)]`
 * trace_lengths = For specifying the length range for each trace in the samples, `default = [(6,6)]`
 * output_folder = For specifying the name of the folder in which samples are generated
+
+The PyPi package for this API can be found in [this link](https://pypi.org/project/Scarlet-ltl/0.0.2/).
 
 
 ## Command Line Usage
@@ -104,14 +101,13 @@ git clone https://github.com/rajarshi008/Scarlet.git
 cd Scarlet
 source ./installation.sh
 ```
-You can also install `Scarlet`  as a python package using pip command. To do so, follow [this link](https://pypi.org/project/Scarlet-ltl/0.0.1/).
 
+### Running
 
-## How to run:
+Run using `python -m Scarlet.ltllearner`. By default, this will run *Scarlet* on `example.trace` located inside the `Scarlet` folder. For easy testing, one can replace `example.trace` with the trace file of choice (see `All_benchmarks` for more example traces). 
 
-### For running the LTL learner
-
-Run using `python -m Scarlet.ltllearner`. By default, this will run *Scarlet* on `example.trace` located inside the Scarlet folder. For easy testing, one can replace `example.trace` with the trace file of choice (see `All_benchmarks` for more example traces). Further, there are a variety of arguments that one can use to run *Scarlet*, as listed below:
+#### Parameters
+There are a variety of arguments that one can use to run *Scarlet*, as listed below:
 
 |Argument        |Meaning
 |----------------|------------------------------
@@ -124,12 +120,15 @@ Run using `python -m Scarlet.ltllearner`. By default, this will run *Scarlet* on
 |-h | For outputting the help.
 
 
-### For generating samples from LTL formulas
+### Generation of (random) Trace Files from LTL formulas
 
 For generating benchmarks from a given set of LTL formula, we rely on a python package LTLf2DFA that uses [MONA](https://www.brics.dk/mona/) in its backend. 
 As a result, one needs to install MONA first in order to be able to use this procedure (instructions can be found in the MONA website).
 
-After the installation, for generating samples one simply needs to run `python -m Scarlet.genBenchmarks`. By default, this generates samples that are separable using the formulas provided in `formulas.txt`. You can run the command with the following arguments:
+After the installation, for generating samples one simply needs to run `python -m Scarlet.genBenchmarks`. By default, this generates samples that are separable using the formulas provided in `formulas.txt`. 
+
+#### Parameters
+You can run the command with the following arguments:
 
 |Argument        |Meaning
 |----------------|------------------------------
