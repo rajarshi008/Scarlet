@@ -54,16 +54,16 @@ Based on the executions, it learns a concise model in LTL that is consistent wit
 
 Let us consider a concrete example to understand `Scarlet`'s functioning.
 Consider a robot that has been designed to collect wastebin contents in an office-like environment.
-For the sake of the example, in this environment, let there be an office o with a wastebin, a hallway h, and a container c to accumulate the waste.
+For the sake of the example, in this environment, let there be an office $o$ with a wastebin, a hallway $h$, and a container $c$ to accumulate the waste.
 The following could be the possible executions of the robot:
 
-$h\cdot h.h.h.o.h.c.h$ 
-$h.h.h.h.h.c.h.o.h.h$
+$h\cdot h \cdot h \cdot h \cdot o \cdot h \cdot c \cdot h$ \
+$h \cdot h \cdot h \cdot h \cdot h \cdot c \cdot h \cdot o \cdot h \cdot h$
 
 Let the first execution be positive since the robot first collects waste from the office and then accumulates in the container.
 Also, let the second execution be negative since the robot tries to accumulate the waste in the container even before it collects from the office.
 From these executions, `Scarlet` learns a model `F(o and FX c)`, where the `F`-operator stands for "finally" and `X`-operator stands for "next".
-The model, in simple words, expresses that: eventually, the robot should visit the office and then, at a later point visit the container. 
+The model, in simple words, expresses that: eventually, the robot should visit the office $o$ and then, at a later point should visit the container $c$. 
 
 
 # Statement of need
