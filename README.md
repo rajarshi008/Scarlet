@@ -33,7 +33,7 @@ Our paper "[Scalable Anytime Algorithms for Learning Fragments of Linear Tempora
 
 ## Input File format:
 
-The input files consist of traces separated as positives and negatives, separated by `---`.
+The input files consist of system executions, formally termed as traces, separated as positives and negatives, separated by `---`.
 Each trace is a sequence of letter separated by `;`. Each letter represents the truth value of atomic propositions.
 An example of a trace is `1,0,1;0,0,0` which consists of two letters each of which define the values of three propositions (which by default consider to be `p,q,r`). An example input file looks like the following:
 ```
