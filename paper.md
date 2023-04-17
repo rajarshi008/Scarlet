@@ -68,7 +68,7 @@ This model, in simple words, expresses that: eventually, the robot should visit 
 
 # Statement of need
 
-The fundamental problem solved by `Scarlet` is to build an explainable model in the form of an LTL formula from system executions that is termed as traces.
+The fundamental problem solved by `Scarlet` is to build an explainable model in the form of an LTL formula from system executions, formally termed as traces.
 
 `Scarlet` is a tool built entirely in Python 3. It can be run using its command-line features or its Python API hosted in PyPi. Its main capabilities include:
 
