@@ -129,7 +129,7 @@ source ./installation.sh
 
 ### Running
 
-Run using `python -m Scarlet.ltllearner`. By default, this will run *Scarlet* on `example.trace` located inside the `Scarlet` folder. For easy testing, one can replace `example.trace` with the trace file of choice (see `All_benchmarks` for more example traces). 
+Run using `python -m Scarlet.ltllearner`. By default, this will run `Scarlet` on `example.trace` located inside the `Scarlet` folder. For easy testing, one can replace `example.trace` with the trace file of choice (see `All_benchmarks` for more example traces). 
 
 #### Parameters
 There are a variety of arguments that one can use to run *Scarlet*, as listed below:
@@ -137,8 +137,8 @@ There are a variety of arguments that one can use to run *Scarlet*, as listed be
 |Argument        |Meaning
 |----------------|------------------------------
 |-i <file_path>| For specifying the name of the input file (to be located inside the `Scarlet` folder), default is *example.trace*.
-|-v | For outputting a detailed log of *Scarlet*'s execution.
-|-vv | For outputting a even more detailed log of *Scarlet*'s execution.
+|-v | For outputting a detailed log of `Scarlet`'s execution.
+|-vv | For outputting a even more detailed log of `Scarlet`'s execution.
 |-t <timeout>| For specifying the timeout, default is 900 secs (the best formula found till timeout can be found in result.csv, located in the `Scarlet` folder).
 |-o <result_file_name>| For specifying the name of the output csv file, default is *results.csv*
 |-l <noise_threshold>| For specifying the bound on loss function for noisy data, default is *0* for perfect classification.	
