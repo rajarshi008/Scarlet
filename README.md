@@ -6,6 +6,7 @@ We solve the problem of learning LTL formulas from a sample consisting of traces
 
 A [paper](https://link.springer.com/chapter/10.1007/978-3-030-99524-9_14) presenting the algorithms behind *Scarlet* was published in TACAS'2022.
 
+*Table of Contents*
 <!-- toc -->
 
 - [Input File format](#input-file-format)
