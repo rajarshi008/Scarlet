@@ -45,8 +45,8 @@ Naturally, one cannot always develop trust in such complex, so-called black-box 
 
 To generate trust in systems, a standard approach in Explainable AI is to build simple explanations using human-understandable models.
 A number of recent works [@NeiderGavran18] [@Camacho_McIlraith_2019] [@RoyFismanNeider20] have identified models in temporal logic to be both formal and explainable.
-Among temporal logics---Linear Temporal Logic (LTL)---arguably the most widely used temporal logic, has received particular focus due to its ease-of-use.
-LTL is in fact a de facto standard in several fields of computer science, including model checking, program analysis, and motion planning for robotics.
+Among temporal logics---Linear Temporal Logic (LTL)---arguably the most widely used temporal logic, has received particular focus due to its resemblance to natural language.
+Moreover, LTL is a de facto standard in several fields of computer science, including model-checking, program analysis, and motion planning for robotics.
 
 `Scarlet` is one of the most competitive tools for learning explainable models in LTL [@RahaRFN22].
 To learn the explainable models, it relies on positive (or desirable) and negative (or undesirable) executions of the system under consideration.
@@ -68,7 +68,7 @@ This model, in simple words, expresses that: eventually, the robot should visit 
 
 # Statement of need
 
-The fundamental problem solved by `Scarlet` is to build an explainable model in the form of an LTL formula from a set of positive and negative execution traces.
+The fundamental problem solved by `Scarlet` is to build an explainable model in the form of an LTL formula from system executions that is termed as traces.
 
 `Scarlet` is a tool built entirely in Python 3. It can be run using its command-line features or its Python API hosted in PyPi. Its main capabilities include:
 
