@@ -14,6 +14,15 @@ A [paper](https://link.springer.com/chapter/10.1007/978-3-030-99524-9_14) presen
   - [Basic API Usage](#basic-api-usage)
     - [Parameters](#parameters)
   - [Generation of Trace Files from LTL formulas](#generation-of-trace-files-from-ltl-formulas)
+    - [Installation of Dependencies](#installation-of-dependencies)
+    - [Generating from a given Formula File](#generating-from-a-given-formula-file)
+    - [Parameters](#parameters)
+- [Command Line Usage](#command-line-usage)
+  - [Installation](#installation)
+  - [Running](#running)
+    - [Parameters](#parameters)
+  - [Generation of Trace Files from LTL formulas](#generation-of-trace-files-from-ltl-formulas)
+    - [Parameters](#parameters)
 - [Report an issue](#report-an-issue)
 - [Contribute](#contribute)
 
@@ -87,7 +96,7 @@ G(!(p));p
 G(->(q, G(!(p))));p,q
 ```
 
-#### Generating Trace Files for a given Formula File
+#### Generating from a given Formula File
 
 ```
 from Scarlet.genBenchmarks import SampleGenerator
@@ -134,7 +143,7 @@ There are a variety of arguments that one can use to run *Scarlet*, as listed be
 |-h | For outputting the help.
 
 
-### Generation of (random) Trace Files from LTL formulas
+### Generation of Trace Files from LTL formulas
 
 For generating benchmarks from a given set of LTL formula, we rely on a python package LTLf2DFA that uses [MONA](https://www.brics.dk/mona/) in its backend. 
 As a result, one needs to install MONA first in order to be able to use this procedure (instructions can be found in the MONA website).
