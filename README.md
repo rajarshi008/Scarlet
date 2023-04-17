@@ -6,6 +6,20 @@ We solve the problem of learning LTL formulas from a sample consisting of traces
 
 A [paper](https://link.springer.com/chapter/10.1007/978-3-030-99524-9_14) presenting the algorithms behind *Scarlet* was published in TACAS'2022.
 
+<!-- toc -->
+
+- [Input File format](#input-file-format)
+- [Python API](#python-api)
+  - [Installation](#installation)
+  - [Basic API Usage](#basic-api-usage)
+    - [Parameters](#parameters)
+  - [Generation of Trace Files from LTL formulas](#generation-of-trace-files-from-ltl-formulas)
+- [Report an issue](#report-an-issue)
+- [Contribute](#contribute)
+
+<!-- tocstop -->
+
+
 ## Input File format:
 
 The input files consist of traces separated as positives and negatives, separated by `---`.
@@ -53,7 +67,7 @@ You can call the `LTLlearner` class with additional parameters as follows:
 * thres = the bound on loss function for noisy data, `default = 0` for perfect classification, has to be a number between zero and one
 
 
-### Generation of (random) Trace Files from LTL formulas
+### Generation of Trace Files from LTL formulas
 
 You can also generate trace files from given LTL formulas following the instructions below:
 
@@ -139,3 +153,12 @@ You can run the command with the following arguments:
 |-h | Outputs the help.
 
 The formula file should contain a list of formulas (in prefix notation) along with the alphabet (see `formulas.txt`) and should be located inside the `Scarlet` folder to be used for generating the sample.
+
+## Report an issue
+
+If you find any issue, please create a GitHub issue with specifics steps to reproduce the bug.
+
+## Contribute
+
+Contributions are welcome! Please first, create an issue with what your contribution should be about.
+Then you can create a pull request.
