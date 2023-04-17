@@ -63,7 +63,7 @@ python3 -m pip install Scarlet-ltl
 We now provide the basic usage of the *Scarlet* python API.
 ```
 from Scarlet.ltllearner import LTLlearner
-learner = LTLlearner(input_file = input_file_name)
+learner = LTLlearner(input_file = input_file_path)
 learner.learn()
 ```
 Note that the python API does not provide any example input files.
@@ -136,7 +136,7 @@ There are a variety of arguments that one can use to run *Scarlet*, as listed be
 
 |Argument        |Meaning
 |----------------|------------------------------
-|-i <file_name>| For specifying the name of the input file (to be located inside the `Scarlet` folder), default is *example.trace*.
+|-i <file_path>| For specifying the name of the input file (to be located inside the `Scarlet` folder), default is *example.trace*.
 |-v | For outputting a detailed log of *Scarlet*'s execution.
 |-vv | For outputting a even more detailed log of *Scarlet*'s execution.
 |-t <timeout>| For specifying the timeout, default is 900 secs (the best formula found till timeout can be found in result.csv, located in the `Scarlet` folder).
