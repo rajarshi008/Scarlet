@@ -1,0 +1,5 @@
+Time Elapsed,Formula Size,Formula,is Terminated?
+0.03,6,((p & (F q)) | (X q))
+0.038,5,(F (p & (F q)))
+0.044,4,(F (p & q))
+0.044,4,(F (p & q)),1

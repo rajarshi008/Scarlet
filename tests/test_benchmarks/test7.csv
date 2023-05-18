@@ -1,0 +1,5 @@
+Time Elapsed,Formula Size,Formula,is Terminated?
+0.023,7,((X (G p)) | (G (! q)))
+0.05,6,(G ((! q) | (G p)))
+0.056,5,(G ((! q) | p))
+0.056,5,(G ((! q) | p)),1
