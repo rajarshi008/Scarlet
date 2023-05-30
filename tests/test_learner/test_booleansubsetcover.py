@@ -47,8 +47,8 @@ def test_boolean_set_cover(test_num):
 
     for formula in random_formulas:
 
-        pos_friend_set = set(random.sample(bsc.positive_set,k=random.randint(1,len(bsc.positive_set))))
-        neg_friend_set = set(random.sample(bsc.negative_set,k=random.randint(1,len(bsc.negative_set))))
+        pos_friend_set = set(random.sample(list(bsc.positive_set),k=random.randint(1,len(bsc.positive_set))))
+        neg_friend_set = set(random.sample(list(bsc.negative_set),k=random.randint(1,len(bsc.negative_set))))
         
         bsc.formula_dict[formula] = (pos_friend_set, neg_friend_set)
         bsc.score[formula] = ((len(pos_friend_set) - len(neg_friend_set) + len(bsc.negative_set))/((formula.treeSize())**(0.5)+1))
