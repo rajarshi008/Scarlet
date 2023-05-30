@@ -12,11 +12,11 @@ def test_genbenchmarks(test_num):
     '''
     Testing genbenchmarks by checking consistency with the formula
     '''
-    sg = SampleGenerator(formula_file = 'Scarlet/tests/test_benchmarks/formulas.txt',
+    sg = SampleGenerator(formula_file = 'Scarlet/tests/test_generator/formulas.txt',
                         trace_type = 'trace',
                         sample_sizes = [(10,10),(50,50)],
                         trace_lengths = [(6,6)],
-                        output_folder = 'Scarlet/tests/test_generations',
+                        output_folder = 'Scarlet/tests/test_generator/test_generations',
                         total_num = 1,
                         gen_method = 'dfa_method'
                         )
@@ -28,7 +28,7 @@ def test_genbenchmarks(test_num):
 
     sg.generate()
 
-    folder_path = 'Scarlet/tests/test_generations/TracesFiles'
+    folder_path = 'Scarlet/tests/test_generator/test_generations/TracesFiles'
     trace_files = [file for file in os.listdir(folder_path) if file.endswith(".trace")]
 
     # Iterate over the csv_files list and remove each file

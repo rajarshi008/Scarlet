@@ -7,21 +7,21 @@ import glob
 import os
 
  
-file_paths = glob.glob('Scarlet/tests/test_benchmarks/*.trace')
+file_list = ['test%s.trace'%str(i) for i in range(1,8)]
 threshold = [0,0.10]
-params = [(f,t) for f in file_paths for t in threshold]
+params = [(f,t) for f in file_list for t in threshold]
 
-@pytest.mark.parametrize("filename, thres", params)
-def test_boolean_set_cover(filename, thres):
+@pytest.mark.parametrize("test_file, thres", params)
+def test_ltllearner(test_file, thres):
     '''
     Testing LTLlearner by invoking the verifier to check consistency with the sample
     '''
-    print(filename, thres)
-    learner = LTLlearner(input_file=filename, timeout=100, thres=thres, csvname=filename.strip('.trace')+'.csv')
+    
+    folder_path = 'Scarlet/tests/test_learner/test_benchmarks/'
+    learner = LTLlearner(input_file=folder_path+test_file, timeout=100, thres=thres, csvname=test_file.strip('.trace')+'.csv')
 
     formula = learner.learn()[0]
-
-    folder_path = 'Scarlet/tests/test_benchmarks/'
+    
     csv_files = [file for file in os.listdir(folder_path) if file.endswith(".csv")]
 
     # Iterate over the csv_files list and remove each file
@@ -32,7 +32,7 @@ def test_boolean_set_cover(filename, thres):
 
 
     sample = Sample(positive=[], negative=[], alphabet=[])
-    sample.readFromFile(filename)
+    sample.readFromFile(folder_path + test_file)
 
     misclass = 0
     for w in sample.positive:

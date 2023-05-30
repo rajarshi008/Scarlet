@@ -12,19 +12,20 @@ Our paper "[Scalable Anytime Algorithms for Learning Fragments of Linear Tempora
 
 - [Input File format](#input-file-format)
 - [Python API](#python-api)
-  - [Installation](#installation)
+  - [Python Installation](#installation)
   - [Basic API Usage](#basic-api-usage)
-    - [Parameters](#parameters)
-  - [Generation of Trace Files from LTL formulas](#generation-of-trace-files-from-ltl-formulas)
+    - [Python Parameters](#parameters)
+  - [Generation of Trace Files using Python](#generation-of-trace-files-from-ltl-formulas)
     - [Installation of Dependencies](#installation-of-dependencies)
     - [Generating from a given Formula File](#generating-from-a-given-formula-file)
-    - [Parameters](#parameters)
+    - [Python Generation Parameters](#parameters)
 - [Command Line Usage](#command-line-usage)
-  - [Installation](#installation)
-  - [Running](#running)
-    - [Parameters](#parameters)
-  - [Generation of Trace Files from LTL formulas](#generation-of-trace-files-from-ltl-formulas)
-    - [Parameters](#parameters)
+  - [CMD Installation](#installation)
+  - [CMD Running](#running)
+    - [CMD Parameters](#parameters)
+  - [Generation of Trace Files using CMD](#generation-of-trace-files-from-ltl-formulas)
+    - [CMD Generation Parameters](#parameters)
+- [Testing]
 - [Report an issue](#report-an-issue)
 - [Contribute](#contribute)
 
@@ -51,7 +52,7 @@ For *Scarlet* to work, you must save your input files with the extension  `.trac
 There are two ways of using *Scarlet*: using its python API or using its command-line features. Here, we provide the instructions to use both.
 ## Python API
 
-### Installation
+### Python Installation
 
 Now, you can install the tool, as python package using pip command as follows:
 
@@ -69,7 +70,7 @@ learner.learn()
 Note that the python API does not provide any example input files.
 Hence, you must create your trace file in a format as described in the previous section and provide it to the API.
 
-#### Parameters
+#### Python Parameters
 You can call the `LTLlearner` class with additional parameters as follows:
 
 * input_file = the path of the file containing LTL formuas, e.g., `= 'example.trace'`
@@ -78,14 +79,14 @@ You can call the `LTLlearner` class with additional parameters as follows:
 * thres = the bound on loss function for noisy data, `default = 0` for perfect classification, has to be a number between zero and one
 
 
-### Generation of Trace Files from LTL formulas
+### Generation of Trace Files using Python
 
 You can also generate trace files from given LTL formulas following the instructions below:
 
 #### Installation of Dependencies
 
-For generating benchmarks from a given set of LTL formula, we rely on a python package LTLf2DFA that uses [MONA](https://www.brics.dk/mona/) in its backend. 
-As a result, one needs to install MONA first in order to be able to use this procedure (instructions can be found in the MONA website).
+For generating benchmarks from a given set of LTL formula, we rely on a python package LTLf2DFA that uses [*MONA*](https://www.brics.dk/mona/) in its backend. 
+As a result, one needs to install *MONA* first in order to be able to use this procedure (instructions can be found in the *MONA* website).
 
 #### Creating Input Formula File
 
@@ -106,7 +107,7 @@ generator = SampleGenerator(formula_file= "formulas.txt")
 generator.generate()
 ```
 
-#### Parameters
+#### Python Generation Parameters 
 You can call the `SampleGenerator` class with additional parameters as follows:
 
 * formula_file = the path of the file containing LTL formuas, `example = 'formulas.txt'`
@@ -119,7 +120,7 @@ The PyPi package for this API can be found in [this link](https://pypi.org/proje
 
 ## Command Line Usage
 
-### Installation
+### CMD Installation
 To build from source, use the following set of commands: 
 ```
 git clone https://github.com/rajarshi008/Scarlet.git
@@ -127,11 +128,11 @@ cd Scarlet
 source ./installation.sh
 ```
 
-### Running
+### CMD Running
 
 Run using `python -m Scarlet.ltllearner`. By default, this will run `Scarlet` on `example.trace` located inside the `Scarlet` folder. For easy testing, one can replace `example.trace` with the trace file of choice (see `All_benchmarks` for more example traces). 
 
-#### Parameters
+#### CMD Parameters
 There are a variety of arguments that one can use to run *Scarlet*, as listed below:
 
 |Argument        |Meaning
@@ -145,14 +146,14 @@ There are a variety of arguments that one can use to run *Scarlet*, as listed be
 |-h | For outputting the help.
 
 
-### Generation of Trace Files from LTL formulas
+### Generation of Trace Files using CMD
 
-For generating benchmarks from a given set of LTL formula, we rely on a python package LTLf2DFA that uses [MONA](https://www.brics.dk/mona/) in its backend. 
-As a result, one needs to install MONA first in order to be able to use this procedure (instructions can be found in the MONA website).
+For generating benchmarks from a given set of LTL formula, we rely on a python package LTLf2DFA that uses [*MONA*](https://www.brics.dk/mona/) in its backend. 
+As a result, one needs to install *MONA* first in order to be able to use this procedure (instructions can be found in the *MONA* website).
 
 After the installation, for generating samples one simply needs to run `python -m Scarlet.genBenchmarks`. By default, this generates samples that are separable using the formulas provided in `formulas.txt`. 
 
-#### Parameters
+#### CMD Generation Parameters
 You can run the command with the following arguments:
 
 |Argument        |Meaning
@@ -164,6 +165,12 @@ You can run the command with the following arguments:
 |-h | Outputs the help.
 
 The formula file should contain a list of formulas (in prefix notation) along with the alphabet (see `formulas.txt`) and should be located inside the `Scarlet` folder to be used for generating the sample.
+
+### Testing
+For testing all features of the tool use: `python -m Scarlet/tests` (Installation of *MONA* is required)
+For testing only the features of LTL learning use: `python -m Scarlet/tests/test_learner`
+For testing only the features of sample generation use: `python -m Scarlet/tests/test_generator` (Installation of *MONA* is required)
+
 
 ## Report an issue
 

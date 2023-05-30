@@ -28,9 +28,11 @@ def comb(n, m):
 	return result
 
 
-
+# Test variables
 num_tests = 5
 prop_types = [[], ['p'], ['p', 'q'], ['p', 'q', 'r'], ['p', 'q', 'r', 's']]
+file_list = ['test%s.trace'%str(i) for i in range(1,8)]
+
 params = [(i,prop_list) for prop_list in prop_types for i in range(num_tests)]
 @pytest.mark.parametrize("test_num, prop_list", params)
 def test_genPossibleAtoms(test_num, prop_list):
@@ -128,14 +130,13 @@ def test_add2dltl(test_num, prop_list):
 		assert not (dltl1_tuple == dltl2_tuple) or formula == None
 
 
-file_list = ['test%s.trace'%str(i) for i in range(1,8)]
 @pytest.mark.parametrize("test_file", file_list)
 def test_preComputeInd(test_file):
 	
 	#Checks if the computation of the ind_table works correctly
 	
 	sample = Sample(positive=[], negative=[], alphabet=[], is_words=False)
-	sample.readFromFile('Scarlet/tests/test_benchmarks/'+test_file)
+	sample.readFromFile('Scarlet/tests/test_learner/test_benchmarks/'+test_file)
 
 	f = findDltl(sample=sample, operators=['F','G','X','&','|','!'], last=False, thres=0, upper_bound=30)
 	
@@ -155,14 +156,14 @@ def test_preComputeInd(test_file):
 			#checking if the inductively computed ind_table is actually correct
 			assert is_sat(trace[k], atom, is_end)
 
-file_list = ['test%s.trace'%str(i) for i in range(1,8)]
+
 @pytest.mark.parametrize("test_file", file_list)
 def test_R_table(test_file):
 	'''
 	Checks if the computation of the R_table works correctly
 	'''
 	sample = Sample(positive=[], negative=[], alphabet=[], is_words=False)
-	sample.readFromFile('Scarlet/tests/test_benchmarks/'+test_file)
+	sample.readFromFile('Scarlet/tests/test_learner/test_benchmarks/'+test_file)
 
 	f = findDltl(sample=sample, operators=['F','G','X','&','|','!'], last=False, thres=0, upper_bound=20)
 
@@ -179,6 +180,7 @@ def test_R_table(test_file):
 			max_len_atom =  max([len(a) for a in atoms])
 			assert max_len_atom == width
 
+
 params = [(i,test_file) for test_file in file_list for i in range(num_tests)]
 @pytest.mark.parametrize("test_num, test_file", params)
 def test_dltlCoverSet(test_num, test_file):
@@ -186,7 +188,7 @@ def test_dltlCoverSet(test_num, test_file):
 	Checks if the computation of the cover set works correctly
 	'''
 	sample = Sample(positive=[], negative=[], alphabet=[], is_words=False)
-	sample.readFromFile('Scarlet/tests/test_benchmarks/'+test_file)
+	sample.readFromFile('Scarlet/tests/test_learner/test_benchmarks/'+test_file)
 
 	f = findDltl(sample=sample, operators=['F','G','X','&','|','!'], last=False, thres=0, upper_bound=30)
 

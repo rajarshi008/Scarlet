@@ -13,9 +13,6 @@ def test_boolean_set_cover(test_num):
     '''
     Testing boolean set cover using random formulas that have random cover set
     '''
-    
-    logging.debug("============== Checking BooleanSubsetCover on Test {test_num} ==============")
-
     sample = Sample()
     sample.readFromFile('Scarlet/example.trace')
 

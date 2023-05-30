@@ -47,6 +47,3 @@ def test_dltl2Formula(test_num):
     dltl_formula = dltl2Formula(dltl_tuple, False, alphabet)
 
     assert is_formula_valid(dltl_formula)
-
-f = Formula.convertTextToFormula('X(X(X(&(&(!(p),q),r))))')
-is_formula_valid(f)
