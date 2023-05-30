@@ -177,7 +177,6 @@ class Formula(SimpleTree):
 			if self.left == None and self.right == None:
 				if self.label == 'true' or self.label == 'false':
 					self.size = 0
-					print("Eta hocche")
 				else:
 					self.size = 1
 			leftSize=0

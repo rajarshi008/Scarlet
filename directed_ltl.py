@@ -6,7 +6,7 @@ import heapq as hq
 import time
 import logging
 from Scarlet.booleanSubsetCover import BooleanSetCover
-from Scarlet.sample import Sample, Trace
+from Scarlet.sample import Sample, Trace, lineToTrace
 from Scarlet.formulaTree import Formula
 
 
@@ -56,7 +56,6 @@ def len_atom(atom: tuple, inv: bool)->int:
 
 
 def is_sat(letter:tuple, atom:tuple, is_end: bool) -> bool:
-
 	'''
 		checking satisfiability of an atom in a letter, e.g. (0,) and (2,) is true in (1,0,1) but (1,) is not
 	'''
@@ -70,8 +69,64 @@ def is_sat(letter:tuple, atom:tuple, is_end: bool) -> bool:
 				return False
 	return True
 
+def dltl2Formula(dltl_tuple: tuple, inv: bool, alphabet: list):
+	'''
+		it converts dirtected dltl data-structures to an LTL formula
+	'''
+	if dltl_tuple == tuple():
+		return None
 
-class dltl:
+	if inv:
+		first_atom = dltl_tuple[1]
+		if first_atom[0][0] == '-':
+			form_atom = Formula(alphabet[int(first_atom[0][1:])])
+		else:
+			form_atom = Formula(['!', Formula(alphabet[int(first_atom[0][1:])])])
+
+		for i in first_atom[1:]:
+			if i[0] == '-':
+				form_atom = Formula(['|', form_atom, Formula(alphabet[int(i[1:])])])
+			else:
+				form_atom = Formula(['|', form_atom, Formula(['!', Formula(alphabet[int(i[1:])])])])
+		
+		if len(dltl_tuple)>2:
+			next_formula = Formula(['|', form_atom, dltl2Formula(dltl_tuple[2:], inv, alphabet)])
+		else:
+			next_formula = form_atom
+		
+		first_digit = int(dltl_tuple[0].strip('>'))
+		if dltl_tuple[0][0]=='>':
+			next_formula = Formula(['G', next_formula])
+
+		for i in range(first_digit):
+			next_formula = Formula(['X', next_formula])
+
+	else:
+		first_digit = int(dltl_tuple[0].strip('>'))
+		first_atom = dltl_tuple[1]
+		if first_atom[0][0] == '+': 
+			form_atom = Formula(alphabet[int(first_atom[0][1:])])
+		else:
+			form_atom = Formula(['!', Formula(alphabet[int(first_atom[0][1:])])])
+
+		for i in first_atom[1:]:
+			if i[0] == '+':
+				form_atom = Formula(['&', form_atom, Formula(alphabet[int(i[1:])])])
+			else:
+				form_atom = Formula(['&', form_atom, Formula(['!', Formula(alphabet[int(i[1:])])])])
+		
+		if len(dltl_tuple)>2:
+			next_formula = Formula(['&', form_atom, dltl2Formula(dltl_tuple[2:], inv, alphabet)])
+		else:
+			next_formula = form_atom
+		for i in range(first_digit):
+			next_formula = Formula(['X', next_formula])
+		if dltl_tuple[0][0]=='>':
+			next_formula = Formula(['F', next_formula])
+
+	return next_formula
+
+class Dltl:
 	'''
 	Data structure for Directed Formulas (dltl)
 	'''
@@ -111,7 +166,7 @@ class dltl:
 						continue
 
 					#new_dltl = dltl+('>'+str(i),atom)
-					new_dltl = dltl(self.vector+('>'+str(i),atom), self.inv)	
+					new_dltl = Dltl(self.vector+('>'+str(i),atom), self.inv)	
 					base_len = self.size + 1 + (i+1) + len_atom(atom, self.inv)
 					
 					if base_len >= upper_bound:
@@ -125,26 +180,26 @@ class dltl:
 			if 'X' in operators:
 				if self.vector != epsilon or not self.inv:
 
-					new_dltl = dltl(self.vector+(str(diff),atom), self.inv)
+					new_dltl = Dltl(self.vector+(str(diff),atom), self.inv)
 					base_len = self.size + 1 + diff + len_atom(atom, self.inv)
 					if base_len < upper_bound:
 						new_dltl.size = base_len
 						dltl_list.append(new_dltl)
-					
 			else:
 				if self.vector == epsilon or not self.inv:
-					new_dltl = dltl(self.vector+('0', atom),self.inv)
+					new_dltl = Dltl(self.vector+('0', atom),self.inv)
 					new_dltl = len_atom(atom, self.inv)
 					dltl_list.append(new_dltl)
 					
 
 			if (not self.inv and 'F' in operators) or (self.inv and 'G' in operators):
-				new_dltl = dltl(self.vector+('>'+str(diff),atom),self.inv)
+				new_dltl = Dltl(self.vector+('>'+str(diff),atom),self.inv)
 				base_len = self.size + 1 + (diff+1) + len_atom(atom, self.inv)
 				
 				if base_len < upper_bound:
 					new_dltl.size = base_len
 					dltl_list.append(new_dltl)
+
 
 		return dltl_list
 
@@ -154,13 +209,14 @@ class findDltl:
 	'''
 	Search algorithm for dltl
 	'''
-	def __init__(self, sample, operators, last, thres):
+	def __init__(self, sample, operators, last, thres, upper_bound):
 		
 		self.sample = sample 
 		self.operators = operators
 		self.last=last
 		self.thres = thres
-		
+		self.upper_bound = upper_bound
+
 		self.num_positives = len(self.sample.positive)
 		self.num_negatives = len(self.sample.negative)
 
@@ -172,9 +228,15 @@ class findDltl:
 		self.neg = '!' in self.operators
 		
 		#Calculates the maximum length of the traces
-		self.max_positive_length = max([len(trace) for trace in self.sample.positive])
-		self.max_negative_length = max([len(trace) for trace in self.sample.negative])
+		try:
+			self.max_positive_length = max([len(trace) for trace in self.sample.positive])
+		except:
+			self.max_positive_length = 0
 
+		try:
+			self.max_negative_length = max([len(trace) for trace in self.sample.negative])
+		except:
+			self.max_negative_length = 0
 		'''
 		Initializing DP tables: 
 	 	
@@ -285,7 +347,7 @@ class findDltl:
 		Computing the ind_table for atoms of width 1
 		'''
 		self.all_atoms = {1: set()}
-		#print(width)
+		#print(width)	
 		if self.neg:
 			for trace in self.sample.positive+self.sample.negative:
 				for letter in trace.vector:	
@@ -385,11 +447,15 @@ class findDltl:
 						self.ind_table[(word, pos, atom)]=sorted(list(set1))
 
 
-	def add2dltl(self, dltl1: dltl, dltl2: dltl):
+
+	def add2dltl(self, dltl1: Dltl, dltl2: Dltl):
 		'''
 		Generates a dltl of width w+1 from dltls of width 1 and width w
 		'''
-		
+		if dltl1.vector == tuple() or dltl2.vector == tuple():
+			return None
+
+
 		dltl_no1 = dltl1.vector[0::2]
 		dltl_no2 = dltl2.vector[0::2]
 		base_len = dltl1.size
@@ -397,7 +463,7 @@ class findDltl:
 		if dltl_no1 != dltl_no2:
 			return None
 		else:
-			n_dltl = dltl(epsilon, dltl1.inv)
+			n_dltl = Dltl(epsilon, dltl1.inv)
 			for i in range(len(dltl2.vector)):
 				if isinstance(dltl2.vector[i],str):
 					n_dltl.vector+=(dltl2.vector[i],)
@@ -448,7 +514,6 @@ class findDltl:
 	def incrLength(self, sl_length, width):
 		''' 
 		Length increasing algortihm for finding dltls
-
 		''' 
 
 		dltl_dict = self.R_table[(sl_length-1,width)]
@@ -511,7 +576,7 @@ class findDltl:
 
 							try:
 								
-								dummy_dltl = dltl(nextdltl.vector, 0)
+								dummy_dltl = Dltl(nextdltl.vector, 0)
 								existing_table = self.R_table[(sl_length, width)][nextdltl]
 							except:
 								existing_table = None
@@ -757,10 +822,10 @@ class findDltl:
 			pve_endpos_list= [[0]]*self.num_positives
 			nve_endpos_list= [[0]]*self.num_negatives
 			
-			empty = dltl(epsilon, 0)
+			empty = Dltl(epsilon, 0)
 			empty.size = -1
 			
-			empty_inv = dltl(epsilon, 1)
+			empty_inv = Dltl(epsilon, 1)
 			empty_inv.size = -1
 
 			m = max(self.max_positive_length, self.max_negative_length)
@@ -887,7 +952,7 @@ class findDltl:
 			
 			self.cover_set[(sl_length,width)][dltl] = (pos_friend_set, neg_friend_set)
 			cover_size = len(pos_friend_set) - len(neg_friend_set) + len(self.negative_set)
-			if cover_size == self.full_cover:
+			if cover_size >= self.full_cover*(1-self.thres):
 				self.cover_set[(sl_length, width)] = {dltl:(pos_friend_set, neg_friend_set)}
 				self.upper_bound = dltl.size
 				self.dltl_found = 1

@@ -3,68 +3,10 @@ import heapq as hq
 import logging
 import csv
 from Scarlet.booleanSubsetCover import BooleanSetCover
-from Scarlet.directed_ltl import dltl, findDltl
+from Scarlet.directed_ltl import Dltl, findDltl, dltl2Formula
 from Scarlet.formulaTree import Formula
 from Scarlet.sample import Sample
 logging_levels = {0:logging.WARNING, 1:logging.INFO, 2:logging.DEBUG}
-
-
-def dltl2Formula(dltl_tuple: tuple, inv: bool):
-	'''
-		it converts dirtected dltl data-structures to an LTL formula
-	'''
-
-	if inv:
-		
-		first_atom = dltl_tuple[1]
-		if first_atom[0][0] == '-':
-			form_atom = Formula(alphabet[int(first_atom[0][1:])])
-		else:
-			form_atom = Formula(['!', Formula(alphabet[int(first_atom[0][1:])])])
-
-		for i in first_atom[1:]:
-			if i[0] == '-':
-				form_atom = Formula(['|', form_atom, Formula(alphabet[int(i[1:])])])
-			else:
-				form_atom = Formula(['|', form_atom, Formula(['!', Formula(alphabet[int(i[1:])])])])
-		
-		if len(dltl_tuple)>2:	
-			next_formula = Formula(['|', form_atom, dltl2Formula(dltl_tuple[2:], inv)])
-		else:
-			next_formula = form_atom
-		
-		first_digit = int(dltl_tuple[0].strip('>'))
-		if dltl_tuple[0][0]=='>':
-			next_formula = Formula(['G', next_formula])
-
-		for i in range(first_digit):
-			next_formula = Formula(['X', next_formula])
-
-	else:
-
-		first_digit = int(dltl_tuple[0].strip('>'))
-		first_atom = dltl_tuple[1]
-		if first_atom[0][0] == '+': 
-			form_atom = Formula(alphabet[int(first_atom[0][1:])])
-		else:
-			form_atom = Formula(['!', Formula(alphabet[int(first_atom[0][1:])])])
-
-		for i in first_atom[1:]:
-			if i[0] == '+':
-				form_atom = Formula(['&', form_atom, Formula(alphabet[int(i[1:])])])
-			else:
-				form_atom = Formula(['&', form_atom, Formula(['!', Formula(alphabet[int(i[1:])])])])
-		
-		if len(dltl_tuple)>2:
-			next_formula = Formula(['&', form_atom, dltl2Formula(dltl_tuple[2:], inv)])
-		else:
-			next_formula = form_atom
-		for i in range(first_digit):
-			next_formula = Formula(['X', next_formula])
-		if dltl_tuple[0][0]=='>':
-			next_formula = Formula(['F', next_formula])
-
-	return next_formula
 
 
 
@@ -96,7 +38,10 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 	writer = csv.writer(f)
 	writer.writerow(["Time Elapsed", "Formula Size", "Formula", "is Terminated?"])
 	f.close()
-	s = findDltl(sample, operators, last, thres)
+
+	reasonable_upper_bound = 30 # Change the reasonable upper bound to find formulas larger than this
+
+	s = findDltl(sample, operators, last, thres, reasonable_upper_bound)
 	
 	global alphabet
 	alphabet=sample.alphabet
@@ -105,10 +50,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 	if last:
 		alphabet.append('L')
 
-	reasonable_upper_bound = 30
-
-
-	s.upper_bound = reasonable_upper_bound
+	
 
 	max_len = s.max_positive_length
 	if sample.is_words or is_word:
@@ -157,7 +99,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 		
 		if s.dltl_found:
 			covering_dltl = list(s.cover_set[(length,width)].keys())[0]
-			current_covering_formula = dltl2Formula(covering_dltl.vector, covering_dltl.inv)
+			current_covering_formula = dltl2Formula(covering_dltl.vector, covering_dltl.inv, alphabet)
 		else:
 			for dltl in s.cover_set[(length,width)].keys():
 
@@ -167,8 +109,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 				if neg_friend_set == negative_set:
 					continue
 
-				formula = dltl2Formula(dltl.vector, dltl.inv)
-				
+				formula = dltl2Formula(dltl.vector, dltl.inv, alphabet)
 				formula.size = dltl.size
 
 				if method == "SC":

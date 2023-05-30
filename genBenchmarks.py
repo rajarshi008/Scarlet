@@ -113,8 +113,7 @@ class SampleGenerator:
 						# sample.generator(formula=formula, length_range=length_range, num_traces=size, filename=trace_file, is_words=(trace_type=='words'), operators=operators)
 
 
-							if sample.isFormulaConsistent(formula):
-								print("Formula is consistent with sample")
+							assert sample.isFormulaConsistent(formula)
 
 		return generated_files
 
