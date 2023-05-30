@@ -12,20 +12,20 @@ Our paper "[Scalable Anytime Algorithms for Learning Fragments of Linear Tempora
 
 - [Input File format](#input-file-format)
 - [Python API](#python-api)
-  - [Python Installation](#installation)
+  - [API Installation](#api-installation)
   - [Basic API Usage](#basic-api-usage)
-    - [Python Parameters](#parameters)
-  - [Generation of Trace Files using Python](#generation-of-trace-files-from-ltl-formulas)
+    - [API Parameters](#api-parameters)
+  - [Generation of Trace Files using API](#generation-of-trace-files-using-api)
     - [Installation of Dependencies](#installation-of-dependencies)
     - [Generating from a given Formula File](#generating-from-a-given-formula-file)
-    - [Python Generation Parameters](#parameters)
+    - [API Generation Parameters](#api-generation-parameters)
 - [Command Line Usage](#command-line-usage)
-  - [CMD Installation](#installation)
-  - [CMD Running](#running)
-    - [CMD Parameters](#parameters)
-  - [Generation of Trace Files using CMD](#generation-of-trace-files-from-ltl-formulas)
-    - [CMD Generation Parameters](#parameters)
-- [Testing]
+  - [CMD Installation](#cmd-installation)
+  - [CMD Running](#cmd-running)
+    - [CMD Parameters](#cmd-parameters)
+  - [Generation of Trace Files using CMD](#generation-of-trace-files-using-cmd)
+    - [CMD Generation Parameters](#cmd-generation-parameters)
+  - [Testing](#testing)
 - [Report an issue](#report-an-issue)
 - [Contribute](#contribute)
 
@@ -70,7 +70,7 @@ learner.learn()
 Note that the python API does not provide any example input files.
 Hence, you must create your trace file in a format as described in the previous section and provide it to the API.
 
-#### Python Parameters
+#### API Parameters
 You can call the `LTLlearner` class with additional parameters as follows:
 
 * input_file = the path of the file containing LTL formuas, e.g., `= 'example.trace'`
@@ -79,7 +79,7 @@ You can call the `LTLlearner` class with additional parameters as follows:
 * thres = the bound on loss function for noisy data, `default = 0` for perfect classification, has to be a number between zero and one
 
 
-### Generation of Trace Files using Python
+### Generation of Trace Files using API
 
 You can also generate trace files from given LTL formulas following the instructions below:
 
@@ -107,7 +107,7 @@ generator = SampleGenerator(formula_file= "formulas.txt")
 generator.generate()
 ```
 
-#### Python Generation Parameters 
+#### API Generation Parameters 
 You can call the `SampleGenerator` class with additional parameters as follows:
 
 * formula_file = the path of the file containing LTL formuas, `example = 'formulas.txt'`
