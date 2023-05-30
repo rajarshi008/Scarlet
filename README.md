@@ -167,9 +167,9 @@ You can run the command with the following arguments:
 The formula file should contain a list of formulas (in prefix notation) along with the alphabet (see `formulas.txt`) and should be located inside the `Scarlet` folder to be used for generating the sample.
 
 ### Testing
-For testing all features of the tool use: `python -m Scarlet/tests` (Installation of *MONA* is required)
-For testing only the features of LTL learning use: `python -m Scarlet/tests/test_learner`
-For testing only the features of sample generation use: `python -m Scarlet/tests/test_generator` (Installation of *MONA* is required)
+For testing all features of the tool use: `python -m Scarlet/tests` (Installation of *MONA* is required).
+For testing only the features of LTL learning use: `python -m Scarlet/tests/test_learner`.
+For testing only the features of sample generation use: `python -m Scarlet/tests/test_generator` (Installation of *MONA* is required).
 
 
 ## Report an issue
