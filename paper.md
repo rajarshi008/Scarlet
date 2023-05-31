@@ -23,7 +23,7 @@ authors:
     affiliation: 2
   - name: Daniel Neider
     orcid: 0000-0001-9276-6342
-    affiliation: 4
+    affiliation: 4, 5
 affiliations:
  - name: University of Antwerp, Antwerp, Belgium
    index: 1
@@ -31,25 +31,27 @@ affiliations:
    index: 2
  - name: Max Planck Institute for Software Systems, Kaiserslautern, Germany
    index: 3
- - name: Carl von Ossietzky Universität Oldenburg, Oldenburg, Germany
+ - name: TU Dortmund University, Dortmund, Germany
    index: 4
+ - name: Center for Trustworthy Data Science and Security, University Alliance Ruhr, Germany
+   index: 5
 date: 26 July 2022
 bibliography: paper.bib
 ---
 
 # Summary
 
-In the past few years, incorporating data-driven AI techniques in system design has become mainstream, almost in all branches of science and technology.
+In the past decade, incorporating data-driven AI techniques in system design has become mainstream, almost in all branches of science and technology.
 Typically, systems powered by AI tend to be rather complex, far beyond human understanding.
 Naturally, one cannot always develop trust in such complex, so-called black-box systems, restricting their widespread use in safety-critical domains.
 
 To generate trust in systems, a standard approach in Explainable AI is to build simple explanations using human-understandable models.
 A number of recent works [@NeiderGavran18] [@Camacho_McIlraith_2019] [@RoyFismanNeider20] have identified models in temporal logic to be both formal and explainable.
 Among temporal logics---Linear Temporal Logic (LTL)---arguably the most widely used temporal logic, has received particular focus due to its resemblance to natural language.
-Moreover, LTL is a de facto standard in several fields of computer science, including model-checking, program analysis, and motion planning for robotics.
+Moreover, LTL is a de-facto standard in several fields of computer science, including model-checking, program analysis, and motion planning for robotics.
 
 `Scarlet` is one of the most competitive tools for learning explainable models in LTL [@RahaRFN22].
-To learn the explainable models, it relies on positive (or desirable) and negative (or undesirable) executions of the system under consideration.
+To learn such models, it relies on positive (or desirable) and negative (or undesirable) executions of the system under consideration.
 Based on the executions, it learns a concise model in LTL that is consistent with the given executions.
 
 Let us consider a concrete example to understand `Scarlet`'s functioning.
@@ -83,8 +85,8 @@ A paper presenting the algorithms behind `Scarlet` was published in TACAS'2022: 
 
 We believe that the path to scalability for learning models in LTL is to leverage normal forms for LTL formulas and derive efficient enumeration algorithms from them. `Scarlet` combines two insights:
 
-* An efficient enumeration algorithm for directed LTL formulas, which are formulas that can be evaluated only moving forward in execution traces,
-* An algorithm solving the Boolean set cover problem, which constructs Boolean combinations of already constructed formulas in order to separate positive and negative execution traces.
+* An efficient enumeration algorithm for directed LTL formulas, which are formulas that can be evaluated only moving forward in traces,
+* An algorithm solving the Boolean set cover problem, which constructs Boolean combinations of already constructed formulas in order to separate positive and negative traces.
 
 Evaluation experiments are presented in the paper [@RahaRFN22].
 
@@ -92,9 +94,9 @@ Evaluation experiments are presented in the paper [@RahaRFN22].
 
 For learning models in LTL, a number of different approaches have been proposed, leveraging SAT solvers [@NeiderGavran18], automata [@Camacho_McIlraith_2019], and Bayesian inference [@ijcai2019-0776]. In fact, there are approaches for more expressive logics such as Property Specification Language (PSL) [@RoyFismanNeider20] and Computational Tree Logic (CTL) [@EhlersGavranNeider20].
 
-Applications of LTL learning include program specification [@LPB15], anomaly and fault detection [@BoVaPeBe-HSCC-2016], robotics [@ChouOB20], and many more: we refer to [@Camacho_McIlraith_2019], Section 7, for a list of practical applications.
+Applications of LTL learning include program specification [@LPB15], anomaly and fault detection [@BoVaPeBe-HSCC-2016], robotics [@ChouOB20], and many more: we refer to [@Camacho_McIlraith_2019] for a list of practical applications.
 An equivalent point of view on LTL learning is as a specification mining question. 
-The ARSENAL [@GhoshELLSS16] and FRET [@GiannakopoulouP20a] projects construct LTL specifications from natural language; we refer to [@Li13d] for an overview.
+The ARSENAL [@GhoshELLSS16] and FRET [@GiannakopoulouP20a] projects construct LTL specifications from natural language; see [@Li13d] for an overview.
 
 The two state-of-the-art tools for learning logic formulas from examples are:
 
