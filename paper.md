@@ -92,7 +92,7 @@ Evaluation experiments are presented in the paper [@RahaRFN22].
 
 # Related works
 
-For learning models in LTL, a number of different approaches have been proposed, leveraging SAT solvers [@NeiderGavran18], automata [@Camacho_McIlraith_2019], and Bayesian inference [@ijcai2019-0776]. In fact, there are approaches for more expressive logics such as Property Specification Language (PSL) [@RoyFismanNeider20] and Computational Tree Logic (CTL) [@EhlersGavranNeider20].
+For learning models in LTL, several approaches have been proposed, leveraging SAT solvers [@NeiderGavran18], automata [@Camacho_McIlraith_2019], and Bayesian inference [@ijcai2019-0776]. In fact, there are approaches for more expressive logics such as Property Specification Language (PSL) [@RoyFismanNeider20] and Computational Tree Logic (CTL) [@EhlersGavranNeider20].
 
 Applications of LTL learning include program specification [@LPB15], anomaly and fault detection [@BoVaPeBe-HSCC-2016], robotics [@ChouOB20], and many more: we refer to [@Camacho_McIlraith_2019] for a list of practical applications.
 An equivalent point of view on LTL learning is as a specification mining question. 
