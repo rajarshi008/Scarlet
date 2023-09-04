@@ -229,12 +229,12 @@ class findDltl:
 		
 		#Calculates the maximum length of the traces
 		try:
-			self.max_positive_length = max([len(trace) for trace in self.sample.positive])
+			self.max_positive_length = max(len(trace) for trace in self.sample.positive)
 		except:
 			self.max_positive_length = 0
 
 		try:
-			self.max_negative_length = max([len(trace) for trace in self.sample.negative])
+			self.max_negative_length = max(len(trace) for trace in self.sample.negative)
 		except:
 			self.max_negative_length = 0
 		'''
@@ -743,7 +743,7 @@ class findDltl:
 		for length in dltl_lengths:
 		
 			for dltl in self.len_dltl[(sl_length, width-1)][length]:
-				min_w1_length = length - sum([len_atom(atom,dltl.inv) for atom in dltl.vector[1::2]]) + sl_length
+				min_w1_length = length - sum(len_atom(atom,dltl.inv) for atom in dltl.vector[1::2]) + sl_length
 				max_w1_length = min_w1_length + sl_length
 
 				for w1_length in range(min_w1_length, max_w1_length+1):

@@ -15,7 +15,7 @@ def lineToTrace(line):
 		traceData, lasso_start = line.split('::')
 	except:
 		traceData = line
-	trace_vector = [tuple([int(varValue) for varValue in varsInTimestep.split(',')]) for varsInTimestep in
+	trace_vector = [tuple(int(varValue) for varValue in varsInTimestep.split(',')) for varsInTimestep in
 				   traceData.split(';')]
 
 	return (trace_vector, lasso_start)
@@ -49,12 +49,12 @@ def convertFileType(operators, wordfile, tracefile=None):
 		tracefile = wordfile.rstrip('.words')+'.trace'
 	with open(tracefile, 'w') as file:
 		for word in sample.positive:
-			prop_word = ';'.join([','.join(one_hot_alphabet[letter]) for letter in word.vector])
+			prop_word = ';'.join(','.join(one_hot_alphabet[letter]) for letter in word.vector)
 			file.write(prop_word+'\n')
 
 		file.write('---\n')
 		for word in sample.negative:
-			prop_word = prop_word = ';'.join([','.join(one_hot_alphabet[letter]) for letter in word.vector])
+			prop_word = prop_word = ';'.join(','.join(one_hot_alphabet[letter]) for letter in word.vector)
 			file.write(prop_word+'\n')
 		file.write('---\n')
 		file.write(','.join(operators))
@@ -161,7 +161,7 @@ class Trace:
 				val = min([self.truthValue(formula.left, futureTimestep, letter2pos) for futureTimestep in futureTracePositions])			
 			elif label == 'U':
 				val = max(
-					[self.truthValue(formula.right, futureTimestep, letter2pos) for futureTimestep in futureTracePositions]) == True \
+					self.truthValue(formula.right, futureTimestep, letter2pos) for futureTimestep in futureTracePositions) == True \
 					   and ( \
 								   self.truthValue(formula.right, timestep, letter2pos) \
 								   or \
@@ -186,7 +186,7 @@ class Trace:
 
 	def __str__(self):
 		vector_str = [list(map(lambda x: str(int(x)), letter)) for letter in self.vector]
-		return str(';'.join([','.join(letter) for letter in vector_str]))
+		return str(';'.join(','.join(letter) for letter in vector_str))
 	
 	def __len__(self):
 		 return self.length
@@ -549,7 +549,7 @@ class Sample:
 		num_accepted_words_length = {}
 		num_words_per_length = {}
 		for i in range(length_range[0], length_range[1]+1):
-			num_accepted_words_length[i] = sum([dfa.number_of_words[(dfa.init_state,i)] for dfa in ltldfa_list])
+			num_accepted_words_length[i] = sum(dfa.number_of_words[(dfa.init_state,i)] for dfa in ltldfa_list)
 		
 		total_accepted_words = sum(num_accepted_words_length.values())
 		for i in range(length_range[0], length_range[1]):
@@ -596,7 +596,7 @@ class Sample:
 		num_accepted_words_length = {}
 		num_words_per_length = {}
 		for i in range(length_range[0], length_range[1]+1):
-			num_accepted_words_length[i] = sum([dfa.number_of_words[(dfa.init_state,i)] for dfa in ltldfa_list])
+			num_accepted_words_length[i] = sum(dfa.number_of_words[(dfa.init_state,i)] for dfa in ltldfa_list)
 		
 		total_accepted_words = sum(num_accepted_words_length.values())
 		for i in range(length_range[0], length_range[1]):

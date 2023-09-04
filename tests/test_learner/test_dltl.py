@@ -41,14 +41,14 @@ def test_genPossibleAtoms(test_num, prop_list):
 	
 	f = findDltl(sample = Sample(), operators=['F','G','X','&','|','!'], last=False, thres=0, upper_bound=30)
 	rand_inv = random.choice([True, False])
-	rand_letter = tuple([random.randint(0,1) for _ in range(len(prop_list))])
+	rand_letter = tuple(random.randint(0,1) for _ in range(len(prop_list)))
 	print(rand_letter)
 	assert f.genPossibleAtoms(letter=rand_letter, width=0, inv=rand_inv, is_end=False) == [] #there are no width 0 atoms 
 	
 	# testing via length check
 	n = len(prop_list)
 	for k in range(1,n+1):
-		assert len(f.genPossibleAtoms(letter=rand_letter, width=k, inv=rand_inv,  is_end=False)) == sum([comb(n,i) for i in range(1,k+1)])
+		assert len(f.genPossibleAtoms(letter=rand_letter, width=k, inv=rand_inv,  is_end=False)) == sum(comb(n,i) for i in range(1,k+1))
 
 
 
@@ -66,7 +66,7 @@ def test_extenddltl(test_num, prop_list):
 
 	for i in range(5):
 		rand_diff = random.randint(0,3)
-		rand_letter = tuple([random.randint(0,1) for _ in range(len(prop_list))])
+		rand_letter = tuple(random.randint(0,1) for _ in range(len(prop_list)))
 		rand_width = random.randint(1,len(prop_list)) if len(prop_list)>1 else 1
 		rand_atoms = f.genPossibleAtoms(letter=rand_letter, width=rand_width, inv=False, is_end=False)
 		try:
@@ -108,7 +108,7 @@ def test_add2dltl(test_num, prop_list):
 		dltl1_tuple = tuple()
 		dltl2_tuple = tuple()
 		for i in range(rand_len):
-			rand_letter = tuple([random.randint(0,1) for _ in range(len(prop_list))])
+			rand_letter = tuple(random.randint(0,1) for _ in range(len(prop_list)))
 			rand_atom1 = random.choice(f.genPossibleAtoms(letter=rand_letter, width=1, inv=False, is_end=False))
 
 			rand_width = random.randint(1,len(prop_list)) if len(prop_list)>1 else 1
@@ -177,7 +177,7 @@ def test_R_table(test_file):
 		for d in R_table:
 			assert len(d.vector) == 2*length
 			atoms = d.vector[1::2]
-			max_len_atom =  max([len(a) for a in atoms])
+			max_len_atom =  max(len(a) for a in atoms)
 			assert max_len_atom == width
 
 
@@ -196,7 +196,7 @@ def test_dltlCoverSet(test_num, test_file):
 	dltl_tuple = tuple()
 	rand_len = random.randint(1,5)
 	for i in range(rand_len):
-		rand_letter = tuple([random.randint(0,1) for _ in range(len(sample.alphabet))])
+		rand_letter = tuple(random.randint(0,1) for _ in range(len(sample.alphabet)))
 		rand_width = random.randint(1,len(sample.alphabet)) if len(sample.alphabet)>1 else 1
 		rand_atom = random.choice(f.genPossibleAtoms(letter=rand_letter, width=rand_width, inv=False, is_end=False))
 

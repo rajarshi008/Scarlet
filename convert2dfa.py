@@ -284,7 +284,7 @@ def atom2letters(atom_string, letter2pos, is_word):
 					new_letter_list.append(l+[0])
 			letter_list = new_letter_list
 
-		letter_list = set([tuple(l) for l in letter_list])
+		letter_list = set(tuple(l) for l in letter_list)
 		all_letter_list= all_letter_list.union(letter_list)
 	
 	return list(all_letter_list)
