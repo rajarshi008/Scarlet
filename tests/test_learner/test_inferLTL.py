@@ -27,7 +27,7 @@ def random_dltl(length):
     for _ in range(length):    
         value = random.choice(['>',''])+str(random.randint(0,5))
         atom = sorted(random.sample([0,1,2],k=random.randint(1,3)))
-        signed_atom = tuple([random.choice(['+','-'])+str(i) for i in atom])
+        signed_atom = tuple(random.choice(['+','-'])+str(i) for i in atom)
         dltl += (value, signed_atom)
 
     return dltl
