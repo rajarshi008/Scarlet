@@ -270,7 +270,7 @@ class findDltl:
 		try:
 			#checks if it is already calculated and stored
 			if self.neg:
-				return self.letter2atoms_table[(letter, width, '+-')]
+				return self.letter2atom_table[(letter, width, '+-')]
 			else:
 				if inv:
 					return self.letter2atom_table[(letter, width, '-')]
@@ -863,6 +863,9 @@ class findDltl:
 							if nextdltl in dltl_dict.keys():
 								continue
 
+							if nextdltl.size >= self.upper_bound:
+								continue
+
 							pos_list=[]
 							neg_list=[]
 							c=0
@@ -874,13 +877,13 @@ class findDltl:
 
 							for k in range(len(self.sample.positive)):
 								
-								current_superword= self.sample.positive[k]
+								current_superword = self.sample.positive[k]
 								last_atom = nextdltl.vector[-1]
 								last_digit = int(nextdltl.vector[-2].strip('>'))
 
 								if inv:
-									if len(current_superword)-1<last_digit:
-										new_pos_list.append([-1])
+									if len(current_superword)<last_digit:
+										pos_list.append([-1])
 										continue
 
 								if nextdltl.vector[0][0]=='>':
@@ -945,7 +948,7 @@ class findDltl:
 		'''
 		Calculates friend sets from the R-table i.e. the set of satisfying traces from the positive and the negative ones
 		'''
-
+		
 		if dltl.inv:
 			pos_friend_set = {i for i in range(self.num_positives) if pos_list[i]==[]}
 			neg_friend_set = {self.num_positives+i for i in range(self.num_negatives) if neg_list[i]==[]}
