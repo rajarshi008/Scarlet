@@ -69,7 +69,7 @@ class Trace:
 		self.length = len(vector)
 		self.lasso_start = lasso_start
 		self.is_word = is_word
-		if self.lasso_start == None:
+		if self.lasso_start is None:
 			self.is_finite = True
 		
 		if is_word==False:
@@ -300,7 +300,7 @@ class Sample:
 		'''
 		checks if the sample is consistent with given formula
 		'''
-		if formula == None:
+		if formula is None:
 			return True
 		for w in self.positive:
 			if w.evaluateFormula(formula,self.letter2pos) == False:
@@ -318,7 +318,7 @@ class Sample:
 
 		if is_words:
 			rand_word = ''
-			for j in range(length_word):
+			for j in range(length):
 				rand_letter = random.choice(alphabet)
 				rand_word += rand_letter
 			return Trace(rand_word, is_word=True)
@@ -353,13 +353,13 @@ class Sample:
 				ver = final_trace.evaluateFormula(formula, letter2pos)
 
 			if num_positives < total_num_positives:
-				if ver == True or formula == None:
+				if ver == True or formula is None:
 					self.positive.append(final_trace)
 					num_positives += 1
 					continue
 
 			if num_negatives < total_num_negatives:
-				if ver == False or formula == None:
+				if ver == False or formula is None:
 					self.negative.append(final_trace) 
 					num_negatives += 1
 

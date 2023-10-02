@@ -135,7 +135,7 @@ class Dltl:
 		self.inv = inv
 
 	def __eq__(self, other):
-		if other == None:
+		if other is None:
 			return False
 		else:
 			return (self.vector == other.vector) and (self.inv == other.inv)

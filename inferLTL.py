@@ -145,7 +145,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 
 	logging.debug("Boolean Combination Time %.3f"%combination_time)
 		
-	if covering_formula == None:
+	if covering_formula is None:
 		logging.warning("No formula found")
 		return covering_formula
 	else:

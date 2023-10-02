@@ -18,7 +18,7 @@ class SimpleTree:
 		return hash(self.label) + id(self.left) + id(self.right)
 	
 	def __eq__(self, other):
-		if other == None:
+		if other is None:
 			return False
 		else:
 			return self.label == other.label and self.left == other.left and self.right == other.right
@@ -27,10 +27,10 @@ class SimpleTree:
 		return not self == other
 	
 	def _isLeaf(self):
-		return self.right == None and self.left == None
+		return self.right is None and self.left is None
 	
 	def _addLeftChild(self, child):
-		if child == None:
+		if child is None:
 			return
 		if type(child) is str:
 			child = SimpleTree(child)
@@ -72,11 +72,11 @@ class SimpleTree:
 		return [self.label] + leftLabels + rightLabels
 
 	def __repr__(self):
-		if self.left == None and self.right == None:
+		if self.left is None and self.right is None:
 			return self.label
 		
 		# the (not enforced assumption) is that if a node has only one child, that is the left one
-		elif self.left != None and self.right == None:
+		elif self.left != None and self.right is None:
 			return self.label + '(' + self.left.__repr__() + ')'
 		
 		elif self.left != None and self.right != None:
@@ -147,7 +147,7 @@ class Formula(SimpleTree):
 		return [ node for node in allNodes if node._isLeaf() == True ]
 	
 	def getDepth(self):
-		if self.left == None and self.right == None:
+		if self.left is None and self.right is None:
 			return 0
 		leftValue = -1
 		rightValue = -1
@@ -161,7 +161,7 @@ class Formula(SimpleTree):
 		return len(self.getSetOfSubformulas())
 	
 	def getSetOfSubformulas(self):
-		if self.left == None and self.right == None:
+		if self.left is None and self.right is None:
 			return [repr(self)]
 		leftValue = []
 		rightValue = []
@@ -173,8 +173,8 @@ class Formula(SimpleTree):
 
 	
 	def treeSize(self):
-		if self.size == None:
-			if self.left == None and self.right == None:
+		if self.size is None:
+			if self.left is None and self.right is None:
 				if self.label == 'true' or self.label == 'false':
 					self.size = 0
 				else:
@@ -231,6 +231,7 @@ class TreeToFormula(Transformer):
         def variable(self, varName):
             return Formula([str(varName[0]), None, None])
         def constant(self, arg):
+            connector = ""
             if str(arg[0]) == "true":
                 connector = "|"
             elif str(arg[0]) == "false":
