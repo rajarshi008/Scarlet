@@ -75,7 +75,7 @@ class Trace:
 		if is_word==False:
 			self.vector_str = str(self)
 
-		if lasso_start != None:
+		if not lasso_start is None:
 			self.is_finite = False
 			self.lasso_start = int(lasso_start)
 			if self.lasso_start >= self.length:
@@ -139,7 +139,7 @@ class Trace:
 		'''
 		futureTracePositions = self.futurePos(timestep)
 		tableValue = self.truthAssignmentTable[formula][timestep]
-		if tableValue != None:
+		if not tableValue is None:
 			return tableValue
 		else:
 			label = formula.label 
@@ -349,7 +349,7 @@ class Sample:
 			final_trace = self.random_trace(alphabet, length, is_words)
 
 			#check
-			if formula != None:
+			if not formula is None:
 				ver = final_trace.evaluateFormula(formula, letter2pos)
 
 			if num_positives < total_num_positives:
@@ -396,7 +396,7 @@ class Sample:
 		total_num_positives = num_traces[0]
 		total_num_negatives = num_traces[1]
 		assert(total_num_positives == total_num_negatives)
-		assert(formula != None)
+		assert(not formula is None)
 
 		letter2pos = {alphabet[i]:i for i in range(len(alphabet))}
 

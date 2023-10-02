@@ -130,12 +130,12 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 			t1=time.time()
 			combination_time+=t1-t0
 
-		if current_covering_formula != None and covering_formula != current_covering_formula:
+		if (not current_covering_formula is None) and covering_formula != current_covering_formula:
 			covering_formula = current_covering_formula
 			logging.info("Already found: %s"%covering_formula)
 			logging.debug("Current formula upper bound %d"%s.upper_bound)
 			
-			if csvname != None:
+			if (not csvname is None):
 				time_elapsed = round(time.time() - time_counter,3)
 				with open(csvname, 'a+') as csvfile:
 					writer = csv.writer(csvfile)
@@ -150,7 +150,7 @@ def inferLTL(sample, csvname, operators=['F', 'G', 'X', '!', '&', '|'], method='
 		return covering_formula
 	else:
 		time_elapsed = time.time() - time_counter
-		if csvname != None:
+		if (not csvname is None):
 			time_elapsed = round(time.time() - time_counter,3)
 			with open(csvname, 'a+') as csvfile:
 				writer = csv.writer(csvfile)
