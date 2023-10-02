@@ -4,9 +4,9 @@ title: 'Scarlet: Scalable Anytime Algorithms for Learning Fragments of Linear Te
 tags:
   - Python
   - linear temporal logic (LTL)
-  - passive learning
+  - Explainable AI (XAI)
   - specification mining
-  - formal methods
+  - Formal Methods
 authors:
   - name: Ritam Raha
     orcid: 0000-0003-1467-1182
