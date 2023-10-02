@@ -16,12 +16,12 @@ class LTLlearner:
 	learner class for running as a module
 	'''
 	def __init__(self,
-				input_file = './example.trace', 
+				input_file = 'Scarlet/example.trace', 
 				is_word = False, 
 				timeout = 900, 
-				verbosity = 0,
+				verbosity = 2,
 				method = 'SC',
-				csvname = './result.csv',
+				csvname = 'Scarlet/result.csv',
 				thres = 0,
 				last = False):
 
@@ -71,6 +71,7 @@ class LTLlearner:
 
 
 
+
 def main():
 
 	parser = argparse.ArgumentParser()
@@ -93,7 +94,6 @@ def main():
 
 
 	learner = LTLlearner(input_file=input_file, is_word=is_word, timeout=timeout, verbosity=verbosity,
-	
 												method=method, csvname=csvname, thres=thres,last=last)
 	
 

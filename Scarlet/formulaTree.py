@@ -18,7 +18,7 @@ class SimpleTree:
 		return hash(self.label) + id(self.left) + id(self.right)
 	
 	def __eq__(self, other):
-		if other == None:
+		if other is None:
 			return False
 		else:
 			return self.label == other.label and self.left == other.left and self.right == other.right
@@ -27,10 +27,10 @@ class SimpleTree:
 		return not self == other
 	
 	def _isLeaf(self):
-		return self.right == None and self.left == None
+		return self.right is None and self.left is None
 	
 	def _addLeftChild(self, child):
-		if child == None:
+		if child is None:
 			return
 		if type(child) is str:
 			child = SimpleTree(child)
@@ -53,33 +53,33 @@ class SimpleTree:
 		leftNodes = []
 		rightNodes = []
 		
-		if self.left != None:
+		if not self.left is None:
 			leftNodes = self.left.getAllNodes()
-		if self.right != None:
+		if not self.right is None:
 			rightNodes = self.right.getAllNodes()
 		return [self] + leftNodes + rightNodes
 
 	def getAllLabels(self):
-		if self.left != None:
+		if not self.left is None:
 			leftLabels = self.left.getAllLabels()
 		else:
 			leftLabels = []
 			
-		if self.right != None:
+		if not self.right is None:
 			rightLabels = self.right.getAllLabels()
 		else:
 			rightLabels = []
 		return [self.label] + leftLabels + rightLabels
 
 	def __repr__(self):
-		if self.left == None and self.right == None:
+		if self.left is None and self.right is None:
 			return self.label
 		
 		# the (not enforced assumption) is that if a node has only one child, that is the left one
-		elif self.left != None and self.right == None:
+		elif (not self.left is None) and self.right is None:
 			return self.label + '(' + self.left.__repr__() + ')'
 		
-		elif self.left != None and self.right != None:
+		elif (not self.left is None) and (not self.right is None):
 			return self.label + '(' + self.left.__repr__() + ',' + self.right.__repr__() + ')'
 
 '''
@@ -147,13 +147,13 @@ class Formula(SimpleTree):
 		return [ node for node in allNodes if node._isLeaf() == True ]
 	
 	def getDepth(self):
-		if self.left == None and self.right == None:
+		if self.left is None and self.right is None:
 			return 0
 		leftValue = -1
 		rightValue = -1
-		if self.left != None:
+		if not self.left is None:
 			leftValue = self.left.getDepth()
-		if self.right != None:
+		if not self.right is None:
 			rightValue = self.right.getDepth()
 		return 1 + max(leftValue, rightValue)
 	
@@ -161,31 +161,30 @@ class Formula(SimpleTree):
 		return len(self.getSetOfSubformulas())
 	
 	def getSetOfSubformulas(self):
-		if self.left == None and self.right == None:
+		if self.left is None and self.right is None:
 			return [repr(self)]
 		leftValue = []
 		rightValue = []
-		if self.left != None:
+		if not self.left is None:
 			leftValue = self.left.getSetOfSubformulas()
-		if self.right != None:
+		if not self.right is None:
 			rightValue = self.right.getSetOfSubformulas()
 		return list(set([repr(self)] + leftValue + rightValue))
 
 	
 	def treeSize(self):
-		if self.size == None:
-			if self.left == None and self.right == None:
+		if self.size is None:
+			if self.left is None and self.right is None:
 				if self.label == 'true' or self.label == 'false':
 					self.size = 0
-					print("Eta hocche")
 				else:
 					self.size = 1
 			leftSize=0
 			rightSize=0
-			if self.left != None:
+			if not self.left is None:
 				leftSize= self.left.treeSize()
-			if self.right != None:
-				rightSize= self.right.treeSize()
+			if not self.right is None:
+				rightSize = self.right.treeSize()
 			self.size = 1+ leftSize + rightSize
 
 		return self.size
@@ -232,6 +231,7 @@ class TreeToFormula(Transformer):
         def variable(self, varName):
             return Formula([str(varName[0]), None, None])
         def constant(self, arg):
+            connector = ""
             if str(arg[0]) == "true":
                 connector = "|"
             elif str(arg[0]) == "false":
@@ -297,23 +297,23 @@ def display(formula):
 	formula_id = {formula: 1}
 	edges = []
 
-	if formula.left != None:
+	if not formula.left is None:
 		formula_queue.append(formula.left)
 		formula_id[formula.left] = 2*formula_id[formula]
 		edges.append((formula_id[formula],formula_id[formula.left]))
-	if formula.right != None:
+	if not formula.right is None:
 		formula_queue.append(formula.right)
 		formula_id[formula.right] = 2*formula_id[formula]+1
 		edges.append((formula_id[formula],formula_id[formula.right]))
 
-	while formula_queue != []:
+	while not formula_queue is []:
 		curr_formula = formula_queue.pop()
 		print(curr_formula)
-		if curr_formula.left != None:
+		if not curr_formula.left is None:
 			formula_queue.append(curr_formula.left)
 			formula_id[curr_formula.left] = 2*formula_id[curr_formula]
 			edges.append((formula_id[curr_formula],formula_id[curr_formula.left]))
-		if curr_formula.right != None:
+		if not curr_formula.right is None:
 			formula_queue.append(curr_formula.right)
 			formula_id[curr_formula.right] = 2*formula_id[curr_formula]+1
 			edges.append((formula_id[curr_formula],formula_id[curr_formula.right]))

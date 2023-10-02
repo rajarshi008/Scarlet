@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: Scarlet-ltl
-Version: 0.0.2
+Version: 0.0.3
 Summary: A package for learning LTL formulas from a sample consisting of traces partitioned into positive and negative
 Author-email: Ritam Raha <ritam.raha18@gmail.com>, Rajarshi Roy <rajarshi008@gmail.com>, Nathanael Fijalkow <nathanael.fijalkow@gmail.com>, Daniel Neider <daniel.neider@uni-oldenburg.de>
 License: Copyright (c) 2022 University of Antwerp, Belgium & LaBRI, University of Bordeaux, France
@@ -32,6 +32,9 @@ Classifier: License :: OSI Approved :: MIT License
 Classifier: Operating System :: OS Independent
 Requires-Python: >=3.7
 Description-Content-Type: text/markdown
+Requires-Dist: lark
+Requires-Dist: graphviz
+Requires-Dist: ltlf2dfa
 
 <h1 align="center">
   <img src="https://rajarshi008.github.io/assets/images/scarlet-logo.png" width="60%">

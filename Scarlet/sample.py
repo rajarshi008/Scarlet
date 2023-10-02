@@ -15,7 +15,7 @@ def lineToTrace(line):
 		traceData, lasso_start = line.split('::')
 	except:
 		traceData = line
-	trace_vector = [tuple([int(varValue) for varValue in varsInTimestep.split(',')]) for varsInTimestep in
+	trace_vector = [tuple(int(varValue) for varValue in varsInTimestep.split(',')) for varsInTimestep in
 				   traceData.split(';')]
 
 	return (trace_vector, lasso_start)
@@ -49,12 +49,12 @@ def convertFileType(operators, wordfile, tracefile=None):
 		tracefile = wordfile.rstrip('.words')+'.trace'
 	with open(tracefile, 'w') as file:
 		for word in sample.positive:
-			prop_word = ';'.join([','.join(one_hot_alphabet[letter]) for letter in word.vector])
+			prop_word = ';'.join(','.join(one_hot_alphabet[letter]) for letter in word.vector)
 			file.write(prop_word+'\n')
 
 		file.write('---\n')
 		for word in sample.negative:
-			prop_word = prop_word = ';'.join([','.join(one_hot_alphabet[letter]) for letter in word.vector])
+			prop_word = prop_word = ';'.join(','.join(one_hot_alphabet[letter]) for letter in word.vector)
 			file.write(prop_word+'\n')
 		file.write('---\n')
 		file.write(','.join(operators))
@@ -69,13 +69,13 @@ class Trace:
 		self.length = len(vector)
 		self.lasso_start = lasso_start
 		self.is_word = is_word
-		if self.lasso_start == None:
+		if self.lasso_start is None:
 			self.is_finite = True
 		
 		if is_word==False:
 			self.vector_str = str(self)
 
-		if lasso_start != None:
+		if not lasso_start is None:
 			self.is_finite = False
 			self.lasso_start = int(lasso_start)
 			if self.lasso_start >= self.length:
@@ -139,7 +139,7 @@ class Trace:
 		'''
 		futureTracePositions = self.futurePos(timestep)
 		tableValue = self.truthAssignmentTable[formula][timestep]
-		if tableValue != None:
+		if not tableValue is None:
 			return tableValue
 		else:
 			label = formula.label 
@@ -161,7 +161,7 @@ class Trace:
 				val = min([self.truthValue(formula.left, futureTimestep, letter2pos) for futureTimestep in futureTracePositions])			
 			elif label == 'U':
 				val = max(
-					[self.truthValue(formula.right, futureTimestep, letter2pos) for futureTimestep in futureTracePositions]) == True \
+					self.truthValue(formula.right, futureTimestep, letter2pos) for futureTimestep in futureTracePositions) == True \
 					   and ( \
 								   self.truthValue(formula.right, timestep, letter2pos) \
 								   or \
@@ -186,7 +186,7 @@ class Trace:
 
 	def __str__(self):
 		vector_str = [list(map(lambda x: str(int(x)), letter)) for letter in self.vector]
-		return str(';'.join([','.join(letter) for letter in vector_str]))
+		return str(';'.join(','.join(letter) for letter in vector_str))
 	
 	def __len__(self):
 		 return self.length
@@ -300,7 +300,7 @@ class Sample:
 		'''
 		checks if the sample is consistent with given formula
 		'''
-		if formula == None:
+		if formula is None:
 			return True
 		for w in self.positive:
 			if w.evaluateFormula(formula,self.letter2pos) == False:
@@ -318,7 +318,7 @@ class Sample:
 
 		if is_words:
 			rand_word = ''
-			for j in range(length_word):
+			for j in range(length):
 				rand_letter = random.choice(alphabet)
 				rand_word += rand_letter
 			return Trace(rand_word, is_word=True)
@@ -349,17 +349,17 @@ class Sample:
 			final_trace = self.random_trace(alphabet, length, is_words)
 
 			#check
-			if formula != None:
+			if not formula is None:
 				ver = final_trace.evaluateFormula(formula, letter2pos)
 
 			if num_positives < total_num_positives:
-				if ver == True or formula == None:
+				if ver == True or formula is None:
 					self.positive.append(final_trace)
 					num_positives += 1
 					continue
 
 			if num_negatives < total_num_negatives:
-				if ver == False or formula == None:
+				if ver == False or formula is None:
 					self.negative.append(final_trace) 
 					num_negatives += 1
 
@@ -396,7 +396,7 @@ class Sample:
 		total_num_positives = num_traces[0]
 		total_num_negatives = num_traces[1]
 		assert(total_num_positives == total_num_negatives)
-		assert(formula != None)
+		assert(not formula is None)
 
 		letter2pos = {alphabet[i]:i for i in range(len(alphabet))}
 
@@ -445,7 +445,7 @@ class Sample:
 		letter2pos = {alphabet[i]:i for i in range(len(alphabet))}
 
 		#convertLTL2dfa
-		ltldfa = ltl2dfa(formula, letter2pos)
+		ltldfa = ltl2dfa(formula, letter2pos, is_words)
 
 		while num_positives < total_num_positives:
 
@@ -491,7 +491,7 @@ class Sample:
 		letter2pos = {alphabet[i]:i for i in range(len(alphabet))}
 
 		#convertLTL2dfa
-		ltldfa = ltl2dfa(formula, letter2pos)
+		ltldfa = ltl2dfa(formula, letter2pos, is_words)
 
 		ltldfa_list = []
 
@@ -549,7 +549,7 @@ class Sample:
 		num_accepted_words_length = {}
 		num_words_per_length = {}
 		for i in range(length_range[0], length_range[1]+1):
-			num_accepted_words_length[i] = sum([dfa.number_of_words[(dfa.init_state,i)] for dfa in ltldfa_list])
+			num_accepted_words_length[i] = sum(dfa.number_of_words[(dfa.init_state,i)] for dfa in ltldfa_list)
 		
 		total_accepted_words = sum(num_accepted_words_length.values())
 		for i in range(length_range[0], length_range[1]):
@@ -596,7 +596,7 @@ class Sample:
 		num_accepted_words_length = {}
 		num_words_per_length = {}
 		for i in range(length_range[0], length_range[1]+1):
-			num_accepted_words_length[i] = sum([dfa.number_of_words[(dfa.init_state,i)] for dfa in ltldfa_list])
+			num_accepted_words_length[i] = sum(dfa.number_of_words[(dfa.init_state,i)] for dfa in ltldfa_list)
 		
 		total_accepted_words = sum(num_accepted_words_length.values())
 		for i in range(length_range[0], length_range[1]):
