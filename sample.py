@@ -445,7 +445,7 @@ class Sample:
 		letter2pos = {alphabet[i]:i for i in range(len(alphabet))}
 
 		#convertLTL2dfa
-		ltldfa = ltl2dfa(formula, letter2pos)
+		ltldfa = ltl2dfa(formula, letter2pos, is_words)
 
 		while num_positives < total_num_positives:
 
@@ -491,7 +491,7 @@ class Sample:
 		letter2pos = {alphabet[i]:i for i in range(len(alphabet))}
 
 		#convertLTL2dfa
-		ltldfa = ltl2dfa(formula, letter2pos)
+		ltldfa = ltl2dfa(formula, letter2pos, is_words)
 
 		ltldfa_list = []
 
