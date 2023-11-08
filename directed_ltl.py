@@ -882,7 +882,7 @@ class findDltl:
 								last_digit = int(nextdltl.vector[-2].strip('>'))
 
 								if inv:
-									if len(current_superword)<last_digit:
+									if len(current_superword)<=last_digit:
 										pos_list.append([-1])
 										continue
 
@@ -906,7 +906,7 @@ class findDltl:
 								last_digit = int(nextdltl.vector[-2].strip('>'))
 
 								if inv:								
-									if len(current_superword)<last_digit:
+									if len(current_superword)<=last_digit:
 										neg_list.append([-1])
 										continue
 
