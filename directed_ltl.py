@@ -735,10 +735,11 @@ class findDltl:
 
 			if length >= self.upper_bound:
 
-				for dltl in self.len_dltl[(sl_length,1)][length]:
+				for dltl in self.len_dltl[(sl_length,width-1)][length]:
 					del self.R_table[(sl_length,width-1)][dltl] 
 				del self.len_dltl[(sl_length,width-1)][length]
 
+		dltl_lengths = sorted(list(self.len_dltl[(sl_length,width-1)]))
 
 		for length in dltl_lengths:
 		
