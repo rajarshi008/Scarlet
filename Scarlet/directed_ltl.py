@@ -735,10 +735,11 @@ class findDltl:
 
 			if length >= self.upper_bound:
 
-				for dltl in self.len_dltl[(sl_length,1)][length]:
+				for dltl in self.len_dltl[(sl_length,width-1)][length]:
 					del self.R_table[(sl_length,width-1)][dltl] 
 				del self.len_dltl[(sl_length,width-1)][length]
 
+		dltl_lengths = sorted(list(self.len_dltl[(sl_length,width-1)]))
 
 		for length in dltl_lengths:
 		
@@ -882,7 +883,7 @@ class findDltl:
 								last_digit = int(nextdltl.vector[-2].strip('>'))
 
 								if inv:
-									if len(current_superword)<last_digit:
+									if len(current_superword)<=last_digit:
 										pos_list.append([-1])
 										continue
 
@@ -906,7 +907,7 @@ class findDltl:
 								last_digit = int(nextdltl.vector[-2].strip('>'))
 
 								if inv:								
-									if len(current_superword)<last_digit:
+									if len(current_superword)<=last_digit:
 										neg_list.append([-1])
 										continue
 

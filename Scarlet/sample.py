@@ -573,7 +573,7 @@ class Sample:
 					self.positive.append(trace)
 					assert(ltldfa.is_word_in(word)==True)
 			
-			dfa = ltldfa_list[-1]
+			dfa = non_empty_dfas[-1]
 			num_words_per_dfa[dfa] = num_words_per_length[i] - sum(num_words_per_dfa.values())
 			new_words = dfa.generate_random_words_in_batch((i,i), num_words_per_dfa[dfa])
 			for word in new_words:
@@ -621,7 +621,7 @@ class Sample:
 					self.negative.append(trace)
 					assert(ltldfa.is_word_in(word)==False)
 			
-			dfa = ltldfa_list[-1]
+			dfa = non_empty_dfas[-1]
 			num_words_per_dfa[dfa] = num_words_per_length[i] - sum(num_words_per_dfa.values())
 			new_words = dfa.generate_random_words_in_batch((i,i), num_words_per_dfa[dfa])
 			for word in new_words:
