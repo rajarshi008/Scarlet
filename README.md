@@ -1,8 +1,9 @@
 <h1 align="center">
   <img src="https://rajarshi008.github.io/assets/images/scarlet-logo.png" width="60%">
  </h1>
-
-
+<p  align="center">
+<a href="https://zenodo.org/doi/10.5281/zenodo.10357544"><img src="https://zenodo.org/badge/365867297.svg" alt="DOI"></a>
+</p>
 We consider the problem of learning explainable models in Linear Temporal Logic (LTL) using system executions partitioned into positive (or desirable) and negative (or undesirable).
 
 Our paper "[Scalable Anytime Algorithms for Learning Fragments of Linear Temporal Logic](https://link.springer.com/chapter/10.1007/978-3-030-99524-9_14)" presenting the algorithms behind *Scarlet* was published in TACAS'2022.
