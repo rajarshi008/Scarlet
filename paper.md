@@ -11,12 +11,12 @@ authors:
   - name: Ritam Raha
     orcid: 0000-0003-1467-1182
     equal-contrib: true
-    corresponding: true # (This is how to denote the corresponding author)
-    affiliation: "1, 2" # (Multiple affiliations must be quoted)
+    corresponding: true 
+    affiliation: "1, 2"
   - name: Rajarshi Roy
     orcid: 0000-0002-0202-1169
-    corresponding: true # (This is how to denote the corresponding author)
-    equal-contrib: true # (This is how you can denote equal contributions between multiple authors)
+    corresponding: true
+    equal-contrib: true
     affiliation: 3
   - name: Nathanaël Fijalkow
     orcid: 0000-0002-6576-4680
@@ -41,7 +41,7 @@ bibliography: paper.bib
 
 # Summary
 
-In the past decade, incorporating data-driven AI techniques in system design has become mainstream, almost in all branches of science and technology.
+In the past decade, incorporating data-driven AI techniques in system design has become mainstream in almost all branches of science and technology.
 Typically, systems powered by AI tend to be rather complex, far beyond human understanding.
 Naturally, one cannot always develop trust in such complex, so-called black-box systems, restricting their widespread use in safety-critical domains.
 
@@ -65,7 +65,7 @@ $h,h,h,h,h,c,h,o,h,h$
 Let the first execution be positive since the robot first collects waste from the office and then accumulates in the container.
 Further, let the second execution be negative since the robot tries to accumulate the waste in the container even before it collects from the office.
 From these executions, `Scarlet` learns a model `F(o and FX c)`, where the `F`-operator stands for "finally" and `X`-operator stands for "next".
-This model, in simple words, expresses that: eventually, the robot should visit the office $o$ and then, at a later point should visit the container $c$. 
+This model, in simple words, expresses that: eventually, the robot should visit the office $o$ and then, at a later point, should visit the container $c$. 
 
 
 # Statement of need
@@ -81,21 +81,21 @@ The fundamental problem solved by `Scarlet` is to build an explainable model in 
 
 # Key insights
 
-A paper presenting the algorithms behind `Scarlet` was published in TACAS'2022: International Conference on Tools and Algorithms for the Construction and Analysis of Systems [@RahaRFN22]. 
+A paper presenting the algorithms behind `Scarlet` was published in TACAS'2022: Tools and Algorithms for the Construction and Analysis of Systems [@RahaRFN22]. 
 
 We believe that the path to scalability for learning models in LTL is to leverage normal forms for LTL formulas and derive efficient enumeration algorithms from them. `Scarlet` combines two insights:
 
 * An efficient enumeration algorithm for directed LTL formulas, which are formulas that can be evaluated only moving forward in traces,
 * An algorithm solving the Boolean set cover problem, which constructs Boolean combinations of already constructed formulas in order to separate positive and negative traces.
 
-Evaluation experiments are presented in the paper [@RahaRFN22].
+For experimental results, refer to the full paper [@RahaRFN22].
 
 # Related works
 
-For learning models in LTL, several approaches have been proposed, leveraging SAT solvers [@NeiderGavran18], automata [@Camacho_McIlraith_2019], and Bayesian inference [@ijcai2019-0776]. In fact, there are approaches for more expressive logics such as Property Specification Language (PSL) [@RoyFismanNeider20] and Computational Tree Logic (CTL) [@EhlersGavranNeider20].
+For learning models in LTL, several approaches have been proposed, leveraging SAT solvers [@NeiderGavran18], automata [@Camacho_McIlraith_2019], and Bayesian inference [@ijcai2019-0776]. In fact, there are approaches for many temporal logics such as Property Specification Language (PSL) [@RoyFismanNeider20], Computational Tree Logic (CTL) [@EhlersGavranNeider20,@abs-2310-13778], Metric Temporal Logic (MTL) [@abs-2310-17410], etc.
 
 Applications of LTL learning include program specification [@LPB15], anomaly and fault detection [@BoVaPeBe-HSCC-2016], robotics [@ChouOB20], and many more: we refer to [@Camacho_McIlraith_2019] for a list of practical applications.
-An equivalent point of view on LTL learning is as a specification mining question. 
+An equivalent point of view on LTL learning is as a specification mining question.
 The ARSENAL [@GhoshELLSS16] and FRET [@GiannakopoulouP20a] projects construct LTL specifications from natural language; see [@Li13d] for an overview.
 
 The two state-of-the-art tools for learning logic formulas from examples are:
