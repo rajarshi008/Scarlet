@@ -92,7 +92,7 @@ For experimental results, refer to the full paper [@RahaRFN22].
 
 # Related works
 
-For learning models in LTL, several approaches have been proposed, leveraging SAT solvers [@NeiderGavran18], automata [@Camacho_McIlraith_2019], and Bayesian inference [@ijcai2019-0776]. In fact, there are approaches for many temporal logics such as Property Specification Language (PSL) [@RoyFismanNeider20], Computational Tree Logic (CTL) [@EhlersGavranNeider20,@abs-2310-13778], Metric Temporal Logic (MTL) [@abs-2310-17410], etc.
+For learning models in LTL, several approaches have been proposed, leveraging SAT solvers [@NeiderGavran18], automata [@Camacho_McIlraith_2019], and Bayesian inference [@ijcai2019-0776]. In fact, there are approaches for many temporal logics such as Property Specification Language (PSL) [@RoyFismanNeider20], Computational Tree Logic (CTL) [@EhlersGavranNeider20, @abs-2310-13778], Metric Temporal Logic (MTL) [@abs-2310-17410], etc.
 
 Applications of LTL learning include program specification [@LPB15], anomaly and fault detection [@BoVaPeBe-HSCC-2016], robotics [@ChouOB20], and many more: we refer to [@Camacho_McIlraith_2019] for a list of practical applications.
 An equivalent point of view on LTL learning is as a specification mining question.
