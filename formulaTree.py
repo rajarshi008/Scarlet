@@ -192,58 +192,125 @@ class Formula(SimpleTree):
 
 	@classmethod
 	def convertTextToFormula(cls, formulaText):
-	    
-	    f = Formula()
-	    try:
-	        formula_parser = Lark(r"""
-	            ?formula: _binary_expression
-	                    |_unary_expression
-	                    | constant
-	                    | variable
-	            !constant: "true"
-	                    | "false"
-	            _binary_expression: binary_operator "(" formula "," formula ")"
-	            _unary_expression: unary_operator "(" formula ")"
-	            variable: /[a-z]/
-	            !binary_operator: "&" | "|" | "->" | "U"
-	            !unary_operator: "F" | "G" | "!" | "X"
-	            
-	            %import common.SIGNED_NUMBER
-	            %import common.WS
-	            %ignore WS 
-	         """, start = 'formula')
-	    
-	        
-	        tree = formula_parser.parse(formulaText)
-	        
-	    except Exception as e:
-	        print("can't parse formula %s" %formulaText)
-	        print("error: %s" %e)
-	        
-	    
-	    f = TreeToFormula().transform(tree)
-	    return f
+		
+		f = Formula()
+		try:
+			formula_parser = Lark(r"""
+				?formula: _binary_expression
+						|_unary_expression
+						| constant
+						| variable
+				!constant: "true"
+						| "false"
+				_binary_expression: binary_operator "(" formula "," formula ")"
+				_unary_expression: unary_operator "(" formula ")"
+				variable: /[a-z]/
+				!binary_operator: "&" | "|" | "->" | "U"
+				!unary_operator: "F" | "G" | "!" | "X"
+				
+				%import common.SIGNED_NUMBER
+				%import common.WS
+				%ignore WS 
+			 """, start = 'formula')
+		
 			
+			tree = formula_parser.parse(formulaText)
+			
+		except Exception as e:
+			print("can't parse formula %s" %formulaText)
+			print("error: %s" %e)
+			
+		
+		f = TreeToFormula().transform(tree)
+		return f
+			
+
+	@classmethod
+	def convertTLSFToFormula(cls, formulaText):
+		
+		f = Formula()
+		try:
+			formula_parser = Lark(r"""
+				?formula: _binary_expression
+						|_unary_expression
+						| constant
+						| variable
+				!constant: "true"
+						| "false"
+				_binary_expression: "(" formula ")" binary_operator "(" formula ")"
+									| formula binary_operator "(" formula ")"
+									| formula binary_operator formula
+				_unary_expression: unary_operator "(" formula ")"
+				variable: /[a-z0-9]+/ | "(" /[a-z0-9]+/ ")"
+				!binary_operator: "&&" | "||" | "->" | "U"
+				!unary_operator: "F" | "G" | "!" | "X"
+				
+				%import common.SIGNED_NUMBER
+				%import common.WS
+				%ignore WS 
+			 """, start = 'formula')
+		
+			
+			tree = formula_parser.parse(formulaText)
+		except Exception as e:
+			print("can't parse formula %s" %formulaText)
+			print("error: %s" %e)
+			
+		
+		f = InfixTreeToFormula().transform(tree)
+		return f
+
 class TreeToFormula(Transformer):
-        def formula(self, formulaArgs):
-            
-            return Formula(formulaArgs)
-        def variable(self, varName):
-            return Formula([str(varName[0]), None, None])
-        def constant(self, arg):
-            connector = ""
-            if str(arg[0]) == "true":
-                connector = "|"
-            elif str(arg[0]) == "false":
-                connector = "&"
-            return Formula([connector, Formula(["p", None, None]), Formula(["!", Formula(["p", None, None] ), None])])
-                
-        def binary_operator(self, args):
-            return str(args[0])
-        def unary_operator(self, args):
-            return str(args[0])
+	def formula(self, formulaArgs):
+		print(formulaArgs)
+		return Formula(formulaArgs)
+	def variable(self, varName):
+		return Formula([str(varName[0]), None, None])
+	def constant(self, arg):
+		connector = ""
+		if str(arg[0]) == "true":
+			connector = "|"
+		elif str(arg[0]) == "false":
+			connector = "&"
+		return Formula([connector, Formula(["p", None, None]), Formula(["!", Formula(["p", None, None] ), None])])
+			
+	def binary_operator(self, args):
+		return str(args[0])
+	def unary_operator(self, args):
+			return str(args[0])
 
-
+class InfixTreeToFormula(Transformer):
+		def formula(self, formulaArgs):
+			if len(formulaArgs) == 1:
+				return Formula([formulaArgs[0], None, None])
+			if len(formulaArgs) == 2:
+				return Formula([formulaArgs[0], formulaArgs[1], None])
+			if len(formulaArgs) == 3:
+				return Formula([formulaArgs[1], formulaArgs[0], formulaArgs[2]])
+			if len(formulaArgs) > 3:
+				return Formula([formulaArgs[1], formulaArgs[0], self.formula(formulaArgs[2:])])
+			
+		def variable(self, varName):
+			return Formula([str(varName[0]), None, None])
+		
+		def constant(self, arg):
+			connector = ""
+			if str(arg[0]) == "true":
+				connector = "|"
+			elif str(arg[0]) == "false":
+				connector = "&"
+			return Formula([connector, Formula(["p", None, None]), Formula(["!", Formula(["p", None, None] ), None])])
+		
+		def binary_operator(self, args):
+			if args[0] == "&&":
+				return "&"
+			if args[0] == "||":
+				return "|"
+			else:
+				return str(args[0])
+		
+		def unary_operator(self, args):
+			return str(args[0])
 
 def merge(operator, formula1, formula2):
 	"""
@@ -339,4 +406,11 @@ formula_true.size = 0
 formula_false.size = 0
 
 
-#formula = Formula.convertTextToFormula("G(X(&(p,q)))")
+formula1 = Formula.convertTLSFToFormula("(G(p0)) && (F(p1)) && (G(p2))")
+print(formula1.prettyPrint())
+formula2 = Formula.convertTLSFToFormula("p0 U (p1 U (p2 U p3))")
+print(formula2.prettyPrint())
+formula3 = Formula.convertTLSFToFormula("(p0 && p1) && (p2 && p3)")
+print(formula3.prettyPrint())
+formula4 = Formula.convertTLSFToFormula("((G((p59))->F((p145))) &&  (G(!(p59))->F(!(p145)))) && ((G((p93))->F((p131))) &&  (G(!(p93))->F(!(p131)))) && ((G((p67))->F((p157))) &&  (G(!(p67))->F(!(p157)))) && ((G((p28))->F((p124))) &&  (G(!(p28))->F(!(p124))))")
+print(formula4.prettyPrint())
