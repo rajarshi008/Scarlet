@@ -399,13 +399,10 @@ def display(formula):
 	s = Source(dot_str, filename="test.gv", format="png")
 	s.view()
 	
-
-formula_true = Formula('true')
-formula_false = Formula('false')
-formula_true.size = 0
-formula_false.size = 0
-
-
+'''
+TLSF format usage
+formula_true = Formula.convertTLSFToFormula("true U (G(p))")
+print(formula_true.prettyPrint())
 formula1 = Formula.convertTLSFToFormula("(G(p0)) && (F(p1)) && (G(p2))")
 print(formula1.prettyPrint())
 formula2 = Formula.convertTLSFToFormula("p0 U (p1 U (p2 U p3))")
@@ -414,3 +411,4 @@ formula3 = Formula.convertTLSFToFormula("(p0 && p1) && (p2 && p3)")
 print(formula3.prettyPrint())
 formula4 = Formula.convertTLSFToFormula("((G((p59))->F((p145))) &&  (G(!(p59))->F(!(p145)))) && ((G((p93))->F((p131))) &&  (G(!(p93))->F(!(p131)))) && ((G((p67))->F((p157))) &&  (G(!(p67))->F(!(p157)))) && ((G((p28))->F((p124))) &&  (G(!(p28))->F(!(p124))))")
 print(formula4.prettyPrint())
+'''
